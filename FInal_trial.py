@@ -8,17 +8,11 @@ class Item:
                  x=None, y=None, z=None, placed_cont=None, placed=False):
         self.item_id = item_id
         self.name = name
-
-        # Original dimensions and rotation tracking
         self.original_width = int(math.ceil(width))
         self.original_depth = int(math.ceil(depth))
         self.original_height = int(math.ceil(height))
-        self.rotation = 0  # 0-5 rotation state
-
-        # Apply initial rotation
+        self.rotation = 0
         self.apply_rotation()
-
-        # Position and placement info
         self.x = x
         self.y = y
         self.z = z
@@ -30,7 +24,6 @@ class Item:
         self.placed = placed or self.fixed_position
 
     def apply_rotation(self):
-        """Update dimensions based on rotation state"""
         rotations = [
             (self.original_width, self.original_depth, self.original_height),
             (self.original_width, self.original_height, self.original_depth),
@@ -40,17 +33,6 @@ class Item:
             (self.original_height, self.original_depth, self.original_width)
         ]
         self.width, self.depth, self.height = rotations[self.rotation % 6]
-
-    def get_rotation_states(self):
-        """Return all possible dimension permutations"""
-        return [
-            (self.original_width, self.original_depth, self.original_height),
-            (self.original_width, self.original_height, self.original_depth),
-            (self.original_depth, self.original_width, self.original_height),
-            (self.original_depth, self.original_height, self.original_width),
-            (self.original_height, self.original_width, self.original_depth),
-            (self.original_height, self.original_depth, self.original_width)
-        ]
 
 
 class Container:
@@ -67,7 +49,6 @@ def sort_items(items):
 
 
 def pack_container(container, items):
-    """Attempt to pack items into a single container"""
     packer = Packer()
     packer.add_bin(PyBin(
         container.container_id,
@@ -84,7 +65,7 @@ def pack_container(container, items):
                 item.width,
                 item.depth,
                 item.height,
-                0  # Weight not used
+                0
             ))
 
     packer.pack(bigger_first=True)
@@ -92,25 +73,37 @@ def pack_container(container, items):
 
 
 def determine_rotation(original_item, packed_dims):
-    """Match packed dimensions to rotation state"""
     try:
-        return original_item.get_rotation_states().index(packed_dims)
+        return [
+            (original_item.original_width, original_item.original_depth, original_item.original_height),
+            (original_item.original_width, original_item.original_height, original_item.original_depth),
+            (original_item.original_depth, original_item.original_width, original_item.original_height),
+            (original_item.original_depth, original_item.original_height, original_item.original_width),
+            (original_item.original_height, original_item.original_width, original_item.original_depth),
+            (original_item.original_height, original_item.original_depth, original_item.original_width)
+        ].index(packed_dims)
     except ValueError:
         return 0
+
+
+def validate_placement(item, container):
+    return (item.x + item.width <= container.width and
+            item.y + item.depth <= container.depth and
+            item.z + item.height <= container.height)
 
 
 def start_BFD(zone_map):
     # First pass: preferred zones
     for container in containers:
-        items_to_pack = [i for i in Overall_List
-                         if not i.placed
-                         and not i.fixed_position
-                         and i.pref_zone == container.zone]
+        preferred_items = [i for i in Overall_List
+                           if not i.placed
+                           and not i.fixed_position
+                           and i.pref_zone == container.zone]
 
-        if not items_to_pack:
+        if not preferred_items:
             continue
 
-        sorted_items = sort_items(items_to_pack)
+        sorted_items = sort_items(preferred_items)
         py3dbp_bin = pack_container(container, sorted_items)
 
         if py3dbp_bin:
@@ -131,81 +124,52 @@ def start_BFD(zone_map):
 
 
 def update_container_placements(container, py3dbp_bin):
-    """Update positions for all items in a container"""
     for packed_item in py3dbp_bin.items:
         original_item = next(i for i in Overall_List if i.item_id == packed_item.name)
-
-        # Update dimensions and rotation first
-        packed_dims = (packed_item.width, packed_item.depth, packed_item.height)
-        original_item.rotation = determine_rotation(original_item, packed_dims)
+        original_item.x, original_item.y, original_item.z = packed_item.position
+        original_item.rotation = determine_rotation(
+            original_item,
+            (packed_item.width, packed_item.depth, packed_item.height)
+        )
         original_item.apply_rotation()
 
-        # Update position if valid
-        if packed_item.position != [0, 0, 0]:
-            original_item.x = packed_item.position[0]
-            original_item.y = packed_item.position[1]
-            original_item.z = packed_item.position[2]
+        if validate_placement(original_item, container):
             original_item.placed = True
             original_item.placed_cont = container.container_id
+        else:
+            original_item.placed = False
+            original_item.x = original_item.y = original_item.z = None
 
 
-def try_pack_item(item, container):
-    """Attempt to pack a single item into a container"""
-    temp_bin = pack_container(container, [item])
-    if temp_bin and temp_bin.items:
-        packed_item = temp_bin.items[0]
-
-        # Update item properties
-        item.rotation = determine_rotation(item,
-                                           (packed_item.width,
-                                            packed_item.depth,
-                                            packed_item.height))
-
-        item.apply_rotation()
-        item.placed = True
-        item.placed_cont = container.container_id
-        item.x = packed_item.position[0]
-        item.y = packed_item.position[1]  # y and z swapped for py3dbp's coordinate system
-        item.z = packed_item.position[2]
-        return True
-    return False
-
-
-def load_containers():
+def load_containers(file_path):
     containers = []
-    with open(r"C:\Users\Saket Ramchandra\Downloads\containers.csv") as f:
+    with open(file_path) as f:
         reader = csv.DictReader(f)
         for row in reader:
-            try:
-                containers.append(Container(
-                    container_id=row['container_id'],
-                    width=float(row['width_cm']),
-                    depth=float(row['depth_cm']),
-                    height=float(row['height_cm']),
-                    zone=row['zone']
-                ))
-            except Exception as e:
-                print(f"Error loading container {row['container_id']}: {str(e)}")
+            containers.append(Container(
+                container_id=row['container_id'],
+                width=float(row['width_cm']),
+                depth=float(row['depth_cm']),
+                height=float(row['height_cm']),
+                zone=row['zone']
+            ))
     return containers
 
 
-def load_items():
+def load_items(file_path):
     items = []
-    with open(r"C:\Users\Saket Ramchandra\Downloads\input_items.csv") as f:
+    with open(file_path) as f:
         reader = csv.DictReader(f)
         for row in reader:
-            try:
-                items.append(Item(
-                    item_id=row['item_id'],
-                    name=row['name'],
-                    width=float(row['width_cm']),
-                    depth=float(row['depth_cm']),
-                    height=float(row['height_cm']),
-                    priority=int(row['priority']),
-                    pref_zone=row['preferred_zone']
-                ))
-            except Exception as e:
-                print(f"Error loading item {row['item_id']}: {str(e)}")
+            items.append(Item(
+                item_id=row['item_id'],
+                name=row['name'],
+                width=float(row['width_cm']),
+                depth=float(row['depth_cm']),
+                height=float(row['height_cm']),
+                priority=int(row['priority']),
+                pref_zone=row['preferred_zone']
+            ))
     return items
 
 
@@ -214,9 +178,9 @@ def print_results():
     for item in Overall_List:
         status = "Fixed" if item.fixed_position else "Placed" if item.placed else "Unplaced"
         print(f"Item {item.item_id}: {status} in {item.placed_cont or 'N/A'} "
-              f"(Zone: {item.pref_zone}) "
-              f"Dimensions: {item.width} {item.depth} {item.height} "
-              f"Position: ({item.x}, {item.y}, {item.z})")
+              f"(Preferred: {item.pref_zone}) "
+              f"Position: ({item.x}, {item.y}, {item.z}) "
+              f"Dimensions: {item.width} {item.depth} {item.height}")
 
 
 def remove_items(remove_list):
@@ -226,14 +190,10 @@ def remove_items(remove_list):
                 item.placed = False
                 item.placed_cont = None
                 item.x = item.y = item.z = None
-                item.rotation = 0
-                item.apply_rotation()
 
 
 def add_items(new_items):
-    for new_item in new_items:
-        if not any(i.item_id == new_item.item_id for i in Overall_List):
-            Overall_List.append(new_item)
+    Overall_List.extend(new_items)
     initialise()
 
 
@@ -243,20 +203,16 @@ def initialise():
             item.placed = False
             item.placed_cont = None
             item.x = item.y = item.z = None
-            item.rotation = 0
-            item.apply_rotation()
 
 
-# Initialize data from CSVs
-containers = load_containers()
-Overall_List = load_items()
-
-# Create zone mapping
+# Initialize data
+containers = load_containers(r"C:\Users\Saket Ramchandra\Downloads\containers.csv")
+Overall_List = load_items(r"C:\Users\Saket Ramchandra\Downloads\input_items.csv")
 zone_map = {}
-for container in containers:
-    if container.zone not in zone_map:
-        zone_map[container.zone] = []
-    zone_map[container.zone].append(container)
+for c in containers:
+    if c.zone not in zone_map:
+        zone_map[c.zone] = []
+    zone_map[c.zone].append(c)
 
 # Main menu
 while True:
