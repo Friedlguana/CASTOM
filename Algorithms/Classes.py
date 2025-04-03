@@ -106,6 +106,10 @@ class Item:
     def sort_priority(self):
         return self.z
 
+    def Use_Item(self,no_of_uses):
+        self.uses -= no_of_uses
+
+
 
 class Container:
     def __init__(self, zone, container_id, width, depth, height):

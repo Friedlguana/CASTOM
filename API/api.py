@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import List, Optional, Literal
 import csv
 from Algorithms.Algo_Picker import ScreenFunctions
+from Algorithms.Classes import *
 import pickle
 
 
@@ -58,24 +59,38 @@ async def placementRecommendations(request: placementRequest):
     with open(binItems, "rb") as f:
         itemData = f.load()
     item_ids = [ item for item in itemData.keys()]
-    template = {
-        "itemId": "string",
-        "containerId": "string",
-        "position": {
-            "startCoordinates": {
-                "width": number,
-                "depth": number,
-                "height": number
-            },
-            "endCoordinates": {
-                "width": number,
-                "depth": number,
-                "height": number
+    result_json = []
+    for ID in item_ids:
+        template = {
+            "itemId": "string",
+            "containerId": "string",
+            "position": {
+                "startCoordinates": {
+                    "width": number,
+                    "depth": number,
+                    "height": number
+                },
+                "endCoordinates": {
+                    "width": number,
+                    "depth": number,
+                    "height": number
+                }
             }
         }
-    }
-    for ID in item_ids:
         template['itemId'] = itemData[ID].itemId
+        template['containerId'] = itemData[ID].placed_cont
+        template["position"]["startCoordinates"]["width"] = itemData[ID].width
+        template["position"]["startCoordinates"]["depth"] = itemData[ID].depth
+        template["position"]["startCoordinates"]["height"] = itemData[ID].height
+        template["position"]["endCoordinates"]["width"] = None
+        template["position"]["endCoordinates"]["width"] = None
+        template["position"]["endCoordinates"]["width"] = None
+        result_json.append(template)
+
+
+
+
+
 
 [
             {
@@ -96,60 +111,60 @@ async def placementRecommendations(request: placementRequest):
             }
         ]
 
-    return {
-        "success": boolean,
-        "placements": [
-            {
-                "itemId": "string",
-                "containerId": "string",
-                "position": {
-                    "startCoordinates": {
-                        "width": number,
-                        "depth": number,
-                        "height": number
-                    },
-                    "endCoordinates": {
-                        "width": number,
-                        "depth": number,
-                        "height": number
-                    }
-                }
-            }
-        ],
-        "rearrangements": [
-            {
-                "step": number,
-                "action": "string",
-                "itemId": "string",
-                "fromContainer": "string",
-                "fromPosition": {
-                    "startCoordinates": {
-                        "width": number,
-                        "depth": number,
-                        "height": number
-                    },
-                    "endCoordinates": {
-                        "width": number,
-                        "depth": number,
-                        "height": number
-                    }
-                },
-                "toContainer": "string",
-                "toPosition": {
-                    "startCoordinates": {
-                        "width": number,
-                        "depth": number,
-                        "height": number
-                    },
-                    "endCoordinates": {
-                        "width": number,
-                        "depth": number,
-                        "height": number
-                    }
-                }
-            }
-        ]
-    }
+    # return {
+    #     "success": boolean,
+    #     "placements": [
+    #         {
+    #             "itemId": "string",
+    #             "containerId": "string",
+    #             "position": {
+    #                 "startCoordinates": {
+    #                     "width": number,
+    #                     "depth": number,
+    #                     "height": number
+    #                 },
+    #                 "endCoordinates": {
+    #                     "width": number,
+    #                     "depth": number,
+    #                     "height": number
+    #                 }
+    #             }
+    #         }
+    #     ],
+    #     "rearrangements": [
+    #         {
+    #             "step": number,
+    #             "action": "string",
+    #             "itemId": "string",
+    #             "fromContainer": "string",
+    #             "fromPosition": {
+    #                 "startCoordinates": {
+    #                     "width": number,
+    #                     "depth": number,
+    #                     "height": number
+    #                 },
+    #                 "endCoordinates": {
+    #                     "width": number,
+    #                     "depth": number,
+    #                     "height": number
+    #                 }
+    #             },
+    #             "toContainer": "string",
+    #             "toPosition": {
+    #                 "startCoordinates": {
+    #                     "width": number,
+    #                     "depth": number,
+    #                     "height": number
+    #                 },
+    #                 "endCoordinates": {
+    #                     "width": number,
+    #                     "depth": number,
+    #                     "height": number
+    #                 }
+    #             }
+    #         }
+    #     ]
+    # }
 
 #-----------------------------------------------------------------------------------------
 
