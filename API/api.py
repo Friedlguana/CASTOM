@@ -1,6 +1,10 @@
 from fastapi import FastAPI, Query, UploadFile, File
 from pydantic import BaseModel
 from typing import List, Optional, Literal
+import csv
+from Algorithms.Algo_Picker import ScreenFunctions
+import pickle
+
 
 
 app = FastAPI()
@@ -35,8 +39,62 @@ class placementRequest(BaseModel):
 @app.post("/api/placement")
 async def placementRecommendations(request: placementRequest):
     ## Example usage
-    # item_ids = [item.itemId for item in request.items]
     # container_ids = [container.containerId for container in request.containers]
+    itemobj=open('itemFile.csv','w',newline='')
+    containerobj = open('containerFile.csv','w',newline='')
+    itemCsvWriter=csv.writer(itemobj)
+    containerCsvWriter=csv.writer(containerobj)
+    itemCsvWriter.writerow(["item_id", "name", "width", "depth", "height", "mass", "priority", "expiry", "uses", "pref_zone","x","y","z","placed_cont","placed Status"])
+    itemCsvWriter.writerow(["zone", "container_id", "width", "depth", "height"])
+    for item in request.items:
+        itemCsvWriter.writerow([item.itemId, item.name, item.width, item.depth, item.height, 0, item.priority, item.expiryDate, item.usageLimit, item.preferredZone])
+    itemobj.close()
+    for container in request.containers:
+        itemCsvWriter.writerow([container.zone, container.containerId, container.width, container.depth, container.height])
+    containerobj.close()
+    obj = ScreenFunctions.SortingScreen("itemFile.csv", "containerFile.csv")
+
+    binItems, binContainers = obj.BeginSort()
+    with open(binItems, "rb") as f:
+        itemData = f.load()
+    item_ids = [ item for item in itemData.keys()]
+    template = {
+        "itemId": "string",
+        "containerId": "string",
+        "position": {
+            "startCoordinates": {
+                "width": number,
+                "depth": number,
+                "height": number
+            },
+            "endCoordinates": {
+                "width": number,
+                "depth": number,
+                "height": number
+            }
+        }
+    }
+    for ID in item_ids:
+        template['itemId'] = itemData[ID].itemId
+
+[
+            {
+                "itemId": "string",
+                "containerId": "string",
+                "position": {
+                    "startCoordinates": {
+                        "width": number,
+                        "depth": number,
+                        "height": number
+                    },
+                    "endCoordinates": {
+                        "width": number,
+                        "depth": number,
+                        "height": number
+                    }
+                }
+            }
+        ]
 
     return {
         "success": boolean,
@@ -354,3 +412,14 @@ async def export_arrangement():
 #END
 #to run this api server first install fastapi and uvicorn and then run:
 #python -m uvicorn api:app --reload
+
+
+
+# from Algorithms.Algo_Picker import ScreenFunctions
+# import pickle
+
+# obj = ScreenFunctions.SortingScreen("items.csv", "containers.csv")
+
+# binItems, binContainers = obj.BeginSort()
+# with poen(binItems, "rb") as f:
+#     f.load()
