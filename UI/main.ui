@@ -7,7 +7,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1199</width>
+    <width>1166</width>
     <height>720</height>
    </rect>
   </property>
@@ -80,6 +80,9 @@ Left Menu */
 #titleLeftDescription { font: 8pt &quot;Segoe UI&quot;; color: rgb(189, 147, 249); }
 
 /* MENUS */
+#QPushButton:hover {
+	background-color: rgb(40, 44, 52);}
+
 #topMenu .QPushButton {	
 	background-position: left center;
     background-repeat: no-repeat;
@@ -96,6 +99,24 @@ Left Menu */
 	background-color: rgb(189, 147, 249);
 	color: rgb(255, 255, 255);
 }
+
+#topMenu .QPushButton {	
+	background-position: left center;
+    background-repeat: no-repeat;
+	border: none;
+	border-left: 22px solid transparent;
+	background-color: transparent;
+	text-align: left;
+	padding-left: 44px;
+}
+#topMenu .QPushButton:hover {
+	background-color: rgb(40, 44, 52);
+}
+#topMenu .QPushButton:pressed {	
+	background-color: rgb(189, 147, 249);
+	color: rgb(255, 255, 255);
+}
+
 #bottomMenu .QPushButton {	
 	background-position: left center;
     background-repeat: no-repeat;
@@ -807,9 +828,9 @@ Button */
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>48</y>
+               <y>50</y>
                <width>60</width>
-               <height>225</height>
+               <height>261</height>
               </rect>
              </property>
              <property name="frameShape">
@@ -1778,10 +1799,28 @@ li.checked::marker { content: &quot;\2612&quot;; }
                    <item>
                     <widget class="QStackedWidget" name="stackedWidget">
                      <property name="styleSheet">
-                      <string notr="true">background: transparent;</string>
+                      <string notr="true">QPushButton{
+	
+	background-color: rgb(33, 37, 43);
+}
+
+QPushButton:pressed {	
+	background-color: rgb(189, 147, 249);
+	color: rgb(255, 255, 255);
+}
+
+QStackedWidget{
+
+background: transparent;
+}
+
+
+
+
+</string>
                      </property>
                      <property name="currentIndex">
-                      <number>0</number>
+                      <number>2</number>
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
@@ -1816,7 +1855,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                              <item row="0" column="0">
                               <widget class="QLabel" name="label">
                                <property name="text">
-                                <string>Misson TIme Left:</string>
+                                <string/>
                                </property>
                               </widget>
                              </item>
@@ -1953,7 +1992,7 @@ QDateEdit::down-arrow {
                                 <string notr="true"/>
                                </property>
                                <property name="text">
-                                <string>RECOMMENDATIONS:</string>
+                                <string/>
                                </property>
                               </widget>
                              </item>
@@ -1997,14 +2036,29 @@ QDateEdit::down-arrow {
                                 <enum>QFrame::Shadow::Raised</enum>
                                </property>
                                <layout class="QHBoxLayout" name="horizontalLayout_15">
+                                <property name="spacing">
+                                 <number>1</number>
+                                </property>
+                                <property name="leftMargin">
+                                 <number>0</number>
+                                </property>
+                                <property name="topMargin">
+                                 <number>0</number>
+                                </property>
+                                <property name="rightMargin">
+                                 <number>0</number>
+                                </property>
+                                <property name="bottomMargin">
+                                 <number>0</number>
+                                </property>
                                 <item>
-                                 <widget class="QPushButton" name="file_dropper_open">
+                                 <widget class="QPushButton" name="file_dropper_item">
                                   <property name="styleSheet">
-                                   <string notr="true">padding: 0px 20px;
+                                   <string notr="true">padding: 6px 20px;
 font: bold 9pt &quot;Segoe UI&quot;;</string>
                                   </property>
                                   <property name="text">
-                                   <string>Open</string>
+                                   <string>Open Item FIle</string>
                                   </property>
                                   <property name="icon">
                                    <iconset resource="resources.qrc">
@@ -2013,20 +2067,32 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                                  </widget>
                                 </item>
                                 <item>
+                                 <widget class="QPushButton" name="file_dropper_cont">
+                                  <property name="styleSheet">
+                                   <string notr="true">padding: 6px 20px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
+                                  </property>
+                                  <property name="text">
+                                   <string>Open Container FIle</string>
+                                  </property>
+                                 </widget>
+                                </item>
+                                <item>
                                  <widget class="QLabel" name="sortingpath_label">
                                   <property name="styleSheet">
-                                   <string notr="true">font: 9pt &quot;Segoe UI&quot;;
+                                   <string notr="true">padding: 5px;
+font: 9pt &quot;Segoe UI&quot;;
 </string>
                                   </property>
                                   <property name="text">
-                                   <string/>
+                                   <string>- upload a csv file to sort</string>
                                   </property>
                                  </widget>
                                 </item>
                                </layout>
                               </widget>
                              </item>
-                             <item>
+                             <item alignment="Qt::AlignmentFlag::AlignRight">
                               <widget class="QFrame" name="frame_9">
                                <property name="frameShape">
                                 <enum>QFrame::Shape::StyledPanel</enum>
@@ -2035,22 +2101,56 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                                 <enum>QFrame::Shadow::Raised</enum>
                                </property>
                                <layout class="QHBoxLayout" name="horizontalLayout_16">
-                                <item alignment="Qt::AlignmentFlag::AlignRight">
-                                 <widget class="QPushButton" name="pushButton_4">
+                                <item>
+                                 <widget class="QPushButton" name="btn_sorting_sort">
+                                  <property name="sizePolicy">
+                                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                   </sizepolicy>
+                                  </property>
                                   <property name="styleSheet">
-                                   <string notr="true">padding: 0px 20px;
+                                   <string notr="true">padding: 6px 20px;
 font: bold 9pt &quot;Segoe UI&quot;;</string>
                                   </property>
                                   <property name="text">
-                                   <string>Reset</string>
+                                   <string>Sort</string>
                                   </property>
                                   <property name="icon">
                                    <iconset resource="resources.qrc">
-                                    <normaloff>:/icons/images/icons/cil-reload.png</normaloff>:/icons/images/icons/cil-reload.png</iconset>
+                                    <normaloff>:/icons/images/icons/cil-media-play.png</normaloff>:/icons/images/icons/cil-media-play.png</iconset>
                                   </property>
                                  </widget>
                                 </item>
                                </layout>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QPushButton" name="btn_sorting_reset">
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
+                               </property>
+                               <property name="styleSheet">
+                                <string notr="true">padding: 6px 20px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
+                               </property>
+                               <property name="text">
+                                <string>Reset</string>
+                               </property>
+                               <property name="icon">
+                                <iconset resource="resources.qrc">
+                                 <normaloff>:/icons/images/icons/cil-reload.png</normaloff>:/icons/images/icons/cil-reload.png</iconset>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QComboBox" name="sorting_cont_comboBox">
+                               <property name="placeholderText">
+                                <string>Select a container after sorting</string>
+                               </property>
                               </widget>
                              </item>
                             </layout>
@@ -2060,7 +2160,7 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                         </widget>
                        </item>
                        <item>
-                        <widget class="QFrame" name="visualising_frame">
+                        <widget class="QFrame" name="sort_frame">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                            <horstretch>0</horstretch>
@@ -2078,7 +2178,7 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                          </property>
                          <layout class="QGridLayout" name="gridLayout_3">
                           <item row="0" column="0">
-                           <widget class="QOpenGLWidget" name="openGLWidget_2"/>
+                           <widget class="QWidget" name="sort_visualiser" native="true"/>
                           </item>
                          </layout>
                         </widget>
@@ -2118,6 +2218,13 @@ font: 9pt &quot;Segoe UI&quot;;</string>
                            </widget>
                           </item>
                           <item>
+                           <widget class="QLineEdit" name="le_item_name">
+                            <property name="placeholderText">
+                             <string>or enter the item name</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
                            <widget class="QLineEdit" name="le_cont_id">
                             <property name="placeholderText">
                              <string>Optional: Enter container name</string>
@@ -2125,9 +2232,31 @@ font: 9pt &quot;Segoe UI&quot;;</string>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLineEdit" name="lineEdit_2">
+                           <widget class="QLineEdit" name="le_astro_id">
                             <property name="placeholderText">
                              <string>Enter astronaut ID</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btn_search_search">
+                            <property name="styleSheet">
+                             <string notr="true">padding: 6px 15px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
+                            </property>
+                            <property name="text">
+                             <string>Search</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btn_search_retrieve">
+                            <property name="styleSheet">
+                             <string notr="true">padding: 6px 12px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
+                            </property>
+                            <property name="text">
+                             <string>Retrieve</string>
                             </property>
                            </widget>
                           </item>
@@ -2150,7 +2279,54 @@ font: 9pt &quot;Segoe UI&quot;;</string>
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_10">
                           <item>
-                           <widget class="QOpenGLWidget" name="openGLWidget"/>
+                           <widget class="QWidget" name="search_visualiser" native="true">
+                            <layout class="QGridLayout" name="gridLayout_5"/>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                       </item>
+                       <item alignment="Qt::AlignmentFlag::AlignHCenter">
+                        <widget class="QFrame" name="frame_11">
+                         <property name="frameShape">
+                          <enum>QFrame::Shape::StyledPanel</enum>
+                         </property>
+                         <property name="frameShadow">
+                          <enum>QFrame::Shadow::Raised</enum>
+                         </property>
+                         <layout class="QHBoxLayout" name="horizontalLayout_18">
+                          <item alignment="Qt::AlignmentFlag::AlignHCenter">
+                           <widget class="QPushButton" name="btn_search_prevstep">
+                            <property name="styleSheet">
+                             <string notr="true">padding: 6px 20px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
+                            </property>
+                            <property name="text">
+                             <string>Prev</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources.qrc">
+                              <normaloff>:/icons/images/icons/cil-media-skip-backward.png</normaloff>:/icons/images/icons/cil-media-skip-backward.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item alignment="Qt::AlignmentFlag::AlignHCenter">
+                           <widget class="QPushButton" name="btn_search_next">
+                            <property name="layoutDirection">
+                             <enum>Qt::LayoutDirection::RightToLeft</enum>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">padding: 6px 20px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
+                            </property>
+                            <property name="text">
+                             <string>Next</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources.qrc">
+                              <normaloff>:/icons/images/icons/cil-media-skip-forward.png</normaloff>:/icons/images/icons/cil-media-skip-forward.png</iconset>
+                            </property>
+                           </widget>
                           </item>
                          </layout>
                         </widget>
@@ -2185,12 +2361,16 @@ font: 9pt &quot;Segoe UI&quot;;</string>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QPushButton" name="pushButton">
+                           <widget class="QPushButton" name="btn_search_log">
                             <property name="minimumSize">
                              <size>
                               <width>75</width>
                               <height>25</height>
                              </size>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">padding: 6px 20px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
                             </property>
                             <property name="text">
                              <string>Submit</string>
@@ -2241,7 +2421,7 @@ font: 9pt &quot;Segoe UI&quot;;</string>
                           <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
                            <widget class="QLabel" name="return_label">
                             <property name="text">
-                             <string>Slated for return</string>
+                             <string>Slated For Return</string>
                             </property>
                            </widget>
                           </item>
@@ -2279,7 +2459,58 @@ font: 9pt &quot;Segoe UI&quot;;</string>
                            <number>0</number>
                           </property>
                           <item>
-                           <widget class="QTableWidget" name="onship_table"/>
+                           <widget class="QTableWidget" name="onship_table">
+                            <property name="styleSheet">
+                             <string notr="true">border-radius:0;</string>
+                            </property>
+                            <property name="cornerButtonEnabled">
+                             <bool>true</bool>
+                            </property>
+                            <attribute name="horizontalHeaderVisible">
+                             <bool>true</bool>
+                            </attribute>
+                            <attribute name="horizontalHeaderCascadingSectionResizes">
+                             <bool>false</bool>
+                            </attribute>
+                            <attribute name="horizontalHeaderDefaultSectionSize">
+                             <number>124</number>
+                            </attribute>
+                            <attribute name="horizontalHeaderHighlightSections">
+                             <bool>true</bool>
+                            </attribute>
+                            <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+                             <bool>false</bool>
+                            </attribute>
+                            <attribute name="horizontalHeaderStretchLastSection">
+                             <bool>true</bool>
+                            </attribute>
+                            <attribute name="verticalHeaderVisible">
+                             <bool>true</bool>
+                            </attribute>
+                            <attribute name="verticalHeaderHighlightSections">
+                             <bool>true</bool>
+                            </attribute>
+                            <column>
+                             <property name="text">
+                              <string>ID</string>
+                             </property>
+                            </column>
+                            <column>
+                             <property name="text">
+                              <string> Name</string>
+                             </property>
+                            </column>
+                            <column>
+                             <property name="text">
+                              <string>Status</string>
+                             </property>
+                            </column>
+                            <column>
+                             <property name="text">
+                              <string>Weight</string>
+                             </property>
+                            </column>
+                           </widget>
                           </item>
                           <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
                            <widget class="QFrame" name="ud_btn_frame">
@@ -2297,46 +2528,66 @@ border-radius: 0;
                             </property>
                             <layout class="QVBoxLayout" name="verticalLayout_18">
                              <item>
-                              <widget class="QPushButton" name="bt_returnall">
+                              <widget class="QPushButton" name="btn_moveall">
                                <property name="styleSheet">
-                                <string notr="true">background-image: url(:/icons/images/icons/cil-chevron-double-left.png);
+                                <string notr="true">
+padding: 2px 2px;
 background-repeat: None;</string>
                                </property>
                                <property name="text">
                                 <string/>
+                               </property>
+                               <property name="icon">
+                                <iconset resource="resources.qrc">
+                                 <normaloff>:/icons/images/icons/cil-chevron-double-right.png</normaloff>:/icons/images/icons/cil-chevron-double-right.png</iconset>
                                </property>
                               </widget>
                              </item>
                              <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
                               <widget class="QPushButton" name="btn_moveone">
                                <property name="styleSheet">
-                                <string notr="true">background-image: url(:/icons/images/icons/cil-arrow-right.png);
+                                <string notr="true">
+padding: 2px 2px;
 background-repeat: None;</string>
                                </property>
                                <property name="text">
                                 <string/>
+                               </property>
+                               <property name="icon">
+                                <iconset resource="resources.qrc">
+                                 <normaloff>:/icons/images/icons/cil-arrow-right.png</normaloff>:/icons/images/icons/cil-arrow-right.png</iconset>
                                </property>
                               </widget>
                              </item>
                              <item>
                               <widget class="QPushButton" name="btn_returnone">
                                <property name="styleSheet">
-                                <string notr="true">background-image: url(:/icons/images/icons/cil-arrow-left.png);
+                                <string notr="true">
+padding: 2px 2px;
 background-repeat: None;</string>
                                </property>
                                <property name="text">
                                 <string/>
+                               </property>
+                               <property name="icon">
+                                <iconset resource="resources.qrc">
+                                 <normaloff>:/icons/images/icons/cil-arrow-left.png</normaloff>:/icons/images/icons/cil-arrow-left.png</iconset>
                                </property>
                               </widget>
                              </item>
-                             <item alignment="Qt::AlignmentFlag::AlignVCenter">
-                              <widget class="QPushButton" name="btn_moveall">
+                             <item>
+                              <widget class="QPushButton" name="bt_returnall">
                                <property name="styleSheet">
-                                <string notr="true">background-image: url(:/icons/images/icons/cil-chevron-double-right.png);
+                                <string notr="true">
+padding: 2px 2px;
 background-repeat: None;</string>
                                </property>
                                <property name="text">
                                 <string/>
+                               </property>
+                               <property name="icon">
+                                <iconset resource="resources.qrc">
+                                 <normaloff>:/icons/images/icons/cil-chevron-double-left.png</normaloff>:/icons/images/icons/cil-chevron-double-left.png</iconset>
                                </property>
                               </widget>
                              </item>
@@ -2344,7 +2595,40 @@ background-repeat: None;</string>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QTableWidget" name="tableWidget"/>
+                           <widget class="QTableWidget" name="tableWidget">
+                            <property name="styleSheet">
+                             <string notr="true"/>
+                            </property>
+                            <attribute name="horizontalHeaderDefaultSectionSize">
+                             <number>123</number>
+                            </attribute>
+                            <attribute name="horizontalHeaderStretchLastSection">
+                             <bool>true</bool>
+                            </attribute>
+                            <attribute name="verticalHeaderVisible">
+                             <bool>true</bool>
+                            </attribute>
+                            <column>
+                             <property name="text">
+                              <string>ID</string>
+                             </property>
+                            </column>
+                            <column>
+                             <property name="text">
+                              <string>Name</string>
+                             </property>
+                            </column>
+                            <column>
+                             <property name="text">
+                              <string>Status</string>
+                             </property>
+                            </column>
+                            <column>
+                             <property name="text">
+                              <string>Weight</string>
+                             </property>
+                            </column>
+                           </widget>
                           </item>
                          </layout>
                         </widget>
@@ -2352,15 +2636,15 @@ background-repeat: None;</string>
                        <item>
                         <widget class="QProgressBar" name="progressBar">
                          <property name="value">
-                          <number>24</number>
+                          <number>0</number>
                          </property>
                         </widget>
                        </item>
                        <item alignment="Qt::AlignmentFlag::AlignRight">
                         <widget class="QPushButton" name="btn_confirm">
                          <property name="styleSheet">
-                          <string notr="true">background-image: url(:/icons/images/icons/cil-arrow-right.png);
-background-repeat: None;</string>
+                          <string notr="true">padding: 6px 20px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
                          </property>
                          <property name="text">
                           <string>Confirm</string>
@@ -2373,6 +2657,9 @@ background-repeat: None;</string>
                       <layout class="QGridLayout" name="gridLayout">
                        <item row="0" column="0">
                         <widget class="QFrame" name="frame_3">
+                         <property name="styleSheet">
+                          <string notr="true"/>
+                         </property>
                          <property name="frameShape">
                           <enum>QFrame::Shape::StyledPanel</enum>
                          </property>
@@ -2389,8 +2676,30 @@ background-repeat: None;</string>
                              <enum>QFrame::Shadow::Raised</enum>
                             </property>
                             <layout class="QGridLayout" name="gridLayout_2">
+                             <item row="3" column="0">
+                              <widget class="QTableWidget" name="tableWidget_2">
+                               <column>
+                                <property name="text">
+                                 <string>Item ID</string>
+                                </property>
+                               </column>
+                               <column>
+                                <property name="text">
+                                 <string>Item Name</string>
+                                </property>
+                               </column>
+                               <column>
+                                <property name="text">
+                                 <string>Status</string>
+                                </property>
+                               </column>
+                              </widget>
+                             </item>
                              <item row="1" column="0">
                               <widget class="QFrame" name="open_file_frame">
+                               <property name="styleSheet">
+                                <string notr="true">border:None</string>
+                               </property>
                                <property name="frameShape">
                                 <enum>QFrame::Shape::StyledPanel</enum>
                                </property>
@@ -2403,11 +2712,11 @@ background-repeat: None;</string>
                                   <property name="minimumSize">
                                    <size>
                                     <width>75</width>
-                                    <height>25</height>
+                                    <height>35</height>
                                    </size>
                                   </property>
                                   <property name="styleSheet">
-                                   <string notr="true">padding: 0px 20px;
+                                   <string notr="true">padding: 8px 25px;
 font: bold 9pt &quot;Segoe UI&quot;;</string>
                                   </property>
                                   <property name="text">
@@ -2420,9 +2729,24 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                                  </widget>
                                 </item>
                                 <item>
+                                 <widget class="QPushButton" name="btn_timesim_reset">
+                                  <property name="styleSheet">
+                                   <string notr="true">padding: 8px 25px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
+                                  </property>
+                                  <property name="text">
+                                   <string>Reset</string>
+                                  </property>
+                                  <property name="icon">
+                                   <iconset resource="resources.qrc">
+                                    <normaloff>:/icons/images/icons/cil-reload.png</normaloff>:/icons/images/icons/cil-reload.png</iconset>
+                                  </property>
+                                 </widget>
+                                </item>
+                                <item>
                                  <widget class="QLabel" name="path_display">
                                   <property name="text">
-                                   <string/>
+                                   <string>- Upload a CSV with items that are used daily</string>
                                   </property>
                                  </widget>
                                 </item>
@@ -2441,8 +2765,14 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                                 </item>
                                 <item>
                                  <widget class="QPushButton" name="btn_next_day">
+                                  <property name="minimumSize">
+                                   <size>
+                                    <width>0</width>
+                                    <height>35</height>
+                                   </size>
+                                  </property>
                                   <property name="styleSheet">
-                                   <string notr="true">padding: 0px 20px;
+                                   <string notr="true">padding: 6px 20px;
 font: bold 9pt &quot;Segoe UI&quot;;</string>
                                   </property>
                                   <property name="text">
@@ -2452,6 +2782,12 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                                 </item>
                                 <item alignment="Qt::AlignmentFlag::AlignLeft">
                                  <widget class="QLineEdit" name="le_days">
+                                  <property name="minimumSize">
+                                   <size>
+                                    <width>0</width>
+                                    <height>35</height>
+                                   </size>
+                                  </property>
                                   <property name="placeholderText">
                                    <string>Number of days</string>
                                   </property>
@@ -2459,8 +2795,14 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                                 </item>
                                 <item>
                                  <widget class="QPushButton" name="btn_next">
+                                  <property name="minimumSize">
+                                   <size>
+                                    <width>0</width>
+                                    <height>35</height>
+                                   </size>
+                                  </property>
                                   <property name="styleSheet">
-                                   <string notr="true">padding: 0px 20px;
+                                   <string notr="true">padding: 6px 20px;
 font: bold 9pt &quot;Segoe UI&quot;;</string>
                                   </property>
                                   <property name="text">
@@ -2472,22 +2814,13 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                               </widget>
                              </item>
                              <item row="2" column="0">
-                              <widget class="QTableWidget" name="tableWidget_2">
-                               <column>
-                                <property name="text">
-                                 <string>Item ID</string>
-                                </property>
-                               </column>
-                               <column>
-                                <property name="text">
-                                 <string>Item Name</string>
-                                </property>
-                               </column>
-                               <column>
-                                <property name="text">
-                                 <string>Status</string>
-                                </property>
-                               </column>
+                              <widget class="Line" name="line">
+                               <property name="styleSheet">
+                                <string notr="true">border-color: rgb(0, 0, 0);</string>
+                               </property>
+                               <property name="orientation">
+                                <enum>Qt::Orientation::Horizontal</enum>
+                               </property>
                               </widget>
                              </item>
                             </layout>
@@ -2545,7 +2878,7 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                 <item>
                  <widget class="QLabel" name="version">
                   <property name="text">
-                   <string>v1.0.3</string>
+                   <string>v1.0.0</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
