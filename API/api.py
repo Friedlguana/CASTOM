@@ -87,16 +87,30 @@ async def placementRecommendations(request: placementRequest):
         template["position"]["endCoordinates"]["width"] = None
         result_json.append(template)
 
-
-
-
-
-
-[
+    return {
+        "success": boolean,
+        "placements": [result_json
+        ],
+        "rearrangements": [
             {
+                "step": number,
+                "action": "string",
                 "itemId": "string",
-                "containerId": "string",
-                "position": {
+                "fromContainer": "string",
+                "fromPosition": {
+                    "startCoordinates": {
+                        "width": number,
+                        "depth": number,
+                        "height": number
+                    },
+                    "endCoordinates": {
+                        "width": number,
+                        "depth": number,
+                        "height": number
+                    }
+                },
+                "toContainer": "string",
+                "toPosition": {
                     "startCoordinates": {
                         "width": number,
                         "depth": number,
@@ -110,61 +124,7 @@ async def placementRecommendations(request: placementRequest):
                 }
             }
         ]
-
-    # return {
-    #     "success": boolean,
-    #     "placements": [
-    #         {
-    #             "itemId": "string",
-    #             "containerId": "string",
-    #             "position": {
-    #                 "startCoordinates": {
-    #                     "width": number,
-    #                     "depth": number,
-    #                     "height": number
-    #                 },
-    #                 "endCoordinates": {
-    #                     "width": number,
-    #                     "depth": number,
-    #                     "height": number
-    #                 }
-    #             }
-    #         }
-    #     ],
-    #     "rearrangements": [
-    #         {
-    #             "step": number,
-    #             "action": "string",
-    #             "itemId": "string",
-    #             "fromContainer": "string",
-    #             "fromPosition": {
-    #                 "startCoordinates": {
-    #                     "width": number,
-    #                     "depth": number,
-    #                     "height": number
-    #                 },
-    #                 "endCoordinates": {
-    #                     "width": number,
-    #                     "depth": number,
-    #                     "height": number
-    #                 }
-    #             },
-    #             "toContainer": "string",
-    #             "toPosition": {
-    #                 "startCoordinates": {
-    #                     "width": number,
-    #                     "depth": number,
-    #                     "height": number
-    #                 },
-    #                 "endCoordinates": {
-    #                     "width": number,
-    #                     "depth": number,
-    #                     "height": number
-    #                 }
-    #             }
-    #         }
-    #     ]
-    # }
+    }
 
 #-----------------------------------------------------------------------------------------
 
