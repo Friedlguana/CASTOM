@@ -1,2 +1,6 @@
 PySide6
-PyQt5
+fastapi
+pydantic
+py3dbp
+glass_engine
+pyglm
