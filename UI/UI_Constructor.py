@@ -84,21 +84,16 @@ class GlassEngineWidget(QWidget):
     def Create_Digi_Twin(self,cont_obj,item_dict):
         self.node = SceneNode()
         self.scene.add(self.node)
-        print(f"packed_item type: {type(cont_obj)}, attributes: {dir(cont_obj)}")
-        self.container = OpenCuboid(glm.vec3(0,0,0), cont_obj.original_width, cont_obj.original_height, -1*cont_obj.original_depth,  "bottom")
+        self.container = OpenCuboid(glm.vec3(0,0,0),  cont_obj.original_width,cont_obj.original_depth,-1*cont_obj.original_height,   "bottom")
         self.node.add_child(self.container)
-
 
         def Generate_Children():
             print("Cooking")
-            # for objs in item_dict.values():
-            #     if objs.placed_cont == cont_obj.container_id:
-            #         self.item = Cuboid(glm.vec3(objs.x,objs.z, objs.y), objs.original_width, objs.original_height, objs.original_depth)
-            #         self.container.add_child(self.item)
+
             for objs in item_dict.values():
                 if objs.placed_cont == cont_obj.container_id:
                     computed_position = glm.vec3(objs.x, objs.y, objs.z)  # Switched axes as per your definition
-                    self.item = Cuboid(computed_position, objs.width, objs.height, objs.depth)
+                    self.item = Cuboid(computed_position, objs.width,objs.height,  objs.depth)
                     self.container.add_child(self.item)  # Attach to container, not node
 
         Generate_Children()
@@ -163,7 +158,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.file_dropper_cont.clicked.connect(self,self.add_path_cont)
         self.btn_sorting_sort.clicked.connect(self,self.sort_btn_function)
         self.btn_sorting_reset.clicked.connect(self,self.reset_btn_function)
-        print(self.sorting_cont_comboBox.currentTextChanged)
+
         self.sorting_cont_comboBox.currentTextChanged.connect(self,self.combox_glass_engine)
 
         ###Retrieval Page Definitions
@@ -234,6 +229,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         if items_fname:
             self.label.setText(str(items_fname))
 
+
     def add_path_cont(self):
         cont_fname, _ = QFileDialog.getOpenFileName(self,"Open container file", "","CSV Files (*.csv)" )
         self.sort_fname_cont = cont_fname
@@ -248,11 +244,11 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
         with open("item_data.bin", "rb") as file:
             item_dict = pickle.load(file)
-            print(item_dict)
+
 
         with open("container_data.bin", "rb") as file:
             cont_dict = pickle.load(file)
-            print(cont_dict)
+
 
         ##Create Container Objects
         # for container in containers:

@@ -56,10 +56,9 @@ class ScreenFunctions():
                     route =  [item for item in SetupRetrivel(i).values()]
                     expiry_date = datetime.strptime(obj['expiry_date'], '%d-%m-%Y')
                     days_to_expiry = (expiry_date - datetime.now()).days
-                    score =  len(route) * 100  + days_to_expiry * 75 + i.uses * 50
+                    score =  len(route) * 100 + days_to_expiry * 75 + i.uses * 50
                     scores.append(score)
                     best_route = {score : route}
-
 
                 return best_route[min(scores)]
 
