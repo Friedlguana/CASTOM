@@ -84,7 +84,7 @@ class GlassEngineWidget(QWidget):
     def Create_Digi_Twin(self,cont_obj,item_dict):
         self.node = SceneNode()
         self.scene.add(self.node)
-        self.container = OpenCuboid(glm.vec3(0,0,0),  cont_obj.original_width,cont_obj.original_depth,-1*cont_obj.original_height,   "bottom")
+        self.container = OpenCuboid(glm.vec3(0,0,0),  cont_obj.original_width/10,cont_obj.original_depth/10,-1*cont_obj.original_height/10,   "bottom")
         self.node.add_child(self.container)
 
         def Generate_Children():
@@ -92,8 +92,8 @@ class GlassEngineWidget(QWidget):
 
             for objs in item_dict.values():
                 if objs.placed_cont == cont_obj.container_id:
-                    computed_position = glm.vec3(objs.x, objs.y, objs.z)  # Switched axes as per your definition
-                    self.item = Cuboid(computed_position, objs.width,objs.height,  objs.depth)
+                    computed_position = glm.vec3(objs.x/10, objs.y/10, objs.z/10)  # Switched axes as per your definition
+                    self.item = Cuboid(computed_position, objs.width/10,objs.height/10,  objs.depth/10)
                     self.container.add_child(self.item)  # Attach to container, not node
 
         Generate_Children()
@@ -494,33 +494,33 @@ class UIFunctions(MainWindow):
 
         # TOGGLE LEFT BOX
         # ///////////////////////////////////////////////////////////////
-        # def toggleLeftBox(self, enable):
-        #     if enable:
-        #         # GET WIDTH
-        #         original_width = self.extraLeftBox.original_width()
-        #         widthLeftMenu = self.leftMenuFrame.original_width()
-        #         #widthRightBox = self.extraRightBox.original_width()
-        #         maxExtend = Settings.LEFT_BOX_WIDTH
-        #         color = Settings.BTN_LEFT_BOX_COLOR
-        #         standard = 0
-        #
-        #         # GET BTN STYLE
-        #         style = self.toggleLeftBox.styleSheet()
-        #
-        #         # SET MAX WIDTH
-        #         if original_width == 0:
-        #             widthExtended = maxExtend
-        #             # SELECT BTN
-        #             self.toggleLeftBox.setStyleSheet(style + color)
-        #             if widthLeftMenu != 0:
-        #                 style = self.settingsTopBtn.styleSheet()
-        #                 self.settingsTopBtn.setStyleSheet(style.replace(Settings.BTN_RIGHT_BOX_COLOR, ''))
-        #         else:
-        #             widthExtended = standard
-        #             # RESET BTN
-        #             self.toggleLeftBox.setStyleSheet(style.replace(color, ''))
-        #
-        #     UIFunctions.start_box_animation(self, original_width, widthLeftMenu, "left")
+        def toggleLeftBox(self, enable):
+            if enable:
+                # GET WIDTH
+                original_width = self.extraLeftBox.original_width()
+                widthLeftMenu = self.leftMenuFrame.original_width()
+                #widthRightBox = self.extraRightBox.original_width()
+                maxExtend = Settings.LEFT_BOX_WIDTH
+                color = Settings.BTN_LEFT_BOX_COLOR
+                standard = 0
+
+                # GET BTN STYLE
+                style = self.toggleLeftBox.styleSheet()
+
+                # SET MAX WIDTH
+                if original_width == 0:
+                    widthExtended = maxExtend
+                    # SELECT BTN
+                    self.toggleLeftBox.setStyleSheet(style + color)
+                    if widthLeftMenu != 0:
+                        style = self.settingsTopBtn.styleSheet()
+                        self.settingsTopBtn.setStyleSheet(style.replace(Settings.BTN_RIGHT_BOX_COLOR, ''))
+                else:
+                    widthExtended = standard
+                    # RESET BTN
+                    self.toggleLeftBox.setStyleSheet(style.replace(color, ''))
+
+            UIFunctions.start_box_animation(self, original_width, widthLeftMenu, "left")
 
         # TOGGLE RIGHT BOX
         # ///////////////////////////////////////////////////////////////

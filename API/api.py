@@ -39,14 +39,19 @@ class placementRequest(BaseModel):
 
 @app.post("/api/placement")
 async def placementRecommendations(request: placementRequest):
+    number = None
     ## Example usage
     # container_ids = [container.containerId for container in request.containers]
     itemobj=open('itemFile.csv','w',newline='')
     containerobj = open('containerFile.csv','w',newline='')
     itemCsvWriter=csv.writer(itemobj)
     containerCsvWriter=csv.writer(containerobj)
-    itemCsvWriter.writerow(["item_id", "name", "width", "depth", "height", "mass", "priority", "expiry", "uses", "pref_zone","x","y","z","placed_cont","placed Status"])
+
+    itemCsvWriter.writerow(["item_id", "name", "width", "depth", "height", "mass", "priority", "expiry", "uses",
+                            "pref_zone","x","y","z","placed_cont","placed Status"])
     itemCsvWriter.writerow(["zone", "container_id", "width", "depth", "height"])
+
+
     for item in request.items:
         itemCsvWriter.writerow([item.itemId, item.name, item.width, item.depth, item.height, 0, item.priority, item.expiryDate, item.usageLimit, item.preferredZone])
     itemobj.close()
@@ -59,9 +64,9 @@ async def placementRecommendations(request: placementRequest):
     with open(binItems, "rb") as f:
         itemData = f.load()
     item_ids = [ item for item in itemData.keys()]
-    result_json = []
+    placement_result_json = []
     for ID in item_ids:
-        template = {
+        placements_template = {
             "itemId": "string",
             "containerId": "string",
             "position": {
@@ -77,52 +82,56 @@ async def placementRecommendations(request: placementRequest):
                 }
             }
         }
-        template['itemId'] = itemData[ID].itemId
-        template['containerId'] = itemData[ID].placed_cont
-        template["position"]["startCoordinates"]["width"] = itemData[ID].width
-        template["position"]["startCoordinates"]["depth"] = itemData[ID].depth
-        template["position"]["startCoordinates"]["height"] = itemData[ID].height
-        template["position"]["endCoordinates"]["width"] = None
-        template["position"]["endCoordinates"]["width"] = None
-        template["position"]["endCoordinates"]["width"] = None
-        result_json.append(template)
+        placements_template['itemId'] = itemData[ID].itemId
+        placements_template['containerId'] = itemData[ID].placed_cont
+        placements_template["position"]["startCoordinates"]["width"] = itemData[ID].x
+        placements_template["position"]["startCoordinates"]["depth"] = itemData[ID].y
+        placements_template["position"]["startCoordinates"]["height"] = itemData[ID].z
+        placements_template["position"]["endCoordinates"]["width"] = itemData[ID].width + itemData[ID].x
+        placements_template["position"]["endCoordinates"]["depth"] = itemData[ID].depth + itemData[ID].y
+        placements_template["position"]["endCoordinates"]["height"] = itemData[ID].height + itemData[ID].z
+        placement_result_json.append(placements_template)
+
+
+
+        rearrangements_template = {
+            "step": number,
+            "action": "string",
+            "itemId": "string",
+            "fromContainer": "string",
+            "fromPosition": {
+                "startCoordinates": {
+                    "width": number,
+                    "depth": number,
+                    "height": number
+                },
+                "endCoordinates": {
+                    "width": number,
+                    "depth": number,
+                    "height": number
+                }
+            },
+            "toContainer": "string",
+            "toPosition": {
+                "startCoordinates": {
+                    "width": number,
+                    "depth": number,
+                    "height": number
+                },
+                "endCoordinates": {
+                    "width": number,
+                    "depth": number,
+                    "height": number
+                }
+            }
+        }
 
     return {
         "success": boolean,
-        "placements": [result_json
+        "placements": [placement_result_json
         ],
         "rearrangements": [
-            {
-                "step": number,
-                "action": "string",
-                "itemId": "string",
-                "fromContainer": "string",
-                "fromPosition": {
-                    "startCoordinates": {
-                        "width": number,
-                        "depth": number,
-                        "height": number
-                    },
-                    "endCoordinates": {
-                        "width": number,
-                        "depth": number,
-                        "height": number
-                    }
-                },
-                "toContainer": "string",
-                "toPosition": {
-                    "startCoordinates": {
-                        "width": number,
-                        "depth": number,
-                        "height": number
-                    },
-                    "endCoordinates": {
-                        "width": number,
-                        "depth": number,
-                        "height": number
-                    }
-                }
-            }
+
         ]
     }
 
@@ -136,8 +145,31 @@ async def searchItem(
     itemName: str = Query(None, description="itemName"),
     userId: str = Query(None, description="userID")
 ):
-    # response
-    return {
+
+    number = None
+
+
+    with open(r"Algorithms/item_data.bin", "rb") as f:
+        itemData = f.load()
+    with open(r"Algorithms/container_data.bin", "rb") as f:
+        containerData = f.load()
+
+
+    item_ids = [item for item in itemData.keys]
+    container_ids = [cont for cont in containerData.keys]
+
+    success = True
+    try:
+
+        route = ScreenFunctions.RetrivalScreen(itemId, itemName,itemData[itemId].placed_cont, userId)
+        steps,found = route.BeginRetrieval()
+
+    except Exception:
+        success = Exception
+
+
+
+    result_json = {
         "success": boolean,
         "found": boolean,
         "item": {
@@ -159,15 +191,59 @@ async def searchItem(
             }
         },
         "retrievalSteps": [
-            {
-                "step": number,
-                "action": "string",  # Possible values: "remove", "setAside", "retrieve", "placeBack"
-                "itemId": "string",
-                "itemName": "string"
-            }
         ]
     }
 
+    result_json["success"] = success
+    result_json["found"] = bool
+    result_json["item"]["containerId"] = itemData[itemId].placed_cont
+    result_json["item"]["zone"] = list(steps[0].keys())[0]
+    result_json["item"]["position"]["startCoordinates"]["width"] = itemData[itemId].width
+    result_json["item"]["position"]["startCoordinates"]["depth"] = itemData[itemId].depth
+    result_json["item"]["position"]["startCoordinates"]["height"] = itemData[itemId].height
+    result_json["item"]["position"]["endCoordinates"]["width"] = itemData[itemId].width + itemData[ID].x
+    result_json["item"]["position"]["endCoordinates"]["depth"] = itemData[itemId].depth + itemData[ID].y
+    result_json["item"]["position"]["endCoordinates"]["height"] = itemData[itemId].height + itemData[ID].z
+
+    remove_buffer = list(steps[0].values())[0][::-1]
+    placeback_buffer = []
+    for i in range(len(list(steps[0].values())[0])*2 - 1):
+        step = 0
+        while remove_buffer != [itemId]:
+            removed_item = remove_buffer.pop()
+            placeback_buffer.append(remove_buffer.pop())
+            template = {
+                    "step": step,
+                    "action": "remove",  # Possible values: "remove", "retrieve", "placeBack"
+                    "itemId": removed_item,
+                    "itemName": itemData[removed_item].name
+                }
+            step+=1
+            result_json["retrievalSteps"].append(template)
+
+        template = {
+            "step": step,
+            "action": "retrieve",  # Possible values: "remove", "retrieve", "placeBack"
+            "itemId": itemId,
+            "itemName": itemName
+        }
+        step += 1
+        result_json["retrievalSteps"].append(template)
+        while placeback_buffer != []:
+            placed_item = placeback_buffer.pop()
+            template = {
+                "step": step,
+                "action": "placeBack",  # Possible values: "remove", "retrieve", "placeBack"
+                "itemId": placed_item,
+                "itemName": itemData[placed_item].name
+            }
+            step += 1
+            result_json["retrievalSteps"].append(template)
+
+    # response
+    return {
+        result_json
+    }
 
 #2.b Item Retrieval Request
 #'Request' structure definition

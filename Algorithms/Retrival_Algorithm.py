@@ -3,6 +3,9 @@ import pickle
 
 
 def steps_for_retrieval(obj, cont, visited=None):
+
+    Item_ID_in_cont = [attribute.item_id for attribute in item_dict.values() if attribute.placed_cont == cont]
+
     if visited is None:
         visited = set()
 
@@ -11,8 +14,8 @@ def steps_for_retrieval(obj, cont, visited=None):
 
     visited.add(obj.item_id)
     # Create a collision object
-    colobj = Item(None,"colobj", obj.original_width, obj.z, obj.original_height, None, None, None, None, None, obj.x, obj.y, obj.z)
-    wo_target_items = [item for item in Item_ID if item != obj.item_id]
+    colobj = Item(None,"colobj", obj.original_width, obj.z, obj.original_height, None, 0, None, None, None, obj.x, obj.y, obj.z)
+    wo_target_items = [item for item in Item_ID_in_cont if item != obj.item_id]
 
     # Find blocking items
     raw_steps = [item_dict[item] for item in wo_target_items if colobj.is_colliding(item_dict[item])]
@@ -24,11 +27,11 @@ def steps_for_retrieval(obj, cont, visited=None):
     dependencies = []
     for i in flagged:
         dependencies.append(steps_for_retrieval(i, cont, visited))  # Track dependencies first
-    print({obj.item_id: dependencies})
+
     return {obj.item_id: dependencies}
 
 def unpack_output(op, target):
-    unpacked = op[int(target)]
+    unpacked = op[target]
     temp_fifo = []
     for entry in unpacked:
         for k, v in entry.items():
@@ -39,24 +42,26 @@ def unpack_output(op, target):
     temp_fifo.append(target)
     return temp_fifo
 
-def global_searcher(target,id,container_ID,targ_cont = False):
+def global_searcher(target,targ_cont = False):
+
     paths = {}
     lengths = {}
     if targ_cont:
-        print("hu")
+
         lengths[container_dict[targ_cont]] = (unpack_output(steps_for_retrieval(item_dict[target], targ_cont), target))
         paths = {}
         min_val = min([len(item) for item in lengths.values()])
+
         for k, v in lengths.items():
-            if len(v) == min_val:
+            if len(v) <= min_val:
                 paths[k.container_id] = v
 
 
     else:
         container_ID = [attribute.container_id for attribute in container_dict.values()]
         for i in container_ID:
-            print(i)
-            lengths[container_dict[i]] = (unpack_output(steps_for_retrieval(item_dict[int(target)],i),target))
+
+            lengths[container_dict[i]] = (unpack_output(steps_for_retrieval(item_dict[target],i),target))
             paths = {}
             min_val = min([len(item) for item in lengths.values()])
             for k,v in lengths.items():
@@ -66,20 +71,33 @@ def global_searcher(target,id,container_ID,targ_cont = False):
     return paths
 
 
-def SetupRetrivel(item,cont):
+def SetupRetrieval(item, cont):
+    global Item_ID
+    global container_ID
+    global container_dict
+    global item_dict
+
     with open("item_data.bin", "rb") as file:
         item_dict = pickle.load(file)
+
 
 
     with open("container_data.bin", "rb") as file:
         container_dict = pickle.load(file)
 
-    return global_searcher(item,Item_ID,container_ID,cont)
+    Item_ID = [attribute.item_id for attribute in item_dict.values()]
+    container_ID = [attribute.container_id for attribute in container_dict.values()]
+    if item in Item_ID:
+
+        return global_searcher(item,cont),True
+
+    else:
+        return None, False
 
 item_dict  = {}
 container_dict = {}
 
-Item_ID = [int(attribute.item_id) for attribute in item_dict.values()]
-container_ID = [attribute.container_id for attribute in container_dict.values()]
+Item_ID = []
+container_ID = []
 
 
