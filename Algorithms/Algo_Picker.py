@@ -1,7 +1,8 @@
 from .Sorting_Algorithm import OpenFileSort
-from .Retrival_Algorithm import SetupRetrivel
+from .Retrival_Algorithm import SetupRetrieval
 from .Classes import *
 from datetime import *
+from dateutil.relativedelta import relativedelta
 import pickle
 class ScreenFunctions():
 
@@ -42,25 +43,33 @@ class ScreenFunctions():
             best_route = {}
             scores = []
             if self.searchitem_id:
-                route = SetupRetrivel(self.searchitem_id, self.searchcont_id)
-                print("search",route)
-                return route
+                if self.searchitem_id in self.item_dict:
+                    route,bool = SetupRetrieval(self.searchitem_id, self.searchcont_id if self.searchcont_id else self.item_dict[self.searchitem_id].placed_cont)
+                    return route,bool
+                else:
+                    return None,False
 
             elif self.searchitem_name:
 
-                min_date = datetime.strptime(datetime.date.today(),"%d-%m+2-%Y")
-                id_to_search = [id for id in self.item_dict.keys() if self.searchitem_name in self.item_dict.values().name]
+                # min_date = (datetime.today() + timedelta(weeks=2)).strftime("%d-%m-%Y")
+                id_to_search = [id for id in self.item_dict.keys() if self.searchitem_name == self.item_dict[id].name]
 
 
                 for i in id_to_search:
-                    route =  [item for item in SetupRetrivel(i).values()]
-                    expiry_date = datetime.strptime(obj['expiry_date'], '%d-%m-%Y')
-                    days_to_expiry = (expiry_date - datetime.now()).days
-                    score =  len(route) * 100 + days_to_expiry * 75 + i.uses * 50
-                    scores.append(score)
-                    best_route = {score : route}
+                    output_dict,bool = SetupRetrieval(i, self.item_dict[i].placed_cont)
+                    if bool:
+                        route =  [item for item in output_dict.values()]
+                        expiry_date = datetime.strptime(self.item_dict[i].expiry, '%d-%m-%Y') if not "N/A" else datetime.now()
+                        days_to_expiry = (expiry_date - datetime.now()).days
+                        score =  len(route) * 100 + days_to_expiry * 150 + self.item_dict[i].uses * 50
+                        scores.append(score)
+                        best_route.update({score : route})
+                        return {self.item_dict[best_route[min(scores)][0][-1]].placed_cont: best_route[min(scores)][
+                            0]}, bool
+                    else:
+                        return output_dict,bool
 
-                return best_route[min(scores)]
+
 
         def logger(self):
             pass

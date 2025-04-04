@@ -25,7 +25,7 @@ class Item:
         self.volume = self.original_width * self.original_depth * self.original_height
         self.fixed_position = all([x is not None, y is not None, z is not None])
         self.placed = placed or self.fixed_position
-        if any(d <= 0 for d in (self.width, self.depth, self.height)):
+        if any(d < 0 for d in (self.width, self.depth, self.height)):
             raise ValueError(f"Invalid dimensions for item {item_id}")
 
     def apply_rotation(self):
@@ -53,9 +53,9 @@ class Item:
     def is_colliding(self, obj):
 
         def centroid(obj):
-            xc = obj.x + obj.original_width / 2
-            yc = obj.y + obj.original_depth / 2
-            zc = obj.z + obj.original_height / 2
+            xc = float(obj.x) + obj.original_width / 2
+            yc = float(obj.y) + obj.original_depth / 2
+            zc = float(obj.z) + obj.original_height / 2
 
             return xc, yc, zc
 
