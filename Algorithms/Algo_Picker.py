@@ -1,9 +1,12 @@
 from .Sorting_Algorithm import OpenFileSort
 from .Retrival_Algorithm import SetupRetrieval
+from .Time_Simulation import SetupSimulation
 from .Classes import *
 from datetime import *
 from dateutil.relativedelta import relativedelta
 import pickle
+from config import *
+from .utils.file_loader import *
 class ScreenFunctions():
 
     class SortingScreen:
@@ -27,15 +30,9 @@ class ScreenFunctions():
             self.searchitem_name = item_name
             self.searchitem_id = item_id
             self.searchcont_id = container
-            self.itemsdict = "item_data.bin"
-            self.contdict = "container_data.bin"
             self.astro_id = astro_id
-
-            with open("item_data.bin", "rb") as file:
-                self.item_dict = pickle.load(file)
-
-            with open("container_data.bin", "rb") as file:
-                self.cont_dict = pickle.load(file)
+            self.item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
+            self.container_dict = load_or_initialize_container_dict(CONTAINER_DATA_PATH)
 
 
 
@@ -43,7 +40,7 @@ class ScreenFunctions():
             best_route = {}
             scores = []
             if self.searchitem_id:
-                if self.searchitem_id in self.item_dict:
+                if int(self.searchitem_id) in self.item_dict:
                     route,bool = SetupRetrieval(self.searchitem_id, self.searchcont_id if self.searchcont_id else self.item_dict[self.searchitem_id].placed_cont)
                     return route,bool
                 else:
@@ -74,6 +71,49 @@ class ScreenFunctions():
         def logger(self):
             pass
 
+    class TimeSimScreen():
+        def __init__(self,no_of_days,usage_list,sim_date):
+            self.daysToSim = no_of_days
+            self.itemsToUse = usage_list
+            self.sim_date = sim_date
+
+        def BeginSimulation(self):
+
+            new_date,expiredlist,usedlist = SetupSimulation(self.daysToSim,self.itemsToUse,self.sim_date)
+            return new_date,expiredlist,usedlist
+
+    class UndockingScreen():
+
+        def __init__(self,udc = None,date =None,maxweight = None):
+            self.undockingcontainerID = udc
+            self.date = date
+            self.weight = maxweight
+        def GarbageCollector(self):
+
+            garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
+            item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
+
+            item_id = [int(item) for item in item_dict.keys]
+            for item in item_id:
+
+                if item_dict[item].status != None:
+                    garbage_dict.update({item: item_dict[item_id]})
+
+            save_dict_to_file(garbage_dict, WASTE_DATA_PATH)
+
+        def IdentifyWaste(self):
+            garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
+            return garbage_dict
+
+        def ReturnPlan(self,udc, date, maxweight):
+            garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
+
+        def Complete_Undocking(self,udc, jet_txime):
+            undockingCont = udc
+            garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
+            garbage_ids = [int(item) for item in garbage_dict.keys]
+
+            return sum(garbage_ids), jet_time
 
 
 

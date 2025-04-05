@@ -1093,8 +1093,8 @@ Button */
               <property name="bottomMargin">
                <number>0</number>
               </property>
-              <item>
-               <widget class="QPushButton" name="togglesettings">
+              <item alignment="Qt::AlignmentFlag::AlignBottom">
+               <widget class="QPushButton" name="resetSim">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1122,7 +1122,7 @@ Button */
                  <enum>Qt::LayoutDirection::LeftToRight</enum>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">background-image: url(:/icons/images/icons/icon_settings.png);</string>
+                 <string notr="true">background-image: url(:/icons/images/icons/cil-reload.png);</string>
                 </property>
                 <property name="text">
                  <string>Settings</string>
@@ -1820,7 +1820,7 @@ background: transparent;
 </string>
                      </property>
                      <property name="currentIndex">
-                      <number>2</number>
+                      <number>4</number>
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
@@ -2123,27 +2123,6 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                                  </widget>
                                 </item>
                                </layout>
-                              </widget>
-                             </item>
-                             <item>
-                              <widget class="QPushButton" name="btn_sorting_reset">
-                               <property name="sizePolicy">
-                                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                                 <horstretch>0</horstretch>
-                                 <verstretch>0</verstretch>
-                                </sizepolicy>
-                               </property>
-                               <property name="styleSheet">
-                                <string notr="true">padding: 6px 20px;
-font: bold 9pt &quot;Segoe UI&quot;;</string>
-                               </property>
-                               <property name="text">
-                                <string>Reset</string>
-                               </property>
-                               <property name="icon">
-                                <iconset resource="resources.qrc">
-                                 <normaloff>:/icons/images/icons/cil-reload.png</normaloff>:/icons/images/icons/cil-reload.png</iconset>
-                               </property>
                               </widget>
                              </item>
                              <item>

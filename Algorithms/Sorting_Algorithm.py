@@ -1,7 +1,8 @@
 import math
 import csv
 import pickle
-
+from config import *
+from .utils.file_loader import *
 
 from .Classes import *
 from py3dbp import Packer, Bin as PyBin, Item as PyItem
@@ -85,11 +86,9 @@ def start_BFD(zone_map):
             remaining = [i for i in Overall_List if not i.placed and not i.fixed_position]
 
     for item in Overall_List:
-        item_dict.update({item.item_id : item})
+        item_dict.update({int(item.item_id) : item})
 
-    with open("item_data.bin", "wb") as file:
-        pickle.dump(item_dict, file)
-    return "item_data.bin"
+    save_dict_to_file(item_dict, ITEM_DATA_PATH)
 
 
 def update_container_placements(container, py3dbp_bin):
@@ -111,6 +110,7 @@ def update_container_placements(container, py3dbp_bin):
 
 
 def load_containers(file_path):
+    global containers
     containers = []
     with open(file_path) as f:
         reader = csv.DictReader(f)
@@ -122,6 +122,14 @@ def load_containers(file_path):
                 height=float(row['height_cm']),
                 zone=row['zone']
             ))
+
+    for i in containers:
+        cont_dict.update({i.container_id: i})
+
+    save_dict_to_file(cont_dict, CONTAINER_DATA_PATH)
+
+
+
     return containers
 
 
@@ -131,7 +139,7 @@ def load_items(file_path):
         reader = csv.DictReader(f)
         for row in reader:
             items.append(Item(
-                item_id=row['item_id'],
+                item_id=int(row['item_id']),
                 name=row['name'],
                 width=float(row['width_cm']),
                 depth=float(row['depth_cm']),
@@ -180,13 +188,13 @@ def initialise():
 def OpenFileSort(item_fname,cont_fname):
     global Overall_List
     Overall_List =load_items(item_fname)
-    global containers
-    containers = load_containers(cont_fname)
+    global cont_dict
+    cont_dict = load_containers(cont_fname)
 
     initialise()
 
     zone_map = {}
-    for c in containers:
+    for c in cont_dict:
         if c.zone not in zone_map:
             zone_map[c.zone] = []
         zone_map[c.zone].append(c)
@@ -202,7 +210,7 @@ def OpenFileSort(item_fname,cont_fname):
 To_Remove_List = []
 #you give me the item object that needs to be added
 To_Add_list=[]
-
+containers = []
 item_dict = {}
 cont_dict = {}
 

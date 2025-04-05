@@ -281,7 +281,7 @@ class Ui_MainWindow(object):
 "}\n"
 "QHeaderView::section{\n"
 "	background-color: rgb(33, 37, 43);\n"
-"	max-original_width: 30px;\n"
+"	max-width: 30px;\n"
 "	border: 1px solid rgb(44, 49, 58);\n"
 "	border-style: none;\n"
 "    border-bottom: 1px solid rgb(44, 49, 60);\n"
@@ -331,10 +331,10 @@ class Ui_MainWindow(object):
 "	selection-background-color: rgb(255, 121, 198);\n"
 "}\n"
 "QPlainTextEdit  QScrollBar:vertical {\n"
-"    original_width: 8px;\n"
+"    width: 8px;\n"
 " }\n"
 "QPlainTextEdit  QScrollBar:horizontal {\n"
-"    original_height: 8px;\n"
+"    height: 8px;\n"
 " }\n"
 "QPlainTextEdit:hover {\n"
 "	border: 2px solid rgb(64, 71, 88);\n"
@@ -349,19 +349,19 @@ class Ui_MainWindow(object):
 "    border: non"
                         "e;\n"
 "    background: rgb(52, 59, 72);\n"
-"    original_height: 8px;\n"
+"    height: 8px;\n"
 "    margin: 0px 21px 0 21px;\n"
 "	border-radius: 0px;\n"
 "}\n"
 "QScrollBar::handle:horizontal {\n"
 "    background: rgb(189, 147, 249);\n"
-"    min-original_width: 25px;\n"
+"    min-width: 25px;\n"
 "	border-radius: 4px\n"
 "}\n"
 "QScrollBar::add-line:horizontal {\n"
 "    border: none;\n"
 "    background: rgb(55, 63, 77);\n"
-"    original_width: 20px;\n"
+"    width: 20px;\n"
 "	border-top-right-radius: 4px;\n"
 "    border-bottom-right-radius: 4px;\n"
 "    subcontrol-position: right;\n"
@@ -370,7 +370,7 @@ class Ui_MainWindow(object):
 "QScrollBar::sub-line:horizontal {\n"
 "    border: none;\n"
 "    background: rgb(55, 63, 77);\n"
-"    original_width: 20px;\n"
+"    width: 20px;\n"
 "	border-top-left-radius: 4px;\n"
 "    border-bottom-left-radius: 4px;\n"
 "    subcontrol-position: left;\n"
@@ -388,19 +388,19 @@ class Ui_MainWindow(object):
                         "Bar:vertical {\n"
 "	border: none;\n"
 "    background: rgb(52, 59, 72);\n"
-"    original_width: 8px;\n"
+"    width: 8px;\n"
 "    margin: 21px 0 21px 0;\n"
 "	border-radius: 0px;\n"
 " }\n"
 " QScrollBar::handle:vertical {	\n"
 "	background: rgb(189, 147, 249);\n"
-"    min-original_height: 25px;\n"
+"    min-height: 25px;\n"
 "	border-radius: 4px\n"
 " }\n"
 " QScrollBar::add-line:vertical {\n"
 "     border: none;\n"
 "    background: rgb(55, 63, 77);\n"
-"     original_height: 20px;\n"
+"     height: 20px;\n"
 "	border-bottom-left-radius: 4px;\n"
 "    border-bottom-right-radius: 4px;\n"
 "     subcontrol-position: bottom;\n"
@@ -409,7 +409,7 @@ class Ui_MainWindow(object):
 " QScrollBar::sub-line:vertical {\n"
 "	border: none;\n"
 "    background: rgb(55, 63, 77);\n"
-"     original_height: 20px;\n"
+"     height: 20px;\n"
 "	border-top-left-radius: 4px;\n"
 "    border-top-right-radius: 4px;\n"
 "     subcontrol-position: top;\n"
@@ -428,8 +428,8 @@ class Ui_MainWindow(object):
 "CheckBox */\n"
 "QCheckBox::indicator {\n"
 "    border: 3px solid rgb(52, 59, 72);\n"
-"	original_width: 15px;\n"
-"	original_height: 15px;\n"
+"	width: 15px;\n"
+"	height: 15px;\n"
 "	border-radius: 10px;\n"
 "    background: rgb(44, 49, 60);\n"
 "}\n"
@@ -446,8 +446,8 @@ class Ui_MainWindow(object):
 "RadioButton */\n"
 "QRadioButton::indicator {\n"
 "    border: 3px solid rgb(52, 59, 72);\n"
-"	original_width: 15px;\n"
-"	original_height: 15px;\n"
+"	width: 15px;\n"
+"	height: 15px;\n"
 "	border-radius: 10px;\n"
 "    background: rgb(44, 49, 60);\n"
 "}\n"
@@ -475,8 +475,8 @@ class Ui_MainWindow(object):
 "QComboBox::drop-down {\n"
 "	subcontrol-origin: padding;\n"
 "	subcontrol-position: top right;\n"
-"	original_width: 25px; \n"
-"	border-left-original_width: 3px;\n"
+"	width: 25px; \n"
+"	border-left-width: 3px;\n"
 "	border-left-color: rgba(39, 44, 54, 150);\n"
 "	border-left-style: solid;\n"
 "	border-top-right-radius: 3px;\n"
@@ -497,7 +497,7 @@ class Ui_MainWindow(object):
 "Sliders */\n"
 "QSlider::groove:horizontal {\n"
 "    border-radius: 5px;\n"
-"    original_height: 10px;\n"
+"    height: 10px;\n"
 "	margin: 0px;\n"
 "	background-color: rgb(52, 59, 72);\n"
 "}\n"
@@ -507,8 +507,8 @@ class Ui_MainWindow(object):
 "QSlider::handle:horizontal {\n"
 "    background-color: rgb(189, 147, 249);\n"
 "    border: none;\n"
-"    original_height: 10px;\n"
-"    original_width: 10px;\n"
+"    height: 10px;\n"
+"    width: 10px;\n"
 "    margin: 0px;\n"
 "	border-radius: 5px;\n"
 "}\n"
@@ -521,7 +521,7 @@ class Ui_MainWindow(object):
 "\n"
 "QSlider::groove:vertical {\n"
 "    border-radius: 5px;\n"
-"    original_width: 10px;\n"
+"    width: 10px;\n"
 "    margin: 0px;\n"
 "	background-color: rgb(52, 59, 72);\n"
 "}\n"
@@ -532,8 +532,8 @@ class Ui_MainWindow(object):
 "QSlider::handle:vertical {\n"
 "    background-color: rgb(189, 147, 249);\n"
 "	border: none;\n"
-"    original_height: 10px;\n"
-"    original_width: 10px;\n"
+"    height: 10px;\n"
+"    width: 10px;\n"
 "    margin: 0px;\n"
 "	border-radius: 5px;\n"
 "}\n"
@@ -756,17 +756,17 @@ class Ui_MainWindow(object):
         self.verticalLayout_9.setSpacing(0)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
         self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
-        self.togglesettings = QPushButton(self.bottomMenu)
-        self.togglesettings.setObjectName(u"togglesettings")
-        sizePolicy.setHeightForWidth(self.togglesettings.sizePolicy().hasHeightForWidth())
-        self.togglesettings.setSizePolicy(sizePolicy)
-        self.togglesettings.setMinimumSize(QSize(0, 45))
-        self.togglesettings.setFont(font)
-        self.togglesettings.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.togglesettings.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
-        self.togglesettings.setStyleSheet(u"background-image: url(:/icons/images/icons/icon_settings.png);")
+        self.resetSim = QPushButton(self.bottomMenu)
+        self.resetSim.setObjectName(u"resetSim")
+        sizePolicy.setHeightForWidth(self.resetSim.sizePolicy().hasHeightForWidth())
+        self.resetSim.setSizePolicy(sizePolicy)
+        self.resetSim.setMinimumSize(QSize(0, 45))
+        self.resetSim.setFont(font)
+        self.resetSim.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.resetSim.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.resetSim.setStyleSheet(u"background-image: url(:/icons/images/icons/cil-reload.png);")
 
-        self.verticalLayout_9.addWidget(self.togglesettings)
+        self.verticalLayout_9.addWidget(self.resetSim, 0, Qt.AlignmentFlag.AlignBottom)
 
 
         self.verticalLayout_3.addWidget(self.leftMenuFrame)
@@ -1088,20 +1088,20 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QTimeEdit::drop-down {\n"
-"    original_width: 0px; /* Hides the dropdown button */\n"
+"    width: 0px; /* Hides the dropdown button */\n"
 "    border: none;\n"
 "}\n"
 "\n"
 "QTimeEdit::up-button, QTimeEdit::down-button {\n"
-"    original_width: 0px; /* Hides the spin buttons */\n"
-"    original_height: 0px;\n"
+"    width: 0px; /* Hides the spin buttons */\n"
+"    height: 0px;\n"
 "    border: none;\n"
 "}\n"
 "\n"
 "QTimeEdit::down-arrow {\n"
 "    image: url(/images/down-arrow.png); /* Optional, use a simple icon */\n"
-"    original_width: 10px;\n"
-"    original_height: 10px;\n"
+"    width: 10px;\n"
+"    height: 10px;\n"
 "}\n"
 "")
         self.timeEdit.setReadOnly(True)
@@ -1123,20 +1123,20 @@ class Ui_MainWindow(object):
 "}\n"
 "\n"
 "QDateEdit::drop-down {\n"
-"    original_width: 0px; /* Hides the dropdown button */\n"
+"    width: 0px; /* Hides the dropdown button */\n"
 "    border: none;\n"
 "}\n"
 "\n"
 "QDateEdit::up-button, QDateEdit::down-button {\n"
-"    original_width: 0px; /* Hides the spin buttons */\n"
-"    original_height: 0px;\n"
+"    width: 0px; /* Hides the spin buttons */\n"
+"    height: 0px;\n"
 "    border: none;\n"
 "}\n"
 "\n"
 "QDateEdit::down-arrow {\n"
 "    image: url(/images/down-arrow.png); /* Optional, use a simple icon */\n"
-"    original_width: 10px;\n"
-"    original_height: 10px;\n"
+"    width: 10px;\n"
+"    height: 10px;\n"
 "}\n"
 "\n"
 "\n"
@@ -1257,21 +1257,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_13.addWidget(self.frame_9, 0, Qt.AlignmentFlag.AlignRight)
 
-        self.btn_sorting_reset = QPushButton(self.header)
-        self.btn_sorting_reset.setObjectName(u"btn_sorting_reset")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Fixed)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.btn_sorting_reset.sizePolicy().hasHeightForWidth())
-        self.btn_sorting_reset.setSizePolicy(sizePolicy4)
-        self.btn_sorting_reset.setStyleSheet(u"padding: 6px 20px;\n"
-"font: bold 9pt \"Segoe UI\";")
-        icon5 = QIcon()
-        icon5.addFile(u":/icons/images/icons/cil-reload.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.btn_sorting_reset.setIcon(icon5)
-
-        self.horizontalLayout_13.addWidget(self.btn_sorting_reset)
-
         self.sorting_cont_comboBox = QComboBox(self.header)
         self.sorting_cont_comboBox.setObjectName(u"sorting_cont_comboBox")
 
@@ -1385,9 +1370,9 @@ class Ui_MainWindow(object):
         self.btn_search_prevstep.setObjectName(u"btn_search_prevstep")
         self.btn_search_prevstep.setStyleSheet(u"padding: 6px 20px;\n"
 "font: bold 9pt \"Segoe UI\";")
-        icon6 = QIcon()
-        icon6.addFile(u":/icons/images/icons/cil-media-skip-backward.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.btn_search_prevstep.setIcon(icon6)
+        icon5 = QIcon()
+        icon5.addFile(u":/icons/images/icons/cil-media-skip-backward.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.btn_search_prevstep.setIcon(icon5)
 
         self.horizontalLayout_18.addWidget(self.btn_search_prevstep, 0, Qt.AlignmentFlag.AlignHCenter)
 
@@ -1396,9 +1381,9 @@ class Ui_MainWindow(object):
         self.btn_search_next.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
         self.btn_search_next.setStyleSheet(u"padding: 6px 20px;\n"
 "font: bold 9pt \"Segoe UI\";")
-        icon7 = QIcon()
-        icon7.addFile(u":/icons/images/icons/cil-media-skip-forward.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.btn_search_next.setIcon(icon7)
+        icon6 = QIcon()
+        icon6.addFile(u":/icons/images/icons/cil-media-skip-forward.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.btn_search_next.setIcon(icon6)
 
         self.horizontalLayout_18.addWidget(self.btn_search_next, 0, Qt.AlignmentFlag.AlignHCenter)
 
@@ -1407,11 +1392,11 @@ class Ui_MainWindow(object):
 
         self.logging_frame = QFrame(self.retrieval)
         self.logging_frame.setObjectName(u"logging_frame")
-        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
-        sizePolicy5.setHorizontalStretch(0)
-        sizePolicy5.setVerticalStretch(0)
-        sizePolicy5.setHeightForWidth(self.logging_frame.sizePolicy().hasHeightForWidth())
-        self.logging_frame.setSizePolicy(sizePolicy5)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.logging_frame.sizePolicy().hasHeightForWidth())
+        self.logging_frame.setSizePolicy(sizePolicy4)
         self.logging_frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.logging_frame.setFrameShadow(QFrame.Shadow.Raised)
         self.horizontalLayout_11 = QHBoxLayout(self.logging_frame)
@@ -1513,9 +1498,9 @@ class Ui_MainWindow(object):
         self.btn_moveall.setStyleSheet(u"\n"
 "padding: 2px 2px;\n"
 "background-repeat: None;")
-        icon8 = QIcon()
-        icon8.addFile(u":/icons/images/icons/cil-chevron-double-right.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.btn_moveall.setIcon(icon8)
+        icon7 = QIcon()
+        icon7.addFile(u":/icons/images/icons/cil-chevron-double-right.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.btn_moveall.setIcon(icon7)
 
         self.verticalLayout_18.addWidget(self.btn_moveall)
 
@@ -1524,9 +1509,9 @@ class Ui_MainWindow(object):
         self.btn_moveone.setStyleSheet(u"\n"
 "padding: 2px 2px;\n"
 "background-repeat: None;")
-        icon9 = QIcon()
-        icon9.addFile(u":/icons/images/icons/cil-arrow-right.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.btn_moveone.setIcon(icon9)
+        icon8 = QIcon()
+        icon8.addFile(u":/icons/images/icons/cil-arrow-right.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.btn_moveone.setIcon(icon8)
 
         self.verticalLayout_18.addWidget(self.btn_moveone, 0, Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignVCenter)
 
@@ -1535,9 +1520,9 @@ class Ui_MainWindow(object):
         self.btn_returnone.setStyleSheet(u"\n"
 "padding: 2px 2px;\n"
 "background-repeat: None;")
-        icon10 = QIcon()
-        icon10.addFile(u":/icons/images/icons/cil-arrow-left.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.btn_returnone.setIcon(icon10)
+        icon9 = QIcon()
+        icon9.addFile(u":/icons/images/icons/cil-arrow-left.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.btn_returnone.setIcon(icon9)
 
         self.verticalLayout_18.addWidget(self.btn_returnone)
 
@@ -1546,9 +1531,9 @@ class Ui_MainWindow(object):
         self.bt_returnall.setStyleSheet(u"\n"
 "padding: 2px 2px;\n"
 "background-repeat: None;")
-        icon11 = QIcon()
-        icon11.addFile(u":/icons/images/icons/cil-chevron-double-left.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.bt_returnall.setIcon(icon11)
+        icon10 = QIcon()
+        icon10.addFile(u":/icons/images/icons/cil-chevron-double-left.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.bt_returnall.setIcon(icon10)
 
         self.verticalLayout_18.addWidget(self.bt_returnall)
 
@@ -1608,18 +1593,18 @@ class Ui_MainWindow(object):
         self.frame_7.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_2 = QGridLayout(self.frame_7)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.tableWidget_2 = QTableWidget(self.frame_7)
-        if (self.tableWidget_2.columnCount() < 3):
-            self.tableWidget_2.setColumnCount(3)
+        self.Table_SimResults = QTableWidget(self.frame_7)
+        if (self.Table_SimResults.columnCount() < 3):
+            self.Table_SimResults.setColumnCount(3)
         __qtablewidgetitem8 = QTableWidgetItem()
-        self.tableWidget_2.setHorizontalHeaderItem(0, __qtablewidgetitem8)
+        self.Table_SimResults.setHorizontalHeaderItem(0, __qtablewidgetitem8)
         __qtablewidgetitem9 = QTableWidgetItem()
-        self.tableWidget_2.setHorizontalHeaderItem(1, __qtablewidgetitem9)
+        self.Table_SimResults.setHorizontalHeaderItem(1, __qtablewidgetitem9)
         __qtablewidgetitem10 = QTableWidgetItem()
-        self.tableWidget_2.setHorizontalHeaderItem(2, __qtablewidgetitem10)
-        self.tableWidget_2.setObjectName(u"tableWidget_2")
+        self.Table_SimResults.setHorizontalHeaderItem(2, __qtablewidgetitem10)
+        self.Table_SimResults.setObjectName(u"Table_SimResults")
 
-        self.gridLayout_2.addWidget(self.tableWidget_2, 3, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.Table_SimResults, 6, 0, 1, 1)
 
         self.open_file_frame = QFrame(self.frame_7)
         self.open_file_frame.setObjectName(u"open_file_frame")
@@ -1641,7 +1626,9 @@ class Ui_MainWindow(object):
         self.btn_timesim_reset.setObjectName(u"btn_timesim_reset")
         self.btn_timesim_reset.setStyleSheet(u"padding: 8px 25px;\n"
 "font: bold 9pt \"Segoe UI\";")
-        self.btn_timesim_reset.setIcon(icon5)
+        icon11 = QIcon()
+        icon11.addFile(u":/icons/images/icons/cil-reload.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.btn_timesim_reset.setIcon(icon11)
 
         self.horizontalLayout_8.addWidget(self.btn_timesim_reset)
 
@@ -1653,14 +1640,6 @@ class Ui_MainWindow(object):
         self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_8.addItem(self.horizontalSpacer)
-
-        self.btn_next_day = QPushButton(self.open_file_frame)
-        self.btn_next_day.setObjectName(u"btn_next_day")
-        self.btn_next_day.setMinimumSize(QSize(0, 35))
-        self.btn_next_day.setStyleSheet(u"padding: 6px 20px;\n"
-"font: bold 9pt \"Segoe UI\";")
-
-        self.horizontalLayout_8.addWidget(self.btn_next_day)
 
         self.le_days = QLineEdit(self.open_file_frame)
         self.le_days.setObjectName(u"le_days")
@@ -1677,7 +1656,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.addWidget(self.btn_next)
 
 
-        self.gridLayout_2.addWidget(self.open_file_frame, 1, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.open_file_frame, 4, 0, 1, 1)
 
         self.line = QFrame(self.frame_7)
         self.line.setObjectName(u"line")
@@ -1685,7 +1664,7 @@ class Ui_MainWindow(object):
         self.line.setFrameShape(QFrame.Shape.HLine)
         self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
-        self.gridLayout_2.addWidget(self.line, 2, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.line, 5, 0, 1, 1)
 
 
         self.verticalLayout_16.addWidget(self.frame_7)
@@ -1744,7 +1723,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(4)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1761,7 +1740,7 @@ class Ui_MainWindow(object):
         self.btn_undocking.setText(QCoreApplication.translate("MainWindow", u"Undocking", None))
         self.btn_time_simulation.setText(QCoreApplication.translate("MainWindow", u"Time Simulation", None))
         self.btn_exit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
-        self.togglesettings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
+        self.resetSim.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.extraLabel.setText(QCoreApplication.translate("MainWindow", u"Left Box", None))
 #if QT_CONFIG(tooltip)
         self.extraCloseColumnBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close left box", None))
@@ -1771,7 +1750,7 @@ class Ui_MainWindow(object):
         self.textEdit.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"hr { original_height: 1px; border-original_width: 0; }\n"
+"hr { height: 1px; border-width: 0; }\n"
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Segoe UI'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
@@ -1804,7 +1783,6 @@ class Ui_MainWindow(object):
         self.file_dropper_cont.setText(QCoreApplication.translate("MainWindow", u"Open Container FIle", None))
         self.sortingpath_label.setText(QCoreApplication.translate("MainWindow", u"- upload a csv file to sort", None))
         self.btn_sorting_sort.setText(QCoreApplication.translate("MainWindow", u"Sort", None))
-        self.btn_sorting_reset.setText(QCoreApplication.translate("MainWindow", u"Reset", None))
         self.sorting_cont_comboBox.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Select a container after sorting", None))
         self.le_item_id.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter the item ID", None))
         self.le_item_name.setPlaceholderText(QCoreApplication.translate("MainWindow", u"or enter the item name", None))
@@ -1840,18 +1818,17 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem7 = self.tableWidget.horizontalHeaderItem(3)
         ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"Weight", None));
         self.btn_confirm.setText(QCoreApplication.translate("MainWindow", u"Confirm", None))
-        ___qtablewidgetitem8 = self.tableWidget_2.horizontalHeaderItem(0)
+        ___qtablewidgetitem8 = self.Table_SimResults.horizontalHeaderItem(0)
         ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"Item ID", None));
-        ___qtablewidgetitem9 = self.tableWidget_2.horizontalHeaderItem(1)
+        ___qtablewidgetitem9 = self.Table_SimResults.horizontalHeaderItem(1)
         ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"Item Name", None));
-        ___qtablewidgetitem10 = self.tableWidget_2.horizontalHeaderItem(2)
+        ___qtablewidgetitem10 = self.Table_SimResults.horizontalHeaderItem(2)
         ___qtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"Status", None));
         self.file_dropper_timesim.setText(QCoreApplication.translate("MainWindow", u"Open File", None))
         self.btn_timesim_reset.setText(QCoreApplication.translate("MainWindow", u"Reset", None))
         self.path_display.setText(QCoreApplication.translate("MainWindow", u"- Upload a CSV with items that are used daily", None))
-        self.btn_next_day.setText(QCoreApplication.translate("MainWindow", u"Next Day", None))
         self.le_days.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Number of days", None))
-        self.btn_next.setText(QCoreApplication.translate("MainWindow", u"Next", None))
+        self.btn_next.setText(QCoreApplication.translate("MainWindow", u"Simulate", None))
         self.version.setText(QCoreApplication.translate("MainWindow", u"v1.0.0", None))
     # retranslateUi
 

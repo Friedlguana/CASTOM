@@ -2,7 +2,7 @@ import sys
 import os
 import platform
 import csv
-
+import datetime
 import PySide6.QtCore
 from PySide6 import QtWidgets as qtw
 from PySide6.QtCore import *
@@ -17,11 +17,17 @@ from pyglm import glm
 import time
 import pickle
 
+
 import Algorithms.Algo_Picker
 from main import Ui_MainWindow
 from Object_Creator import *
 from Algorithms import *
 
+from Algorithms.utils.file_loader import (
+    load_or_initialize_item_dict,
+    load_or_initialize_container_dict,
+)
+from config import *
 
 os.environ["QT_FONT_DPI"] = "96"
 Window_Size = 0
@@ -47,7 +53,9 @@ class Settings():
         background-color: rgb(40, 44, 52);
         """
 
+
 widgets = None
+
 
 class GlassEngineWidget(QWidget):
     def __init__(self, parent=None):
@@ -81,10 +89,11 @@ class GlassEngineWidget(QWidget):
     def update_orbit(self):
         pass
 
-    def Create_Digi_Twin(self,cont_obj,item_dict):
+    def Create_Digi_Twin(self, cont_obj, item_dict):
         self.node = SceneNode()
         self.scene.add(self.node)
-        self.container = OpenCuboid(glm.vec3(0,0,0),  cont_obj.original_width/10,cont_obj.original_depth/10,-1*cont_obj.original_height/10,   "bottom")
+        self.container = OpenCuboid(glm.vec3(0, 0, 0), cont_obj.original_width / 10, cont_obj.original_depth / 10,
+                                    -1 * cont_obj.original_height / 10, "bottom")
         self.node.add_child(self.container)
 
         def Generate_Children():
@@ -92,8 +101,9 @@ class GlassEngineWidget(QWidget):
 
             for objs in item_dict.values():
                 if objs.placed_cont == cont_obj.container_id:
-                    computed_position = glm.vec3(objs.x/10, objs.y/10, objs.z/10)  # Switched axes as per your definition
-                    self.item = Cuboid(computed_position, objs.width/10,objs.height/10,  objs.depth/10)
+                    computed_position = glm.vec3(objs.x / 10, objs.y / 10,
+                                                 objs.z / 10)  # Switched axes as per your definition
+                    self.item = Cuboid(computed_position, objs.width / 10, objs.height / 10, objs.depth / 10)
                     self.container.add_child(self.item)  # Attach to container, not node
 
         Generate_Children()
@@ -103,6 +113,7 @@ class GlassEngineWidget(QWidget):
             children = self.node.children_names
             self.node.remove_child(children)
             self.scene.remove(self.node)
+
 
 class MainWindow(qtw.QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -122,7 +133,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         widgets.toggleButton.clicked.connect(lambda: UIFunctions.toggleMenu(self, True))
         UIFunctions.uiDefinitions(self)
 
-        widgets.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        widgets.Table_SimResults.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
 
         #Widget Connections
         widgets.btn_home.clicked.connect(self.buttonClick)
@@ -133,49 +144,70 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         widgets.btn_exit.clicked.connect(self.buttonClick)
 
         # Clock Logic
+
         def update_time():
-            current_time = QTime.currentTime()
+            current_time =QTime.currentTime()
             self.timeEdit.setTime(current_time)
+
         self.timer = QTimer(self)
         self.timer.timeout.connect(update_time)
         self.timer.start(10)
 
         #Date logic
-        def update_date():
-            self.dateEdit.setDate(QDate.currentDate())
+
+
+
+        self.current_date = date.today() #.strftime("%d-%m-%Y")
+
+        self.simulated_date = None
         self.dateEdit.setDisplayFormat("dd MMM yyyy")
         self.dateEdit.setDate(QDate.currentDate())
+
         self.datetimer = QTimer(self)
-        self.datetimer.timeout.connect(update_date)
+        self.datetimer.timeout.connect(self.update_date)
         self.datetimer.start(60000)  # 60,000 ms = 1 minute
+
+
+        self.garbagetimer = QTimer(self)
+        self.garbagetimer.timeout.connect(self.GarbageTrigger)
+        self.garbagetimer.start(60000)
+
 
         ##Sorting Page Definitions
         self.sort_fname = None
         self.cont_dict = {}
 
         self.label = self.findChild(QLabel, "sortingpath_label")
-        self.file_dropper_item.clicked.connect(self,self.add_path_item)
-        self.file_dropper_cont.clicked.connect(self,self.add_path_cont)
-        self.btn_sorting_sort.clicked.connect(self,self.sort_btn_function)
-        self.btn_sorting_reset.clicked.connect(self,self.reset_btn_function)
+        self.file_dropper_item.clicked.connect(self, self.add_path_item)
+        self.file_dropper_cont.clicked.connect(self, self.add_path_cont)
+        self.btn_sorting_sort.clicked.connect(self, self.sort_btn_function)
+        self.resetSim.clicked.connect(self, self.reset_btn_function)
 
-        self.sorting_cont_comboBox.currentTextChanged.connect(self,self.combox_glass_engine)
+        self.sorting_cont_comboBox.currentTextChanged.connect(self, self.combox_glass_engine)
 
-        ###Retrieval Page Definitions
-
+        ###Retrieval Page Definitions################################################3
         self.btn_search_search.clicked.connect(self,self.Search_Trigger)
-        self.btn_search_retrieve.clicked.connect(self,self.Retrieval_Trigger)
+
+        self.btn_search_retrieve.clicked.connect(self, self.Retrieval_Trigger)
+
+
+
+        ##################Time Sim Definitions######################################
+        self.daystosim = 1
+        self.sim_items = {}
+        self.btn_next.clicked.connect(self,self.TimeSimTrigger)
+        self.file_dropper_timesim.clicked.connect(self,self.add_path_sim)
+
+        ########################################################################
         def openCloseLeftBox():
             UIFunctions.toggleLeftBox(self, True)
 
-        widgets.togglesettings.clicked.connect(openCloseLeftBox)
+        #widgets.togglesettings.clicked.connect(openCloseLeftBox)
         widgets.extraCloseColumnBtn.clicked.connect(openCloseLeftBox)
         self.titleRightInfo.installEventFilter(self)
 
         # Glass Engine Driver Code
         self.glass_engine_widget = GlassEngineWidget(parent=self.sort_visualiser)
-
-
 
         # Add the Glass Engine widget to `sort_visualiser`
         if not self.sort_visualiser.layout():
@@ -187,12 +219,9 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             layout = self.sort_visualiser.layout()  # Use existing layout
             layout.addWidget(self.glass_engine_widget)
 
-
         self.stackedWidget.setCurrentWidget(self.sorting)
 
-
         self.show()
-
 
         # useCustomTheme = True
         # themeFile = r"themes\py_dracula_light.qss"
@@ -211,27 +240,35 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
 
-
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_viewport)
         self.timer.start(16)  # Approximately 60 FPS (1000ms / 60 ≈ 16ms)
 
+    def set_custom_start_date(self, year, month, day):
+        self.simulated_date = date(year, month, day)
+        self.update_date()
+
+    def update_date(self):
+        if self.simulated_date:
+            self.simulated_date += timedelta(days=1)
+            qdate = QDate(self.simulated_date.year, self.simulated_date.month, self.simulated_date.day)
+        else:
+            qdate = QDate.currentDate()
+
+        self.dateEdit.setDate(qdate)
     def update_viewport(self):
         self.repaint()  # Force a redraw of the widget
 
-
     ## Sorting Page Functions###################################################################################################################
 
-
     def add_path_item(self):
-        items_fname, _ = QFileDialog.getOpenFileName(self,"Open item file for sorting", "","CSV Files (*.csv)" )
+        items_fname, _ = QFileDialog.getOpenFileName(self, "Open item file for sorting", "", "CSV Files (*.csv)")
         self.sort_fname_items = items_fname
         if items_fname:
             self.label.setText(str(items_fname))
 
-
     def add_path_cont(self):
-        cont_fname, _ = QFileDialog.getOpenFileName(self,"Open container file", "","CSV Files (*.csv)" )
+        cont_fname, _ = QFileDialog.getOpenFileName(self, "Open container file", "", "CSV Files (*.csv)")
         self.sort_fname_cont = cont_fname
         if cont_fname:
             self.label.setText(str(cont_fname))
@@ -239,16 +276,12 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
     def sort_btn_function(self):
         self.sorting_cont_comboBox.clear()
         GlassEngineWidget.Clear_Scene(self.glass_engine_widget)
-        sorter = Algorithms.Algo_Picker.ScreenFunctions.SortingScreen(self.sort_fname_items,self.sort_fname_cont) # pass this through the sorting algo // should return the sorted file at the end
-        self.sorted_fname = sorter.BeginSort() ##Create the Item Objects and store them in a binary file.
+        sorter = Algorithms.Algo_Picker.ScreenFunctions.SortingScreen(self.sort_fname_items,
+                                                                      self.sort_fname_cont)  # pass this through the sorting algo // should return the sorted file at the end
+        self.sorted_fname = sorter.BeginSort()  ##Create the Item Objects and store them in a binary file.
 
-        with open("item_data.bin", "rb") as file:
-            item_dict = pickle.load(file)
-
-
-        with open("container_data.bin", "rb") as file:
-            cont_dict = pickle.load(file)
-
+        item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
+        container_dict = load_or_initialize_container_dict(CONTAINER_DATA_PATH)
 
         ##Create Container Objects
         # for container in containers:
@@ -261,7 +294,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.sorting_cont_comboBox.addItem(k)
 
     first = True
-    def combox_glass_engine(self,cont_ID):
+
+    def combox_glass_engine(self, cont_ID):
 
         if self.first:
 
@@ -269,7 +303,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
                 pass
             else:
                 container_ID = cont_ID
-                GlassEngineWidget.Create_Digi_Twin(self.glass_engine_widget,self.cont_dict[container_ID],self.item_dict)
+                GlassEngineWidget.Create_Digi_Twin(self.glass_engine_widget, self.cont_dict[container_ID],
+                                                   self.item_dict)
                 self.first = False
 
         else:
@@ -278,38 +313,137 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             else:
                 GlassEngineWidget.Clear_Scene(self.glass_engine_widget)
                 container_ID = cont_ID
-                GlassEngineWidget.Create_Digi_Twin(self.glass_engine_widget,self.cont_dict[container_ID],self.item_dict)
-
+                GlassEngineWidget.Create_Digi_Twin(self.glass_engine_widget, self.cont_dict[container_ID],
+                                                   self.item_dict)
 
     def reset_btn_function(self):
         self.sorting_cont_comboBox.clear()
         GlassEngineWidget.Clear_Scene(self.glass_engine_widget)
 
+    ####################################################################################3####################################################################
 
-
-####################################################################################3####################################################################
-
-########################################Retriveal Functions###########################################################################3
+    ########################################Retriveal Functions###########################################################################3
 
     def Search_Trigger(self):
+        self.searchitem_id = int(self.le_item_id.text()) if self.le_item_id.text() else None
+        self.searchitem_name = self.le_item_name.text()
+        self.searchcont_id = self.le_cont_id.text() if self.le_cont_id.text() else None
+        self.astro_id = self.le_astro_id.text()
+
+        route = Algorithms.Algo_Picker.ScreenFunctions.RetrivalScreen(self.searchitem_id, self.searchitem_name,
+                                                                      self.searchcont_id, self.astro_id)
+        self.steps, self.bool = route.BeginRetrieval()
+        print(self.steps,self.bool)
+
+    def Retrieval_Trigger(self):
+
         self.searchitem_id = self.le_item_id.text()
         self.searchitem_name = self.le_item_name.text()
         self.searchcont_id = self.le_cont_id.text() if self.le_cont_id.text() else None
         self.astro_id = self.le_astro_id.text()
 
-        route = Algorithms.Algo_Picker.ScreenFunctions.RetrivalScreen(self.searchitem_id,self.searchitem_name,self.searchcont_id,self.astro_id)
-        print("Main", route.BeginRetrieval())
-    def Retrieval_Trigger(self):
+        item_dict[self.searchitem_id].Use_Item()
+
+        remove_buffer = list(steps[0].values())[0][::-1]
+        placeback_buffer = []
+        for i in range(len(list(steps[0].values())[0]) * 2 - 1):
+            step = 0
+            while remove_buffer != [itemId]:
+                removed_item = remove_buffer.pop()
+                placeback_buffer.append(remove_buffer.pop())
+                #########Visualisation Code Goes Here#########################
+                step += 1
+
+
+            #MARK TARGET
+            #target.colour = red
+            step += 1
+
+
+            while placeback_buffer != []:
+                placed_item = placeback_buffer.pop()
+                #########Visualisation Code Goes Here#########################
+                step += 1
+
+
+    def Next_Item(self):
         pass
 
+    def Prev_Item(self):
+        pass
+
+    ################################################################################################################################3######
+
+    ##################################################TIMESIMULATION#########################################################3######
+
+    def add_path_sim(self):
+        self.daystosim = int(self.le_days.text()) if self.le_days.text() else 1
+        sim_items_csv, _ = items_fname, _ = QFileDialog.getOpenFileName(self, "Open items to be used daily", "",
+                                                                        "CSV Files (*.csv)")
 
 
 
+        itemObj = open(sim_items_csv, 'r', newline="")
+        csvreader = csv.reader(itemObj)
+        head = next(csvreader)
+        self.item_consumption_list = []
+        for row in csvreader:
+            # try:
+            #
+            #     self.sim_items[int(row[0])] = [datetime.date.fromisoformat(row[7]), int(row[8].split()[0]), "Not Waste"]
+            # except:
+            #     self.sim_items[int(row[0])] = ["no expiry", int(row[8].split()[0]), "Not Waste"]
+
+            self.item_consumption_list.append({"itemId": int(row[0]),"name": None})
+        itemObj.close()
+
+    def TimeSimTrigger(self):
+
+        self.item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
+
+        sim = Algorithms.Algo_Picker.ScreenFunctions.TimeSimScreen(self.daystosim,self.item_consumption_list,self.current_date)
+        new_date, expiredlist, usedlist = sim.BeginSimulation()
+        self.simulated_date = new_date
+        self.set_custom_start_date(self.simulated_date.year,self.simulated_date.month,self.simulated_date.day)
+
+        print(expiredlist)
+        print(usedlist)
+
+        wastelist = set(expiredlist + usedlist)
+        data = []
+        for i in wastelist:
+            temp_data = [i,self.item_dict[i].name,self.item_dict[i].status]
+            data.append(temp_data)
+
+        self.Table_SimResults.setRowCount(len(data))
+        self.Table_SimResults.setColumnCount(len(data[0]) if len(data[0]) else 0)
+
+        for row_idx,row_data in enumerate(data):
+            for col_idx,value in enumerate(row_data):
+                item = QTableWidgetItem(str(value))
+                self.Table_SimResults.setItem(row_idx,col_idx,item)
+
+    ################################################################################################################################3######
+
+    ###################################################GARBAGE COLLECTOR####################################################3######
 
 
+    def GarbageTrigger(self):
+        garbage = Algorithms.Algo_Picker.ScreenFunctions.UndockingScreen()
+        garbage.GarbageCollector()
 
-################################################################################################################################3######
+    def button_Identify(self):
+        garbage_dict = self.garbage.IdentifyWaste()
 
+    def button_Return_Plan(self):
+        manifest = self.garbage.ReturnPlan()
+
+    def button_complete_dock(self):
+        num,date = self.garbage.Complete_Undocking()
+        return num,date
+
+
+    ################################################################################################################################3######
     def buttonClick(self):
         # GET BUTTON CLICKED
         btn = self.sender()
@@ -329,9 +463,9 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
         # SHOW Search
         if btnName == "btn_search":
-            widgets.stackedWidget.setCurrentWidget(widgets.retrieval) # SET PAGE
-            UIFunctions.resetStyle(self, btnName) # RESET ANOTHERS BUTTONS SELECTED
-            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet())) # SELECT MENU
+            widgets.stackedWidget.setCurrentWidget(widgets.retrieval)  # SET PAGE
+            UIFunctions.resetStyle(self, btnName)  # RESET ANOTHERS BUTTONS SELECTED
+            btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))  # SELECT MENU
 
         if btnName == "btn_undocking":
             widgets.stackedWidget.setCurrentWidget(widgets.undocking)
@@ -343,11 +477,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             UIFunctions.resetStyle(self, btnName)
             btn.setStyleSheet(UIFunctions.selectMenu(btn.styleSheet()))
 
-
         # PRINT BTN NAME
         print(f'Button "{btnName}" pressed!')
-
-
 
     def restore_or_maximize_window(self):
         global Window_Size
@@ -401,7 +532,6 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
                 self.glass_engine_widget.camera.screen.event(event)
                 return True
 
-
         return super().eventFilter(obj, event)
 
     class Settings():
@@ -427,270 +557,270 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
     GLOBAL_TITLE_BAR = True
 
 
-
 class UIFunctions(MainWindow):
+    # MAXIMIZE/RESTORE
+    # ///////////////////////////////////////////////////////////////
+    def maximize_restore(self):
+        global GLOBAL_STATE
+        status = GLOBAL_STATE
+        if status == False:
+            self.showMaximized()
+            GLOBAL_STATE = True
+            self.appMargins.setContentsMargins(0, 0, 0, 0)
+            self.maximizeRestoreAppBtn.setToolTip("Restore")
+            self.maximizeRestoreAppBtn.setIcon(QIcon(u":/icons/images/icons/icon_restore.png"))
+            self.frame_size_grip.hide()
+            self.left_grip.hide()
+            self.right_grip.hide()
+            self.top_grip.hide()
+            self.bottom_grip.hide()
+        else:
+            GLOBAL_STATE = False
+            self.showNormal()
+            self.resize(self.width() + 1, self.height() + 1)
+            self.appMargins.setContentsMargins(10, 10, 10, 10)
+            self.maximizeRestoreAppBtn.setToolTip("Maximize")
+            self.maximizeRestoreAppBtn.setIcon(QIcon(u":/icons/images/icons/icon_maximize.png"))
+            self.frame_size_grip.show()
+            self.left_grip.show()
+            self.right_grip.show()
+            self.top_grip.show()
+            self.bottom_grip.show()
+
+    # RETURN STATUS
+    # ///////////////////////////////////////////////////////////////
+    def returStatus(self):
+        return GLOBAL_STATE
+
+    # SET STATUS
+    # ///////////////////////////////////////////////////////////////
+    def setStatus(self, status):
+        global GLOBAL_STATE
+        GLOBAL_STATE = status
+
+    # TOGGLE MENU
+    # ///////////////////////////////////////////////////////////////
+    def toggleMenu(self, enable):
+        if enable:
+            # GET WIDTH
+            width = self.leftMenuBg.original_width()
+            maxExtend = Settings.MENU_WIDTH
+            standard = 60
+
+            # SET MAX WIDTH
+            if width == 60:
+                widthExtended = maxExtend
+            else:
+                widthExtended = standard
+
+            # ANIMATION
+            self.animation = QPropertyAnimation(self.leftMenuBg, b"minimumWidth")
+            self.animation.setDuration(Settings.TIME_ANIMATION)
+            self.animation.setStartValue(width)
+            self.animation.setEndValue(widthExtended)
+            self.animation.setEasingCurve(QEasingCurve.InOutQuart)
+            self.animation.start()
+
+    # TOGGLE LEFT BOX
+    # ///////////////////////////////////////////////////////////////
+    def toggleLeftBox(self, enable):
+        if enable:
+            # GET WIDTH
+            original_width = self.extraLeftBox.original_width()
+            widthLeftMenu = self.leftMenuFrame.original_width()
+            #widthRightBox = self.extraRightBox.original_width()
+            maxExtend = Settings.LEFT_BOX_WIDTH
+            color = Settings.BTN_LEFT_BOX_COLOR
+            standard = 0
+
+            # GET BTN STYLE
+            style = self.toggleLeftBox.styleSheet()
+
+            # SET MAX WIDTH
+            if original_width == 0:
+                widthExtended = maxExtend
+                # SELECT BTN
+                self.toggleLeftBox.setStyleSheet(style + color)
+                if widthLeftMenu != 0:
+                    style = self.settingsTopBtn.styleSheet()
+                    self.settingsTopBtn.setStyleSheet(style.replace(Settings.BTN_RIGHT_BOX_COLOR, ''))
+            else:
+                widthExtended = standard
+                # RESET BTN
+                self.toggleLeftBox.setStyleSheet(style.replace(color, ''))
+
+        UIFunctions.start_box_animation(self, original_width, widthLeftMenu, "left")
+
+    # TOGGLE RIGHT BOX
+    # ///////////////////////////////////////////////////////////////
+    # def toggleRightBox(self, enable):
+    #     if enable:
+    #         # GET WIDTH
+    #         original_width = self.leftMenuFrame.original_width()
+    #         widthLeftBox = self.extraLeftBox.original_width()
+    #         maxExtend = Settings.RIGHT_BOX_WIDTH
+    #         color = Settings.BTN_RIGHT_BOX_COLOR
+    #         standard = 0
+    #
+    #         # GET BTN STYLE
+    #         style = self.settingsTopBtn.styleSheet()
+    #
+    #         # SET MAX WIDTH
+    #         if original_width == 0:
+    #             widthExtended = maxExtend
+    #             # SELECT BTN
+    #             self.settingsTopBtn.setStyleSheet(style + color)
+    #             if widthLeftBox != 0:
+    #                 style = self.toggleLeftBox.styleSheet()
+    #                 self.toggleLeftBox.setStyleSheet(style.replace(Settings.BTN_LEFT_BOX_COLOR, ''))
+    #         else:
+    #             widthExtended = standard
+    #             # RESET BTN
+    #             self.settingsTopBtn.setStyleSheet(style.replace(color, ''))
+    #
+    #         UIFunctions.start_box_animation(self, widthLeftBox, original_width, "right")
+
+    # def start_box_animation(self, left_box_width, left_menu_width, direction):
+    #     right_width = 0
+    #     left_width = 0
+    #
+    #     # Check values
+    #     if left_box_width == 0 and direction == "left":
+    #         left_width = 240
+    #     else:
+    #         left_width = 0
+    #     # Check values
+    #     if left_menu_width == 0 and direction == "right":
+    #         right_width = 240
+    #     else:
+    #         right_width = 0
+    #
+    #         # ANIMATION LEFT BOX
+    #     self.left_box = QPropertyAnimation(self.extraLeftBox, b"minimumWidth")
+    #     self.left_box.setDuration(Settings.TIME_ANIMATION)
+    #     self.left_box.setStartValue(left_box_width)
+    #     self.left_box.setEndValue(left_width)
+    #     self.left_box.setEasingCurve(QEasingCurve.InOutQuart)
+    #
+    #     self.toggleMenu(self,ena)
+
+    # ANIMATION RIGHT BOX
+    # self.leftMenuFrame = QPropertyAnimation(self.leftMenuFrame, b"minimumWidth")
+    # self.leftMenuFrame.setDuration(Settings.TIME_ANIMATION)
+    # self.leftMenuFrame.setStartValue(left_menu_width)
+    # self.leftMenuFrame.setEndValue(right_width)
+    # self.leftMenuFrame.setEasingCurve(QEasingCurve.InOutQuart)
+    #
+    # # GROUP ANIMATION
+    # self.group = QParallelAnimationGroup()
+    # self.group.addAnimation(self.left_box)
+    # self.group.addAnimation(self.leftMenuFrame)
+    # self.group.start()
+
+    # SELECT/DESELECT MENU
+    # ///////////////////////////////////////////////////////////////
+    # SELECT
+    def selectMenu(getStyle):
+        select = getStyle + Settings.MENU_SELECTED_STYLESHEET
+        return select
+
+    # DESELECT
+    def deselectMenu(getStyle):
+        deselect = getStyle.replace(Settings.MENU_SELECTED_STYLESHEET, "")
+        return deselect
+
+    # START SELECTION
+    def selectStandardMenu(self, widget):
+        for w in self.topMenu.findChildren(QPushButton):
+            if w.objectName() == widget:
+                w.setStyleSheet(UIFunctions.selectMenu(w.styleSheet()))
+
+    # RESET SELECTION
+    def resetStyle(self, widget):
+        for w in self.topMenu.findChildren(QPushButton):
+            if w.objectName() != widget:
+                w.setStyleSheet(UIFunctions.deselectMenu(w.styleSheet()))
+
+    # IMPORT THEMES FILES QSS/CSS
+    # ///////////////////////////////////////////////////////////////
+    def theme(self, file, useCustomTheme):
+        if useCustomTheme:
+            str = open(file, 'r').read()
+            self.styleSheet.setStyleSheet(str)
+
+    # START - GUI DEFINITIONS
+    # ///////////////////////////////////////////////////////////////
+    def uiDefinitions(self):
+        def dobleClickMaximizeRestore(event):
+            # IF DOUBLE CLICK CHANGE STATUS
+            if event.type() == QEvent.MouseButtonDblClick:
+                QTimer.singleShot(250, lambda: UIFunctions.maximize_restore(self))
+
+        self.titleRightInfo.mouseDoubleClickEvent = dobleClickMaximizeRestore
+
+        if Settings.ENABLE_CUSTOM_TITLE_BAR:
+            # STANDARD TITLE BAR
+            self.setWindowFlags(Qt.FramelessWindowHint)
+            self.setAttribute(Qt.WA_TranslucentBackground)
+
+            # MOVE WINDOW / MAXIMIZE / RESTORE
+            def moveWindow(event):
+                # IF MAXIMIZED CHANGE TO NORMAL
+                if UIFunctions.returStatus(self):
+                    UIFunctions.maximize_restore(self)
+                # MOVE WINDOW
+                if event.buttons() == Qt.LeftButton:
+                    self.move(self.pos() + event.globalPos() - self.dragPos)
+                    self.dragPos = event.globalPos()
+                    event.accept()
+
+            self.titleRightInfo.mouseMoveEvent = moveWindow
+
+            # CUSTOM GRIPS
+            self.left_grip = CustomGrip(self, Qt.LeftEdge, True)
+            self.right_grip = CustomGrip(self, Qt.RightEdge, True)
+            self.top_grip = CustomGrip(self, Qt.TopEdge, True)
+            self.bottom_grip = CustomGrip(self, Qt.BottomEdge, True)
+
+        else:
+            self.appMargins.setContentsMargins(0, 0, 0, 0)
+            self.minimizeAppBtn.hide()
+            self.maximizeRestoreAppBtn.hide()
+            self.closeAppBtn.hide()
+            self.frame_size_grip.hide()
+
+        # DROP SHADOW
+        self.shadow = QGraphicsDropShadowEffect(self)
+        self.shadow.setBlurRadius(17)
+        self.shadow.setXOffset(0)
+        self.shadow.setYOffset(0)
+        self.shadow.setColor(QColor(0, 0, 0, 150))
+        self.bgApp.setGraphicsEffect(self.shadow)
+
+        # RESIZE WINDOW
+        self.sizegrip = QSizeGrip(self.frame_size_grip)
+        self.sizegrip.setStyleSheet("original_width: 20px; original_height: 20px; margin 0px; padding: 0px;")
+
+        # MINIMIZE
+        self.minimizeAppBtn.clicked.connect(lambda: self.showMinimized())
+
         # MAXIMIZE/RESTORE
-        # ///////////////////////////////////////////////////////////////
-        def maximize_restore(self):
-            global GLOBAL_STATE
-            status = GLOBAL_STATE
-            if status == False:
-                self.showMaximized()
-                GLOBAL_STATE = True
-                self.appMargins.setContentsMargins(0, 0, 0, 0)
-                self.maximizeRestoreAppBtn.setToolTip("Restore")
-                self.maximizeRestoreAppBtn.setIcon(QIcon(u":/icons/images/icons/icon_restore.png"))
-                self.frame_size_grip.hide()
-                self.left_grip.hide()
-                self.right_grip.hide()
-                self.top_grip.hide()
-                self.bottom_grip.hide()
-            else:
-                GLOBAL_STATE = False
-                self.showNormal()
-                self.resize(self.width() + 1, self.height() + 1)
-                self.appMargins.setContentsMargins(10, 10, 10, 10)
-                self.maximizeRestoreAppBtn.setToolTip("Maximize")
-                self.maximizeRestoreAppBtn.setIcon(QIcon(u":/icons/images/icons/icon_maximize.png"))
-                self.frame_size_grip.show()
-                self.left_grip.show()
-                self.right_grip.show()
-                self.top_grip.show()
-                self.bottom_grip.show()
+        self.maximizeRestoreAppBtn.clicked.connect(lambda: UIFunctions.maximize_restore(self))
 
-        # RETURN STATUS
-        # ///////////////////////////////////////////////////////////////
-        def returStatus(self):
-            return GLOBAL_STATE
+        # CLOSE APPLICATION
+        self.btn_exit.clicked.connect(lambda: self.close())
+        self.closeAppBtn.clicked.connect(lambda: self.close())
 
-        # SET STATUS
-        # ///////////////////////////////////////////////////////////////
-        def setStatus(self, status):
-            global GLOBAL_STATE
-            GLOBAL_STATE = status
+    def resize_grips(self):
+        if Settings.ENABLE_CUSTOM_TITLE_BAR:
+            self.left_grip.setGeometry(0, 10, 10, self.height())
+            self.right_grip.setGeometry(self.width() - 10, 10, 10, self.height())
+            self.top_grip.setGeometry(0, 0, self.width(), 10)
+            self.bottom_grip.setGeometry(0, self.height() - 10, self.width(), 10)
 
-        # TOGGLE MENU
-        # ///////////////////////////////////////////////////////////////
-        def toggleMenu(self, enable):
-            if enable:
-                # GET WIDTH
-                width = self.leftMenuBg.original_width()
-                maxExtend = Settings.MENU_WIDTH
-                standard = 60
-
-                # SET MAX WIDTH
-                if width == 60:
-                    widthExtended = maxExtend
-                else:
-                    widthExtended = standard
-
-                # ANIMATION
-                self.animation = QPropertyAnimation(self.leftMenuBg, b"minimumWidth")
-                self.animation.setDuration(Settings.TIME_ANIMATION)
-                self.animation.setStartValue(width)
-                self.animation.setEndValue(widthExtended)
-                self.animation.setEasingCurve(QEasingCurve.InOutQuart)
-                self.animation.start()
-
-        # TOGGLE LEFT BOX
-        # ///////////////////////////////////////////////////////////////
-        def toggleLeftBox(self, enable):
-            if enable:
-                # GET WIDTH
-                original_width = self.extraLeftBox.original_width()
-                widthLeftMenu = self.leftMenuFrame.original_width()
-                #widthRightBox = self.extraRightBox.original_width()
-                maxExtend = Settings.LEFT_BOX_WIDTH
-                color = Settings.BTN_LEFT_BOX_COLOR
-                standard = 0
-
-                # GET BTN STYLE
-                style = self.toggleLeftBox.styleSheet()
-
-                # SET MAX WIDTH
-                if original_width == 0:
-                    widthExtended = maxExtend
-                    # SELECT BTN
-                    self.toggleLeftBox.setStyleSheet(style + color)
-                    if widthLeftMenu != 0:
-                        style = self.settingsTopBtn.styleSheet()
-                        self.settingsTopBtn.setStyleSheet(style.replace(Settings.BTN_RIGHT_BOX_COLOR, ''))
-                else:
-                    widthExtended = standard
-                    # RESET BTN
-                    self.toggleLeftBox.setStyleSheet(style.replace(color, ''))
-
-            UIFunctions.start_box_animation(self, original_width, widthLeftMenu, "left")
-
-        # TOGGLE RIGHT BOX
-        # ///////////////////////////////////////////////////////////////
-        # def toggleRightBox(self, enable):
-        #     if enable:
-        #         # GET WIDTH
-        #         original_width = self.leftMenuFrame.original_width()
-        #         widthLeftBox = self.extraLeftBox.original_width()
-        #         maxExtend = Settings.RIGHT_BOX_WIDTH
-        #         color = Settings.BTN_RIGHT_BOX_COLOR
-        #         standard = 0
-        #
-        #         # GET BTN STYLE
-        #         style = self.settingsTopBtn.styleSheet()
-        #
-        #         # SET MAX WIDTH
-        #         if original_width == 0:
-        #             widthExtended = maxExtend
-        #             # SELECT BTN
-        #             self.settingsTopBtn.setStyleSheet(style + color)
-        #             if widthLeftBox != 0:
-        #                 style = self.toggleLeftBox.styleSheet()
-        #                 self.toggleLeftBox.setStyleSheet(style.replace(Settings.BTN_LEFT_BOX_COLOR, ''))
-        #         else:
-        #             widthExtended = standard
-        #             # RESET BTN
-        #             self.settingsTopBtn.setStyleSheet(style.replace(color, ''))
-        #
-        #         UIFunctions.start_box_animation(self, widthLeftBox, original_width, "right")
-
-        # def start_box_animation(self, left_box_width, left_menu_width, direction):
-        #     right_width = 0
-        #     left_width = 0
-        #
-        #     # Check values
-        #     if left_box_width == 0 and direction == "left":
-        #         left_width = 240
-        #     else:
-        #         left_width = 0
-        #     # Check values
-        #     if left_menu_width == 0 and direction == "right":
-        #         right_width = 240
-        #     else:
-        #         right_width = 0
-        #
-        #         # ANIMATION LEFT BOX
-        #     self.left_box = QPropertyAnimation(self.extraLeftBox, b"minimumWidth")
-        #     self.left_box.setDuration(Settings.TIME_ANIMATION)
-        #     self.left_box.setStartValue(left_box_width)
-        #     self.left_box.setEndValue(left_width)
-        #     self.left_box.setEasingCurve(QEasingCurve.InOutQuart)
-        #
-        #     self.toggleMenu(self,ena)
-
-            # ANIMATION RIGHT BOX
-            # self.leftMenuFrame = QPropertyAnimation(self.leftMenuFrame, b"minimumWidth")
-            # self.leftMenuFrame.setDuration(Settings.TIME_ANIMATION)
-            # self.leftMenuFrame.setStartValue(left_menu_width)
-            # self.leftMenuFrame.setEndValue(right_width)
-            # self.leftMenuFrame.setEasingCurve(QEasingCurve.InOutQuart)
-            #
-            # # GROUP ANIMATION
-            # self.group = QParallelAnimationGroup()
-            # self.group.addAnimation(self.left_box)
-            # self.group.addAnimation(self.leftMenuFrame)
-            # self.group.start()
-
-        # SELECT/DESELECT MENU
-        # ///////////////////////////////////////////////////////////////
-        # SELECT
-        def selectMenu(getStyle):
-            select = getStyle + Settings.MENU_SELECTED_STYLESHEET
-            return select
-
-        # DESELECT
-        def deselectMenu(getStyle):
-            deselect = getStyle.replace(Settings.MENU_SELECTED_STYLESHEET, "")
-            return deselect
-
-        # START SELECTION
-        def selectStandardMenu(self, widget):
-            for w in self.topMenu.findChildren(QPushButton):
-                if w.objectName() == widget:
-                    w.setStyleSheet(UIFunctions.selectMenu(w.styleSheet()))
-
-        # RESET SELECTION
-        def resetStyle(self, widget):
-            for w in self.topMenu.findChildren(QPushButton):
-                if w.objectName() != widget:
-                    w.setStyleSheet(UIFunctions.deselectMenu(w.styleSheet()))
-
-        # IMPORT THEMES FILES QSS/CSS
-        # ///////////////////////////////////////////////////////////////
-        def theme(self, file, useCustomTheme):
-            if useCustomTheme:
-                str = open(file, 'r').read()
-                self.styleSheet.setStyleSheet(str)
-
-        # START - GUI DEFINITIONS
-        # ///////////////////////////////////////////////////////////////
-        def uiDefinitions(self):
-            def dobleClickMaximizeRestore(event):
-                # IF DOUBLE CLICK CHANGE STATUS
-                if event.type() == QEvent.MouseButtonDblClick:
-                    QTimer.singleShot(250, lambda: UIFunctions.maximize_restore(self))
-
-            self.titleRightInfo.mouseDoubleClickEvent = dobleClickMaximizeRestore
-
-            if Settings.ENABLE_CUSTOM_TITLE_BAR:
-                # STANDARD TITLE BAR
-                self.setWindowFlags(Qt.FramelessWindowHint)
-                self.setAttribute(Qt.WA_TranslucentBackground)
-
-                # MOVE WINDOW / MAXIMIZE / RESTORE
-                def moveWindow(event):
-                    # IF MAXIMIZED CHANGE TO NORMAL
-                    if UIFunctions.returStatus(self):
-                        UIFunctions.maximize_restore(self)
-                    # MOVE WINDOW
-                    if event.buttons() == Qt.LeftButton:
-                        self.move(self.pos() + event.globalPos() - self.dragPos)
-                        self.dragPos = event.globalPos()
-                        event.accept()
-
-                self.titleRightInfo.mouseMoveEvent = moveWindow
-
-                # CUSTOM GRIPS
-                self.left_grip = CustomGrip(self, Qt.LeftEdge, True)
-                self.right_grip = CustomGrip(self, Qt.RightEdge, True)
-                self.top_grip = CustomGrip(self, Qt.TopEdge, True)
-                self.bottom_grip = CustomGrip(self, Qt.BottomEdge, True)
-
-            else:
-                self.appMargins.setContentsMargins(0, 0, 0, 0)
-                self.minimizeAppBtn.hide()
-                self.maximizeRestoreAppBtn.hide()
-                self.closeAppBtn.hide()
-                self.frame_size_grip.hide()
-
-            # DROP SHADOW
-            self.shadow = QGraphicsDropShadowEffect(self)
-            self.shadow.setBlurRadius(17)
-            self.shadow.setXOffset(0)
-            self.shadow.setYOffset(0)
-            self.shadow.setColor(QColor(0, 0, 0, 150))
-            self.bgApp.setGraphicsEffect(self.shadow)
-
-            # RESIZE WINDOW
-            self.sizegrip = QSizeGrip(self.frame_size_grip)
-            self.sizegrip.setStyleSheet("original_width: 20px; original_height: 20px; margin 0px; padding: 0px;")
-
-            # MINIMIZE
-            self.minimizeAppBtn.clicked.connect(lambda: self.showMinimized())
-
-            # MAXIMIZE/RESTORE
-            self.maximizeRestoreAppBtn.clicked.connect(lambda: UIFunctions.maximize_restore(self))
-
-            # CLOSE APPLICATION
-            self.btn_exit.clicked.connect(lambda: self.close())
-            self.closeAppBtn.clicked.connect(lambda: self.close())
-
-        def resize_grips(self):
-            if Settings.ENABLE_CUSTOM_TITLE_BAR:
-                self.left_grip.setGeometry(0, 10, 10, self.height())
-                self.right_grip.setGeometry(self.width() - 10, 10, 10, self.height())
-                self.top_grip.setGeometry(0, 0, self.width(), 10)
-                self.bottom_grip.setGeometry(0, self.height() - 10, self.width(), 10)
 
 class CustomGrip(QWidget):
-    def __init__(self, parent, position, disable_color = False):
+    def __init__(self, parent, position, disable_color=False):
 
         # SETUP UI
         QWidget.__init__(self)
@@ -716,6 +846,7 @@ class CustomGrip(QWidget):
                 geo.setTop(geo.bottom() - height)
                 self.parent.setGeometry(geo)
                 event.accept()
+
             self.wi.top.mouseMoveEvent = resize_top
 
             # ENABLE COLOR
@@ -740,6 +871,7 @@ class CustomGrip(QWidget):
                 height = max(self.parent.minimumHeight(), self.parent.height() + delta.y())
                 self.parent.resize(self.parent.width(), height)
                 event.accept()
+
             self.wi.bottom.mouseMoveEvent = resize_bottom
 
             # ENABLE COLOR
@@ -762,6 +894,7 @@ class CustomGrip(QWidget):
                 geo.setLeft(geo.right() - width)
                 self.parent.setGeometry(geo)
                 event.accept()
+
             self.wi.leftgrip.mouseMoveEvent = resize_left
 
             # ENABLE COLOR
@@ -779,12 +912,12 @@ class CustomGrip(QWidget):
                 width = max(self.parent.minimumWidth(), self.parent.width() + delta.x())
                 self.parent.resize(width, self.parent.height())
                 event.accept()
+
             self.wi.rightgrip.mouseMoveEvent = resize_right
 
             # ENABLE COLOR
             if disable_color:
                 self.wi.rightgrip.setStyleSheet("background: transparent")
-
 
     def mouseReleaseEvent(self, event):
         self.mousePos = None
@@ -801,6 +934,7 @@ class CustomGrip(QWidget):
 
         elif hasattr(self.wi, 'rightgrip'):
             self.wi.rightgrip.setGeometry(0, 0, 10, self.height() - 20)
+
 
 class Widgets(object):
     def top(self, Form):
