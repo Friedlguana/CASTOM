@@ -78,13 +78,8 @@ def SetupRetrieval(item, cont):
     global container_dict
     global item_dict
 
-    with open("item_data.bin", "rb") as file:
-        item_dict = pickle.load(file)
-
-
-
-    with open("container_data.bin", "rb") as file:
-        container_dict = pickle.load(file)
+    item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
+    container_dict = load_or_initialize_container_dict(CONTAINER_DATA_PATH)
 
     Item_ID = [int(attribute.item_id) for attribute in item_dict.values()]
     container_ID = [attribute.container_id for attribute in container_dict.values()]

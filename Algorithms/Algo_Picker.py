@@ -40,7 +40,7 @@ class ScreenFunctions():
             best_route = {}
             scores = []
             if self.searchitem_id:
-                if self.searchitem_id in self.item_dict:
+                if int(self.searchitem_id) in self.item_dict:
                     route,bool = SetupRetrieval(self.searchitem_id, self.searchcont_id if self.searchcont_id else self.item_dict[self.searchitem_id].placed_cont)
                     return route,bool
                 else:

@@ -99,26 +99,3 @@ currDate = None
 
 
 
-
-
-# while True:
-#     print("Enter choice")
-#     print("1) Current status")
-#     print("2) Simulate n days")
-#     n = int(input())
-#     if n == 1:
-#         opDict = currStatus()
-#         print("item id, days to expiry, uses left, waste status")
-#         for itemID in opDict:
-#             print(itemID, ": ", opDict[itemID][0], " days; ", opDict[itemID][1], " uses;", opDict[itemID][2])
-#         print("Disposal list: ", disposalList)
-#     elif n == 2:
-#         dailyUseList = []
-#         x = int(input("Enter delta: "))
-#         f = open('dailyUse.csv', 'r', newline='')  #csv containing itemIDs of daily use items
-#         csvreader = csv.reader(f)
-#         head = next(csvreader)
-#         for row in csvreader:
-#             dailyUseList.append(int(row[0]))
-#         f.close()
-#         shiftCurrentDate(dailyUseList, x)

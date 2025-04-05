@@ -182,8 +182,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.sorting_cont_comboBox.currentTextChanged.connect(self, self.combox_glass_engine)
 
         ###Retrieval Page Definitions################################################3
+        self.btn_search_search.clicked.connect(self,self.Search_Trigger)
 
-        self.btn_search_search.clicked.connect(self, self.Search_Trigger)
         self.btn_search_retrieve.clicked.connect(self, self.Retrieval_Trigger)
 
 
@@ -239,6 +239,10 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_viewport)
         self.timer.start(16)  # Approximately 60 FPS (1000ms / 60 ≈ 16ms)
+
+    def set_custom_start_date(self, year, month, day):
+        self.simulated_date = date(year, month, day)
+        self.update_date()
 
     def update_date(self):
         if self.simulated_date:
@@ -317,7 +321,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
     ########################################Retriveal Functions###########################################################################3
 
     def Search_Trigger(self):
-        self.searchitem_id = self.le_item_id.text()
+        self.searchitem_id = int(self.le_item_id.text()) if self.le_item_id.text() else None
         self.searchitem_name = self.le_item_name.text()
         self.searchcont_id = self.le_cont_id.text() if self.le_cont_id.text() else None
         self.astro_id = self.le_astro_id.text()
@@ -396,7 +400,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         sim = Algorithms.Algo_Picker.ScreenFunctions.TimeSimScreen(self.daystosim,self.item_consumption_list,self.current_date)
         new_date, expiredlist, usedlist = sim.BeginSimulation()
         self.simulated_date = new_date
-        self.update_date()
+        self.set_custom_start_date(self.simulated_date.year,self.simulated_date.month,self.simulated_date.day)
+
         print(expiredlist)
         print(usedlist)
 
@@ -413,6 +418,14 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             for col_idx,value in enumerate(row_data):
                 item = QTableWidgetItem(str(value))
                 self.Table_SimResults.setItem(row_idx,col_idx,item)
+
+    ################################################################################################################################3######
+
+    ###################################################GARBAGE COLLECTOR####################################################3######
+
+
+
+
 
     ################################################################################################################################3######
     def buttonClick(self):
