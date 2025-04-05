@@ -1093,8 +1093,8 @@ Button */
               <property name="bottomMargin">
                <number>0</number>
               </property>
-              <item>
-               <widget class="QPushButton" name="togglesettings">
+              <item alignment="Qt::AlignmentFlag::AlignBottom">
+               <widget class="QPushButton" name="resetSim">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1122,7 +1122,7 @@ Button */
                  <enum>Qt::LayoutDirection::LeftToRight</enum>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">background-image: url(:/icons/images/icons/icon_settings.png);</string>
+                 <string notr="true">background-image: url(:/icons/images/icons/cil-reload.png);</string>
                 </property>
                 <property name="text">
                  <string>Settings</string>
@@ -1820,7 +1820,7 @@ background: transparent;
 </string>
                      </property>
                      <property name="currentIndex">
-                      <number>2</number>
+                      <number>4</number>
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
@@ -2123,27 +2123,6 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                                  </widget>
                                 </item>
                                </layout>
-                              </widget>
-                             </item>
-                             <item>
-                              <widget class="QPushButton" name="btn_sorting_reset">
-                               <property name="sizePolicy">
-                                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                                 <horstretch>0</horstretch>
-                                 <verstretch>0</verstretch>
-                                </sizepolicy>
-                               </property>
-                               <property name="styleSheet">
-                                <string notr="true">padding: 6px 20px;
-font: bold 9pt &quot;Segoe UI&quot;;</string>
-                               </property>
-                               <property name="text">
-                                <string>Reset</string>
-                               </property>
-                               <property name="icon">
-                                <iconset resource="resources.qrc">
-                                 <normaloff>:/icons/images/icons/cil-reload.png</normaloff>:/icons/images/icons/cil-reload.png</iconset>
-                               </property>
                               </widget>
                              </item>
                              <item>
@@ -2676,8 +2655,8 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                              <enum>QFrame::Shadow::Raised</enum>
                             </property>
                             <layout class="QGridLayout" name="gridLayout_2">
-                             <item row="3" column="0">
-                              <widget class="QTableWidget" name="tableWidget_2">
+                             <item row="6" column="0">
+                              <widget class="QTableWidget" name="Table_SimResults">
                                <column>
                                 <property name="text">
                                  <string>Item ID</string>
@@ -2695,7 +2674,7 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                                </column>
                               </widget>
                              </item>
-                             <item row="1" column="0">
+                             <item row="4" column="0">
                               <widget class="QFrame" name="open_file_frame">
                                <property name="styleSheet">
                                 <string notr="true">border:None</string>
@@ -2763,23 +2742,6 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                                   </property>
                                  </spacer>
                                 </item>
-                                <item>
-                                 <widget class="QPushButton" name="btn_next_day">
-                                  <property name="minimumSize">
-                                   <size>
-                                    <width>0</width>
-                                    <height>35</height>
-                                   </size>
-                                  </property>
-                                  <property name="styleSheet">
-                                   <string notr="true">padding: 6px 20px;
-font: bold 9pt &quot;Segoe UI&quot;;</string>
-                                  </property>
-                                  <property name="text">
-                                   <string>Next Day</string>
-                                  </property>
-                                 </widget>
-                                </item>
                                 <item alignment="Qt::AlignmentFlag::AlignLeft">
                                  <widget class="QLineEdit" name="le_days">
                                   <property name="minimumSize">
@@ -2806,14 +2768,14 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
 font: bold 9pt &quot;Segoe UI&quot;;</string>
                                   </property>
                                   <property name="text">
-                                   <string>Next</string>
+                                   <string>Simulate</string>
                                   </property>
                                  </widget>
                                 </item>
                                </layout>
                               </widget>
                              </item>
-                             <item row="2" column="0">
+                             <item row="5" column="0">
                               <widget class="Line" name="line">
                                <property name="styleSheet">
                                 <string notr="true">border-color: rgb(0, 0, 0);</string>

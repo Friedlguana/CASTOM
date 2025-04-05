@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import random
+
+
+
+
 def create_plot(container_needed):
     # ======== Container Data ========
     CONTAINERS = {}
@@ -70,16 +74,17 @@ def create_plot(container_needed):
 
     # ======== Run Visualization ========
     if __name__ == "__main__":
-        visualize_containers()def create_plot(container_needed):
-    # ======== Container Data ========
-    CONTAINERS = {}
-    cont=[]
-    for item in Overall_List:
+        visualize_containers()
+        def create_plot(container_needed):
 
-        if item.placed_cont == container_needed:
-            itemer = {"Position": (float(item.x), float(item.y), float(item.z)), "Dimensions": (float(item.width), float(item.depth), float(item.height))}
-            cont.append(itemer)
-    CONTAINERS[container_needed] = cont
+            CONTAINERS = {}
+            cont=[]
+            for item in Overall_List:
+
+                if item.placed_cont == container_needed:
+                    itemer = {"Position": (float(item.x), float(item.y), float(item.z)), "Dimensions": (float(item.width), float(item.depth), float(item.height))}
+                    cont.append(itemer)
+            CONTAINERS[container_needed] = cont
 
     # ======== Visualization Functions ========
     def plot_cuboid(ax, position, dimensions, color):

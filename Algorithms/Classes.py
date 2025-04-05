@@ -3,7 +3,7 @@ import numpy as np
 class Item:
 
     def __init__(self, item_id, name, width, depth, height, mass, priority, expiry, uses, pref_zone, x=None, y=None,
-                 z=None, placed_cont=None, placed =False):
+                 z=None, placed_cont=None, placed =False,status = None):
         self.item_id = item_id
         self.name = name
         self.original_width = int(math.ceil(width))
@@ -22,6 +22,7 @@ class Item:
         self.priority = int(priority)
         self.expiry = expiry
         self.uses = uses
+        self.status = status
         self.volume = self.original_width * self.original_depth * self.original_height
         self.fixed_position = all([x is not None, y is not None, z is not None])
         self.placed = placed or self.fixed_position
@@ -107,6 +108,7 @@ class Item:
         return self.z
 
     def Use_Item(self,no_of_uses):
+
         self.uses -= no_of_uses
 
 

@@ -1,9 +1,12 @@
 from .Sorting_Algorithm import OpenFileSort
 from .Retrival_Algorithm import SetupRetrieval
+from .Time_Simulation import SetupSimulation
 from .Classes import *
 from datetime import *
 from dateutil.relativedelta import relativedelta
 import pickle
+from config import *
+from .utils.file_loader import *
 class ScreenFunctions():
 
     class SortingScreen:
@@ -27,15 +30,9 @@ class ScreenFunctions():
             self.searchitem_name = item_name
             self.searchitem_id = item_id
             self.searchcont_id = container
-            self.itemsdict = "item_data.bin"
-            self.contdict = "container_data.bin"
             self.astro_id = astro_id
-
-            with open("item_data.bin", "rb") as file:
-                self.item_dict = pickle.load(file)
-
-            with open("container_data.bin", "rb") as file:
-                self.cont_dict = pickle.load(file)
+            self.item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
+            self.container_dict = load_or_initialize_container_dict(CONTAINER_DATA_PATH)
 
 
 
@@ -73,6 +70,17 @@ class ScreenFunctions():
 
         def logger(self):
             pass
+
+    class TimeSimScreen():
+        def __init__(self,no_of_days,usage_list,sim_date):
+            self.daysToSim = no_of_days
+            self.itemsToUse = usage_list
+            self.sim_date = sim_date
+
+        def BeginSimulation(self):
+
+            new_date,expiredlist,usedlist = SetupSimulation(self.daysToSim,self.itemsToUse,self.sim_date)
+            return new_date,expiredlist,usedlist
 
 
 

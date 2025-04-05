@@ -1,10 +1,11 @@
 from .Classes import *
 import pickle
-
+from config import *
+from .utils.file_loader import *
 
 def steps_for_retrieval(obj, cont, visited=None):
 
-    Item_ID_in_cont = [attribute.item_id for attribute in item_dict.values() if attribute.placed_cont == cont]
+    Item_ID_in_cont = [int(attribute.item_id) for attribute in item_dict.values() if attribute.placed_cont == cont]
 
     if visited is None:
         visited = set()
@@ -85,7 +86,7 @@ def SetupRetrieval(item, cont):
     with open("container_data.bin", "rb") as file:
         container_dict = pickle.load(file)
 
-    Item_ID = [attribute.item_id for attribute in item_dict.values()]
+    Item_ID = [int(attribute.item_id) for attribute in item_dict.values()]
     container_ID = [attribute.container_id for attribute in container_dict.values()]
     if item in Item_ID:
 
