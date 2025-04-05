@@ -4,15 +4,23 @@ import platform
 import csv
 import datetime
 import PySide6.QtCore
+import matplotlib
 from PySide6 import QtWidgets as qtw
 from PySide6.QtCore import *
 from PySide6.QtGui import *
 from PySide6.QtWidgets import *
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+matplotlib.use('QtAgg')  # Set backend before other matplotlib imports
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
+import random
 from datetime import datetime
 
-from glass_engine import *
+"""from glass_engine import *
 from glass_engine.Geometries import *
-from glass_engine.Lights import *
+from glass_engine.Lights import *"""
 from pyglm import glm
 import time
 import pickle
@@ -48,16 +56,29 @@ class Settings():
     BTN_RIGHT_BOX_COLOR = "background-color: #ff79c6;"
 
     # MENU SELECTED STYLESHEET
-    MENU_SELECTED_STYLESHEET = """
+    MENU_SELECTED_STYLESHEET ="""
         border-left: 22px solid qlineargradient(spread:pad, x1:0.034, y1:0, x2:0.216, y2:0, stop:0.499 rgba(255, 121, 198, 255), stop:0.5 rgba(85, 170, 255, 0));
-        background-color: rgb(40, 44, 52);
-        """
+        background-color: rgb(40, 44, 52);"""
+class MplCanvas(FigureCanvas):
+    def __init__(self, parent=None):
+        self.fig = Figure(figsize=(5, 5), dpi=100)
+        super().__init__(self.fig)
+        self.ax = self.fig.add_subplot(111, projection='3d')
+
+        # Set background colors
+        dark_gray_rgb = (44 / 255, 49 / 255, 58 / 255)
+        self.fig.patch.set_facecolor(dark_gray_rgb)  # Set figure background
+        self.ax.set_facecolor(dark_gray_rgb)         # Set axes background
+
+        self.setParent(parent)
+
+
 
 
 widgets = None
 
 
-class GlassEngineWidget(QWidget):
+"""class GlassEngineWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.layout = QVBoxLayout(self)
@@ -112,10 +133,11 @@ class GlassEngineWidget(QWidget):
         if self.node:
             children = self.node.children_names
             self.node.remove_child(children)
-            self.scene.remove(self.node)
+            self.scene.remove(self.node)"""
 
 
 class MainWindow(qtw.QMainWindow, Ui_MainWindow):
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -142,6 +164,17 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         widgets.btn_undocking.clicked.connect(self.buttonClick)
         widgets.btn_time_simulation.clicked.connect(self.buttonClick)
         widgets.btn_exit.clicked.connect(self.buttonClick)
+        # Initialize Matplotlib canvas
+        self.mpl_canvas = MplCanvas(self.sort_visualiser)
+
+        # Create layout for visualizer widget
+        layout = QVBoxLayout(self.sort_visualiser)
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        # Add navigation toolbar
+        self.toolbar = NavigationToolbar(self.mpl_canvas, self)
+        layout.addWidget(self.toolbar)
+        layout.addWidget(self.mpl_canvas)
 
         # Clock Logic
 
@@ -174,25 +207,25 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.cont_dict = {}
 
         self.label = self.findChild(QLabel, "sortingpath_label")
-        self.file_dropper_item.clicked.connect(self, self.add_path_item)
-        self.file_dropper_cont.clicked.connect(self, self.add_path_cont)
-        self.btn_sorting_sort.clicked.connect(self, self.sort_btn_function)
-        self.resetSim.clicked.connect(self, self.reset_btn_function)
+        self.file_dropper_item.clicked.connect(self.add_path_item)
+        self.file_dropper_cont.clicked.connect( self.add_path_cont)
+        self.btn_sorting_sort.clicked.connect( self.sort_btn_function)
+        self.resetSim.clicked.connect(self.reset_btn_function)
 
-        self.sorting_cont_comboBox.currentTextChanged.connect(self, self.combox_glass_engine)
+        self.sorting_cont_comboBox.currentTextChanged.connect( self.combox_glass_engine)
 
         ###Retrieval Page Definitions################################################3
-        self.btn_search_search.clicked.connect(self,self.Search_Trigger)
+        self.btn_search_search.clicked.connect(self.Search_Trigger)
 
-        self.btn_search_retrieve.clicked.connect(self, self.Retrieval_Trigger)
+        self.btn_search_retrieve.clicked.connect( self.Retrieval_Trigger)
 
 
 
         ##################Time Sim Definitions######################################
         self.daystosim = 1
         self.sim_items = {}
-        self.btn_next.clicked.connect(self,self.TimeSimTrigger)
-        self.file_dropper_timesim.clicked.connect(self,self.add_path_sim)
+        self.btn_next.clicked.connect(self.TimeSimTrigger)
+        self.file_dropper_timesim.clicked.connect(self.add_path_sim)
 
         ########################################################################
         def openCloseLeftBox():
@@ -203,17 +236,17 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.titleRightInfo.installEventFilter(self)
 
         # Glass Engine Driver Code
-        self.glass_engine_widget = GlassEngineWidget(parent=self.sort_visualiser)
+        #self.glass_engine_widget = GlassEngineWidget(parent=self.sort_visualiser)
 
         # Add the Glass Engine widget to `sort_visualiser`
-        if not self.sort_visualiser.layout():
+        '''if not self.sort_visualiser.layout():
             layout = QVBoxLayout(self.sort_visualiser)  # Create a layout if none exists
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(0)
-            layout.addWidget(self.glass_engine_widget)
+            #layout.addWidget(self.glass_engine_widget)
         else:
             layout = self.sort_visualiser.layout()  # Use existing layout
-            layout.addWidget(self.glass_engine_widget)
+            #layout.addWidget(self.glass_engine_widget)'''
 
         self.stackedWidget.setCurrentWidget(self.sorting)
 
@@ -271,7 +304,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
     def sort_btn_function(self):
         self.sorting_cont_comboBox.clear()
-        GlassEngineWidget.Clear_Scene(self.glass_engine_widget)
+        #GlassEngineWidget.Clear_Scene(self.glass_engine_widget)
         sorter = Algorithms.Algo_Picker.ScreenFunctions.SortingScreen(self.sort_fname_items,
                                                                       self.sort_fname_cont)  # pass this through the sorting algo // should return the sorted file at the end
         self.sorted_fname = sorter.BeginSort()  ##Create the Item Objects and store them in a binary file.
@@ -293,28 +326,127 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
     def combox_glass_engine(self, cont_ID):
 
-        if self.first:
+        '''if self.first:
 
             if cont_ID == "":
                 pass
             else:
                 container_ID = cont_ID
-                GlassEngineWidget.Create_Digi_Twin(self.glass_engine_widget, self.cont_dict[container_ID],
-                                                   self.item_dict)
+                #GlassEngineWidget.Create_Digi_Twin(self.glass_engine_widget, self.cont_dict[container_ID],
+                                                   #self.item_dict)
                 self.first = False
 
         else:
             if cont_ID == "":
                 pass
             else:
-                GlassEngineWidget.Clear_Scene(self.glass_engine_widget)
+                #GlassEngineWidget.Clear_Scene(self.glass_engine_widget)
                 container_ID = cont_ID
-                GlassEngineWidget.Create_Digi_Twin(self.glass_engine_widget, self.cont_dict[container_ID],
-                                                   self.item_dict)
+                #GlassEngineWidget.Create_Digi_Twin(self.glass_engine_widget, self.cont_dict[container_ID],
+                                                   #self.item_dict)'''
+
+        def create_plot(container_needed):
+            # ======== Container Data ========
+            CONTAINERS = {}
+            cont = []
+            item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)  # Load item data
+
+            # Filter items belonging to the specified container
+            for item in item_dict:
+                if item_dict[item].placed_cont == container_needed:
+                    itemer = {
+                        "Position": (float(item_dict[item].x), float(item_dict[item].y), float(item_dict[item].z)),
+                        "Dimensions": (
+                            float(item_dict[item].width), float(item_dict[item].depth), float(item_dict[item].height)
+                        ),
+                    }
+                    cont.append(itemer)
+            CONTAINERS[container_needed] = cont
+
+            # ======== Visualization Functions ========
+            def plot_cuboid(ax, position, dimensions, color):
+                """Plot a 3D cuboid with specified position and dimensions"""
+                x, y, z = position
+                dx, dy, dz = dimensions
+
+                # Define cuboid vertices
+                vertices = [
+                    [x, y, z],
+                    [x + dx, y, z],
+                    [x + dx, y + dy, z],
+                    [x, y + dy, z],
+                    [x, y, z + dz],
+                    [x + dx, y, z + dz],
+                    [x + dx, y + dy, z + dz],
+                    [x, y + dy, z + dz],
+                ]
+
+                # Define cube faces
+                faces = [
+                    [vertices[0], vertices[1], vertices[5], vertices[4]],  # Bottom
+                    [vertices[2], vertices[3], vertices[7], vertices[6]],  # Top
+                    [vertices[0], vertices[3], vertices[2], vertices[1]],  # Front
+                    [vertices[4], vertices[5], vertices[6], vertices[7]],  # Back
+                    [vertices[0], vertices[4], vertices[7], vertices[3]],  # Left
+                    [vertices[1], vertices[5], vertices[6], vertices[2]],  # Right
+                ]
+
+                ax.add_collection3d(Poly3DCollection(faces, facecolors=color,
+                                                     edgecolors='black', alpha=0.8))
+
+            def visualize_container(container_name):
+                """Visualize a single container inside the sort_visualiser widget"""
+                items = CONTAINERS.get(container_name)
+                if not items:
+                    print(f"No items found in container {container_name}")
+                    return
+
+                # Clear previous plot from canvas
+                self.mpl_canvas.ax.clear()
+
+                # Set background colors to match the dark theme
+                dark_gray_rgb = (44 / 255, 49 / 255, 58 / 255)  # Convert RGB values to normalized format (0-1)
+                self.mpl_canvas.fig.patch.set_facecolor(dark_gray_rgb)  # Figure background
+                self.mpl_canvas.ax.set_facecolor(dark_gray_rgb)  # Axes background
+
+                # Customize gridlines and labels for better visibility
+                self.mpl_canvas.ax.grid(color='gray', linestyle='--', linewidth=0.5)
+
+                # Change axis labels and ticks to white for visibility
+                self.mpl_canvas.ax.xaxis.label.set_color('white')  # X-axis label color
+                self.mpl_canvas.ax.yaxis.label.set_color('white')  # Y-axis label color
+                self.mpl_canvas.ax.zaxis.label.set_color('white')  # Z-axis label color
+
+                self.mpl_canvas.ax.tick_params(axis='x', colors='white')
+                self.mpl_canvas.ax.tick_params(axis='y', colors='white')
+                self.mpl_canvas.ax.tick_params(axis='z', colors='white')
+
+                # Set title with white text color
+                self.mpl_canvas.ax.set_title(f"Container {container_name}", fontweight='bold', color='white')
+
+                self.mpl_canvas.ax.set_xlabel("X-axis", color='white')  # X-axis label text color
+                self.mpl_canvas.ax.set_ylabel("Y-axis", color='white')  # Y-axis label text color
+                self.mpl_canvas.ax.set_zlabel("Z-axis", color='white')  # Z-axis label text color
+
+                # Plot each item with random color
+                for item in items:
+                    color = (random.random(), random.random(), random.random())
+                    plot_cuboid(self.mpl_canvas.ax, item["Position"], item["Dimensions"], color)
+
+                # Set equal aspect ratio and redraw canvas
+                self.mpl_canvas.ax.set_box_aspect([1, 1, 1])
+
+                self.mpl_canvas.draw()
+
+            # ======== Run Visualization ========
+            visualize_container(container_needed)
+
+        # Call the function with the desired container ID
+        create_plot(cont_ID)
 
     def reset_btn_function(self):
         self.sorting_cont_comboBox.clear()
-        GlassEngineWidget.Clear_Scene(self.glass_engine_widget)
+        #GlassEngineWidget.Clear_Scene(self.glass_engine_widget)
 
     ####################################################################################3####################################################################
 
@@ -511,10 +643,10 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
                 event.accept()
                 return True
 
-        if obj == self.glass_engine_widget.camera.screen:
+        '''if obj == self.glass_engine_widget.camera.screen:
             if event.type() in [QEvent.MouseButtonPress, QEvent.MouseMove, QEvent.MouseButtonRelease]:
                 self.glass_engine_widget.camera.screen.event(event)
-                return True
+                return True'''
 
         return super().eventFilter(obj, event)
 

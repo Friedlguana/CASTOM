@@ -6,9 +6,9 @@ class Item:
                  z=None, placed_cont=None, placed =False,status = None):
         self.item_id = item_id
         self.name = name
-        self.original_width = int(math.ceil(width))
-        self.original_depth = int(math.ceil(depth))
-        self.original_height = int(math.ceil(height))
+        self.original_width = int(math.ceil(10*width))
+        self.original_depth = int(math.ceil(10*depth))
+        self.original_height = int(math.ceil(10*height))
         self.rotation = 0
 
         self.apply_rotation()
@@ -117,9 +117,9 @@ class Container:
     def __init__(self, zone, container_id, width, depth, height):
         self.zone = zone
         self.container_id = container_id
-        self.original_width = int(math.floor(width))
-        self.original_depth = int(math.floor(depth))
-        self.original_height = int(math.floor(height))
+        self.original_width = int(math.floor(10*width))
+        self.original_depth = int(math.floor(10*depth))
+        self.original_height = int(math.floor(10*height))
         self.zone = zone
 
 
