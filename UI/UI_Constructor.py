@@ -168,6 +168,10 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.datetimer.start(60000)  # 60,000 ms = 1 minute
 
 
+        self.garbagetimer = QTimer(self)
+        self.garbagetimer.timeout.connect(self.GarbageTrigger)
+        self.garbagetimer.start(60000)
+
 
         ##Sorting Page Definitions
         self.sort_fname = None
@@ -424,7 +428,19 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
     ###################################################GARBAGE COLLECTOR####################################################3######
 
 
+    def GarbageTrigger(self):
+        garbage = Algorithms.Algo_Picker.ScreenFunctions.UndockingScreen()
+        garbage.GarbageCollector()
 
+    def button_Identify(self):
+        garbage_dict = self.garbage.IdentifyWaste()
+
+    def button_Return_Plan(self):
+        manifest = self.garbage.ReturnPlan()
+
+    def button_complete_dock(self):
+        num,date = self.garbage.Complete_Undocking()
+        return num,date
 
 
     ################################################################################################################################3######

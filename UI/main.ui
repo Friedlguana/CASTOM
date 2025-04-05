@@ -2655,8 +2655,8 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                              <enum>QFrame::Shadow::Raised</enum>
                             </property>
                             <layout class="QGridLayout" name="gridLayout_2">
-                             <item row="6" column="0">
-                              <widget class="QTableWidget" name="Table_SimResults">
+                             <item row="3" column="0">
+                              <widget class="QTableWidget" name="tableWidget_2">
                                <column>
                                 <property name="text">
                                  <string>Item ID</string>
@@ -2674,7 +2674,7 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                                </column>
                               </widget>
                              </item>
-                             <item row="4" column="0">
+                             <item row="1" column="0">
                               <widget class="QFrame" name="open_file_frame">
                                <property name="styleSheet">
                                 <string notr="true">border:None</string>
@@ -2742,6 +2742,23 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                                   </property>
                                  </spacer>
                                 </item>
+                                <item>
+                                 <widget class="QPushButton" name="btn_next_day">
+                                  <property name="minimumSize">
+                                   <size>
+                                    <width>0</width>
+                                    <height>35</height>
+                                   </size>
+                                  </property>
+                                  <property name="styleSheet">
+                                   <string notr="true">padding: 6px 20px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
+                                  </property>
+                                  <property name="text">
+                                   <string>Next Day</string>
+                                  </property>
+                                 </widget>
+                                </item>
                                 <item alignment="Qt::AlignmentFlag::AlignLeft">
                                  <widget class="QLineEdit" name="le_days">
                                   <property name="minimumSize">
@@ -2768,14 +2785,14 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
 font: bold 9pt &quot;Segoe UI&quot;;</string>
                                   </property>
                                   <property name="text">
-                                   <string>Simulate</string>
+                                   <string>Next</string>
                                   </property>
                                  </widget>
                                 </item>
                                </layout>
                               </widget>
                              </item>
-                             <item row="5" column="0">
+                             <item row="2" column="0">
                               <widget class="Line" name="line">
                                <property name="styleSheet">
                                 <string notr="true">border-color: rgb(0, 0, 0);</string>
