@@ -98,6 +98,7 @@ def start_BFD(zone_map):
     save_dict_to_file(item_dict, ITEM_DATA_PATH)
 
 
+
 def update_container_placements(container, py3dbp_bin):
     for packed_item in py3dbp_bin.items:
         original_item = next(i for i in Overall_List if i.item_id == packed_item.name)
@@ -134,6 +135,7 @@ def load_containers(file_path):
         cont_dict.update({i.container_id: i})
 
     save_dict_to_file(cont_dict, CONTAINER_DATA_PATH)
+
 
 
 

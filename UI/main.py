@@ -1430,6 +1430,42 @@ class Ui_MainWindow(object):
         self.verticalLayout.setSpacing(10)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(10, 10, 10, 10)
+        self.frame_13 = QFrame(self.undocking)
+        self.frame_13.setObjectName(u"frame_13")
+        self.frame_13.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_13.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_20 = QHBoxLayout(self.frame_13)
+        self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
+        self.frame_12 = QFrame(self.frame_13)
+        self.frame_12.setObjectName(u"frame_12")
+        self.frame_12.setStyleSheet(u"border:transparent")
+        self.frame_12.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_12.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_19 = QHBoxLayout(self.frame_12)
+        self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
+        self.btn_load_waste = QPushButton(self.frame_12)
+        self.btn_load_waste.setObjectName(u"btn_load_waste")
+        self.btn_load_waste.setStyleSheet(u"padding: 6px 20px;\n"
+"font: bold 9pt \"Segoe UI\";")
+
+        self.horizontalLayout_19.addWidget(self.btn_load_waste, 0, Qt.AlignmentFlag.AlignHCenter)
+
+
+        self.horizontalLayout_20.addWidget(self.frame_12, 0, Qt.AlignmentFlag.AlignLeft)
+
+        self.udc_name = QLineEdit(self.frame_13)
+        self.udc_name.setObjectName(u"udc_name")
+
+        self.horizontalLayout_20.addWidget(self.udc_name)
+
+        self.ludc_maxweight = QLineEdit(self.frame_13)
+        self.ludc_maxweight.setObjectName(u"ludc_maxweight")
+
+        self.horizontalLayout_20.addWidget(self.ludc_maxweight)
+
+
+        self.verticalLayout.addWidget(self.frame_13)
+
         self.frame_10 = QFrame(self.undocking)
         self.frame_10.setObjectName(u"frame_10")
         self.frame_10.setFrameShape(QFrame.Shape.StyledPanel)
@@ -1568,12 +1604,38 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.progressBar)
 
-        self.btn_confirm = QPushButton(self.undocking)
-        self.btn_confirm.setObjectName(u"btn_confirm")
-        self.btn_confirm.setStyleSheet(u"padding: 6px 20px;\n"
+        self.frame_14 = QFrame(self.undocking)
+        self.frame_14.setObjectName(u"frame_14")
+        self.frame_14.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_14.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_21 = QHBoxLayout(self.frame_14)
+        self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
+        self.frame_15 = QFrame(self.frame_14)
+        self.frame_15.setObjectName(u"frame_15")
+        self.frame_15.setStyleSheet(u"border:transparent")
+        self.frame_15.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_15.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_22 = QHBoxLayout(self.frame_15)
+        self.horizontalLayout_22.setObjectName(u"horizontalLayout_22")
+        self.btn_waste_manifest = QPushButton(self.frame_15)
+        self.btn_waste_manifest.setObjectName(u"btn_waste_manifest")
+        self.btn_waste_manifest.setStyleSheet(u"padding: 6px 20px;\n"
 "font: bold 9pt \"Segoe UI\";")
 
-        self.verticalLayout.addWidget(self.btn_confirm, 0, Qt.AlignmentFlag.AlignRight)
+        self.horizontalLayout_22.addWidget(self.btn_waste_manifest)
+
+        self.btn_undocking_confirm = QPushButton(self.frame_15)
+        self.btn_undocking_confirm.setObjectName(u"btn_undocking_confirm")
+        self.btn_undocking_confirm.setStyleSheet(u"padding: 6px 20px;\n"
+"font: bold 9pt \"Segoe UI\";")
+
+        self.horizontalLayout_22.addWidget(self.btn_undocking_confirm)
+
+
+        self.horizontalLayout_21.addWidget(self.frame_15, 0, Qt.AlignmentFlag.AlignRight)
+
+
+        self.verticalLayout.addWidget(self.frame_14)
 
         self.stackedWidget.addWidget(self.undocking)
         self.time_simulation = QWidget()
@@ -1604,7 +1666,7 @@ class Ui_MainWindow(object):
         self.Table_SimResults.setHorizontalHeaderItem(2, __qtablewidgetitem10)
         self.Table_SimResults.setObjectName(u"Table_SimResults")
 
-        self.gridLayout_2.addWidget(self.Table_SimResults, 6, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.Table_SimResults, 3, 0, 1, 1)
 
         self.open_file_frame = QFrame(self.frame_7)
         self.open_file_frame.setObjectName(u"open_file_frame")
@@ -1641,6 +1703,14 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_8.addItem(self.horizontalSpacer)
 
+        self.btn_next_day = QPushButton(self.open_file_frame)
+        self.btn_next_day.setObjectName(u"btn_next_day")
+        self.btn_next_day.setMinimumSize(QSize(0, 35))
+        self.btn_next_day.setStyleSheet(u"padding: 6px 20px;\n"
+"font: bold 9pt \"Segoe UI\";")
+
+        self.horizontalLayout_8.addWidget(self.btn_next_day)
+
         self.le_days = QLineEdit(self.open_file_frame)
         self.le_days.setObjectName(u"le_days")
         self.le_days.setMinimumSize(QSize(0, 35))
@@ -1656,7 +1726,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.addWidget(self.btn_next)
 
 
-        self.gridLayout_2.addWidget(self.open_file_frame, 4, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.open_file_frame, 1, 0, 1, 1)
 
         self.line = QFrame(self.frame_7)
         self.line.setObjectName(u"line")
@@ -1664,7 +1734,7 @@ class Ui_MainWindow(object):
         self.line.setFrameShape(QFrame.Shape.HLine)
         self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
-        self.gridLayout_2.addWidget(self.line, 5, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.line, 2, 0, 1, 1)
 
 
         self.verticalLayout_16.addWidget(self.frame_7)
@@ -1723,7 +1793,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(4)
+        self.stackedWidget.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1795,6 +1865,9 @@ class Ui_MainWindow(object):
         self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter container in which item was placed", None))
         self.lineEdit_3.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter coordinates as [0,0,0]", None))
         self.btn_search_log.setText(QCoreApplication.translate("MainWindow", u"Submit", None))
+        self.btn_load_waste.setText(QCoreApplication.translate("MainWindow", u"Load Waste", None))
+        self.udc_name.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Undocking Container Name", None))
+        self.ludc_maxweight.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Maximum Weight", None))
         self.waste_label.setText(QCoreApplication.translate("MainWindow", u"Waste and Expired Items", None))
         self.return_label.setText(QCoreApplication.translate("MainWindow", u"Slated For Return", None))
         ___qtablewidgetitem = self.onship_table.horizontalHeaderItem(0)
@@ -1817,7 +1890,8 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Status", None));
         ___qtablewidgetitem7 = self.tableWidget.horizontalHeaderItem(3)
         ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"Weight", None));
-        self.btn_confirm.setText(QCoreApplication.translate("MainWindow", u"Confirm", None))
+        self.btn_waste_manifest.setText(QCoreApplication.translate("MainWindow", u"Generate Manifest", None))
+        self.btn_undocking_confirm.setText(QCoreApplication.translate("MainWindow", u"Confirm", None))
         ___qtablewidgetitem8 = self.Table_SimResults.horizontalHeaderItem(0)
         ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"Item ID", None));
         ___qtablewidgetitem9 = self.Table_SimResults.horizontalHeaderItem(1)
@@ -1827,8 +1901,9 @@ class Ui_MainWindow(object):
         self.file_dropper_timesim.setText(QCoreApplication.translate("MainWindow", u"Open File", None))
         self.btn_timesim_reset.setText(QCoreApplication.translate("MainWindow", u"Reset", None))
         self.path_display.setText(QCoreApplication.translate("MainWindow", u"- Upload a CSV with items that are used daily", None))
+        self.btn_next_day.setText(QCoreApplication.translate("MainWindow", u"Next Day", None))
         self.le_days.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Number of days", None))
-        self.btn_next.setText(QCoreApplication.translate("MainWindow", u"Simulate", None))
+        self.btn_next.setText(QCoreApplication.translate("MainWindow", u"Next", None))
         self.version.setText(QCoreApplication.translate("MainWindow", u"v1.0.0", None))
     # retranslateUi
 

@@ -1820,7 +1820,7 @@ background: transparent;
 </string>
                      </property>
                      <property name="currentIndex">
-                      <number>4</number>
+                      <number>3</number>
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
@@ -2382,6 +2382,58 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                         <number>10</number>
                        </property>
                        <item>
+                        <widget class="QFrame" name="frame_13">
+                         <property name="frameShape">
+                          <enum>QFrame::Shape::StyledPanel</enum>
+                         </property>
+                         <property name="frameShadow">
+                          <enum>QFrame::Shadow::Raised</enum>
+                         </property>
+                         <layout class="QHBoxLayout" name="horizontalLayout_20">
+                          <item alignment="Qt::AlignmentFlag::AlignLeft">
+                           <widget class="QFrame" name="frame_12">
+                            <property name="styleSheet">
+                             <string notr="true">border:transparent</string>
+                            </property>
+                            <property name="frameShape">
+                             <enum>QFrame::Shape::StyledPanel</enum>
+                            </property>
+                            <property name="frameShadow">
+                             <enum>QFrame::Shadow::Raised</enum>
+                            </property>
+                            <layout class="QHBoxLayout" name="horizontalLayout_19">
+                             <item alignment="Qt::AlignmentFlag::AlignHCenter">
+                              <widget class="QPushButton" name="btn_load_waste">
+                               <property name="styleSheet">
+                                <string notr="true">padding: 6px 20px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
+                               </property>
+                               <property name="text">
+                                <string>Load Waste</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="udc_name">
+                            <property name="placeholderText">
+                             <string>Undocking Container Name</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QLineEdit" name="ludc_maxweight">
+                            <property name="placeholderText">
+                             <string>Maximum Weight</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                       </item>
+                       <item>
                         <widget class="QFrame" name="frame_10">
                          <property name="frameShape">
                           <enum>QFrame::Shape::StyledPanel</enum>
@@ -2619,15 +2671,53 @@ background-repeat: None;</string>
                          </property>
                         </widget>
                        </item>
-                       <item alignment="Qt::AlignmentFlag::AlignRight">
-                        <widget class="QPushButton" name="btn_confirm">
-                         <property name="styleSheet">
-                          <string notr="true">padding: 6px 20px;
+                       <item>
+                        <widget class="QFrame" name="frame_14">
+                         <property name="frameShape">
+                          <enum>QFrame::Shape::StyledPanel</enum>
+                         </property>
+                         <property name="frameShadow">
+                          <enum>QFrame::Shadow::Raised</enum>
+                         </property>
+                         <layout class="QHBoxLayout" name="horizontalLayout_21">
+                          <item alignment="Qt::AlignmentFlag::AlignRight">
+                           <widget class="QFrame" name="frame_15">
+                            <property name="styleSheet">
+                             <string notr="true">border:transparent</string>
+                            </property>
+                            <property name="frameShape">
+                             <enum>QFrame::Shape::StyledPanel</enum>
+                            </property>
+                            <property name="frameShadow">
+                             <enum>QFrame::Shadow::Raised</enum>
+                            </property>
+                            <layout class="QHBoxLayout" name="horizontalLayout_22">
+                             <item>
+                              <widget class="QPushButton" name="btn_waste_manifest">
+                               <property name="styleSheet">
+                                <string notr="true">padding: 6px 20px;
 font: bold 9pt &quot;Segoe UI&quot;;</string>
-                         </property>
-                         <property name="text">
-                          <string>Confirm</string>
-                         </property>
+                               </property>
+                               <property name="text">
+                                <string>Generate Manifest</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QPushButton" name="btn_undocking_confirm">
+                               <property name="styleSheet">
+                                <string notr="true">padding: 6px 20px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
+                               </property>
+                               <property name="text">
+                                <string>Confirm</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
+                           </widget>
+                          </item>
+                         </layout>
                         </widget>
                        </item>
                       </layout>
@@ -2656,7 +2746,7 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                             </property>
                             <layout class="QGridLayout" name="gridLayout_2">
                              <item row="3" column="0">
-                              <widget class="QTableWidget" name="tableWidget_2">
+                              <widget class="QTableWidget" name="Table_SimResults">
                                <column>
                                 <property name="text">
                                  <string>Item ID</string>

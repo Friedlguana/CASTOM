@@ -232,6 +232,12 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.file_dropper_timesim.clicked.connect(self.add_path_sim)
 
         ########################################################################
+
+        ##########################Garbage sim def#############################
+        self.btn_load_waste.clicked.connect(self.button_Identify)
+        self.btn_waste_manifest.clicked.connect(self.button_generate_manifest)
+        self.btn_undocking_confirm.clicked.connect(self.button_complete_dock)
+        ######################################################################3
         def openCloseLeftBox():
             UIFunctions.toggleLeftBox(self, True)
 
@@ -515,8 +521,6 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         sim_items_csv, _ = items_fname, _ = QFileDialog.getOpenFileName(self, "Open items to be used daily", "",
                                                                         "CSV Files (*.csv)")
 
-
-
         itemObj = open(sim_items_csv, 'r', newline="")
         csvreader = csv.reader(itemObj)
         head = next(csvreader)
@@ -533,22 +537,19 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
     def TimeSimTrigger(self):
         self.daystosim = 1 if self.le_days.text() == "" else int(self.le_days.text())
-        self.item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
+        # item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
 
         sim = Algorithms.Algo_Picker.ScreenFunctions.TimeSimScreen(self.daystosim,self.item_consumption_list,self.current_date)
-        new_date, expiredlist, usedlist = sim.BeginSimulation()
+        new_date,item_dict, expiredlist, usedlist = sim.BeginSimulation()
         self.simulated_date = new_date
         self.set_custom_start_date(self.simulated_date.year,self.simulated_date.month,self.simulated_date.day)
 
-        print(expiredlist)
-        print(usedlist)
-
         wastelist = set(expiredlist + usedlist)
-        print(wastelist)
+
         data = []
         for i in wastelist:
-            temp_data = [i,self.item_dict[i].name,self.item_dict[i].status]
-            print(temp_data)
+            temp_data = [i,item_dict[i].name,item_dict[i].status]
+
             data.append(temp_data)
 
         self.Table_SimResults.setRowCount(len(data))
@@ -569,14 +570,27 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         garbage.GarbageCollector()
 
     def button_Identify(self):
-        garbage_dict = self.garbage.IdentifyWaste()
+        garbage = Algorithms.Algo_Picker.ScreenFunctions.UndockingScreen()
+        garbage_dict = garbage.IdentifyWaste()
+
+        self.Table_SimResults.setRowCount(len(data))
+        self.Table_SimResults.setColumnCount(len(data[0]) if len(data[0]) else 0)
+
+        for row_idx, row_data in enumerate(data):
+            for col_idx, value in enumerate(row_data):
+                item = QTableWidgetItem(str(value))
+                self.Table_SimResults.setItem(row_idx, col_idx, item)
+
         return garbage_dict
 
-    def button_Return_Plan(self):
-        manifest = self.garbage.ReturnPlan()
+    def button_generate_manifest(self):
+        garbage = Algorithms.Algo_Picker.ScreenFunctions.UndockingScreen()
+        manifest = garbage.ReturnPlan("Nasa", 32, 200)
+        print(manifest)
 
     def button_complete_dock(self):
-        num,date = self.garbage.Complete_Undocking()
+        garbage = Algorithms.Algo_Picker.ScreenFunctions.UndockingScreen()
+        num,date = garbage.Complete_Undocking("Nasa",jet_time=datetime.datetime.now())
         return num,date
 
 
