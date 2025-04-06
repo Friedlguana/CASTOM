@@ -85,7 +85,14 @@ def start_BFD(zone_map):
             update_container_placements(container, py3dbp_bin)
             remaining = [i for i in Overall_List if not i.placed and not i.fixed_position]
 
+
     for item in Overall_List:
+        item.x=item.x/10
+        item.y=item.y/10
+        item.z=item.z/10
+        item.width=item.width/10
+        item.height=item.height/10
+        item.depth=item.depth/10
         item_dict.update({int(item.item_id) : item})
 
     save_dict_to_file(item_dict, ITEM_DATA_PATH)
