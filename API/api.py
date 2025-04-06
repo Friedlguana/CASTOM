@@ -655,7 +655,7 @@ if __name__ == "__main__":
 #-----------------------------------------------------------------------------------------
 #END
 #to run this api server first install fastapi and uvicorn and then run:
-#python3 -m uvicorn API.api:app --reload
+##python3 -m uvicorn API.api:app --host 0.0.0.0 --port 8000 --reload
 
 
 
