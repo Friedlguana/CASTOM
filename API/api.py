@@ -1,18 +1,19 @@
-from fastapi import FastAPI, Query, UploadFile, File
+from fastapi import FastAPI, Query, UploadFile, File, HTTPException
 from pydantic import BaseModel
 from typing import List, Optional, Literal,Union
+from datetime import datetime
+
 import csv
 
 import Algorithms.Algo_Picker
 from Algorithms.Algo_Picker import ScreenFunctions
+from Algorithms.Algo_Picker import SetupSimulation
 from Algorithms.Classes import *
 import pickle
 from Algorithms.utils.file_loader import *
 from config import *
 
 from Algorithms.Retrival_Algorithm import SetupRetrieval
-
-
 
 app = FastAPI()
 boolean = True
@@ -462,14 +463,14 @@ async def completeUndocking(request: wasteCompleteUndockingRequest):
 #-----------------------------------------------------------------------------------------
 
 #4 Time simulation
-class itemUsage(BaseModel):
+class ItemToUse(BaseModel):
     itemId: str
     name: Optional[str] = None
 
-class simulationRequest(BaseModel):
+class SimulationRequest(BaseModel):
     numOfDays: Optional[int] = None
     toTimestamp: Optional[str] = None
-    itemsToBeUsedPerDay: List[itemUsage] = []
+    itemsToBeUsedPerDay: List[ItemToUse] = []
 
 class itemUsed(BaseModel):
     itemId: str
@@ -489,33 +490,60 @@ class simulationResponse(BaseModel):
     success: bool
     newDate: str
     changes: simulationChanges
+
 @app.post("/api/simulate/day")
-async def simulateDay(request: simulationRequest):
-    return {
-        "success": boolean,
-        "newDate": "string",  # ISO format
-        "changes": {
-            "itemsUsed": [
-                {
-                    "itemId": "string",
-                    "name": "string",
-                    "remainingUses": number
-                }
-            ],
-            "itemsExpired": [
-                {
-                    "itemId": "string",
-                    "name": "string"
-                }
-            ],
-            "itemsDepletedToday": [
-                {
-                    "itemId": "string",
-                    "name": "string"
-                }
-            ]
+async def simulateDay(request: SimulationRequest):
+    try:
+        # Validate input - either numOfDays or toTimestamp must be provided
+        if request.numOfDays is None and request.toTimestamp is None:
+            raise HTTPException(status_code=400, detail="Either numOfDays or toTimestamp must be provided")
+
+        # Convert itemsToBeUsedPerDay to the format expected by TimeSimScreen
+        items_to_use = [{"itemId": item.itemId, "name": item.name} for item in request.itemsToBeUsedPerDay]
+
+        # Parse timestamp if provided
+        sim_date = None
+        if request.toTimestamp:
+            try:
+                sim_date = datetime.fromisoformat(request.toTimestamp)
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Invalid ISO format for toTimestamp")
+
+        # Create TimeSimScreen instance and begin simulation
+        time_sim_screen = ScreenFunctions.TimeSimScreen(
+            no_of_days=request.numOfDays,
+            usage_list=items_to_use,
+            sim_date=sim_date
+        )
+
+        # Call BeginSimulation which returns new_date, expired_list, used_list
+        new_date, expired_list, used_list = time_sim_screen.BeginSimulation()
+
+        # Identify items that are depleted (have 0 remaining uses)
+        items_depleted = [
+            {"itemId": item["itemId"], "name": item["name"]}
+            for item in used_list if item.get("remainingUses", 0) == 0
+        ]
+
+        # Format response according to expected structure
+        response = {
+            "success": True,
+            "newDate": new_date.isoformat() if isinstance(new_date, datetime) else str(new_date),
+            "changes": {
+                "itemsUsed": used_list,
+                "itemsExpired": expired_list,
+                "itemsDepletedToday": items_depleted
+            }
         }
-    }
+
+        return response
+
+    except Exception as e:
+        # Handle any exceptions
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
 #-----------------------------------------------------------------------------------------
 
