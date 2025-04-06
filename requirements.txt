@@ -1,6 +1,8 @@
 PySide6
 fastapi
+uvicorn
 pydantic
 py3dbp
 glass_engine
 pyglm
+python-dateutil
