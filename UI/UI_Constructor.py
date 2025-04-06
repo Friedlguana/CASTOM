@@ -255,6 +255,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         else:
             qdate = QDate.currentDate()
 
+        print("Warping: Date is now", qdate )
+
         self.dateEdit.setDate(qdate)
     def update_viewport(self):
         self.repaint()  # Force a redraw of the widget
@@ -410,9 +412,11 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         print(usedlist)
 
         wastelist = set(expiredlist + usedlist)
+        print(wastelist)
         data = []
         for i in wastelist:
             temp_data = [i,self.item_dict[i].name,self.item_dict[i].status]
+            print(temp_data)
             data.append(temp_data)
 
         self.Table_SimResults.setRowCount(len(data))
