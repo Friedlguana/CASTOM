@@ -377,14 +377,14 @@ async def wasteReturnPlan(request: wasteReturnPlanRequest):
 
     remove_buffer = list(path_to_items.values())[0][::-1]
     placeback_buffer = []
-    for i in range(len(list(path_to_items.values())[0]) * 2 - 1):
+    for i in range(len(list(path_to_items.values())[0])):
         step = 0
         while remove_buffer != [itemId]:
             removed_item = remove_buffer.pop()
             placeback_buffer.append(remove_buffer.pop())
             template = {
                 "step": step,
-                "action": "remove",  # Possible values: "remove", "retrieve", "placeBack"
+                "action": "move",  # Possible values: "remove", "retrieve", "placeBack"
                 "itemId": removed_item,
                 "itemName": itemData[removed_item].name
             }
@@ -393,7 +393,7 @@ async def wasteReturnPlan(request: wasteReturnPlanRequest):
 
         template = {
             "step": step,
-            "action": "retrieve",  # Possible values: "remove", "retrieve", "placeBack"
+            "action": "remove",  # Possible values: "remove", "retrieve", "placeBack"
             "itemId": itemId,
             "itemName": itemName
         }
@@ -407,7 +407,7 @@ async def wasteReturnPlan(request: wasteReturnPlanRequest):
                 "itemId": placed_item,
                 "itemName": itemData[placed_item].name
             }
-            step += 1
+
             result_json["retrievalSteps"].append(template)
 
 
