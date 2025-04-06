@@ -513,6 +513,51 @@ async def export_arrangement():
 
     return csv_content  # Ideally, return as a downloadable CSV file
 
+class log_params(BaseModel):
+    startDate : str #iso
+    endDate: str
+    itemId: str
+    userId: str
+    actionType: str #optional
+@app.post("/api/logs")
+async def returnlogs(request: log_params):
+
+
+
+    return {
+        "logs": [
+            {
+                "timestamp": "string",
+                "userId": "string",
+                "actionType": "string",
+                "itemId": "string",
+                "details": {
+                    "fromContainer": "string",
+                    "toContainer": "string",
+                    "reason": "string"
+                }
+            }
+        ]
+    }
+
+
+class place_params(BaseModel):
+    itemId: str
+    userId: str
+    timestamp:str #iso
+    containerId: str
+    width: int or float
+    depth: int or float
+    height: int or float
+@app.post("/api/place")
+async def place_item(request: place_params):
+
+    placed = True
+
+    return {
+        "success" : placed
+    }
+
 #-----------------------------------------------------------------------------------------
 #END
 #to run this api server first install fastapi and uvicorn and then run:

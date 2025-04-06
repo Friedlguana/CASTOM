@@ -135,10 +135,6 @@ def load_containers(file_path):
         cont_dict.update({i.container_id: i})
 
     save_dict_to_file(cont_dict, CONTAINER_DATA_PATH)
-
-
-
-
     return containers
 
 
