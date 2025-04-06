@@ -92,8 +92,6 @@ class ScreenFunctions():
 
             garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
             item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
-
-
             item_id = [int(item) for item in item_dict.keys()]
             print(item_id)
             for item in item_id:
@@ -110,6 +108,8 @@ class ScreenFunctions():
             return garbage_dict
 
         def ReturnPlan(self,udc, date, maxweight):
+
+
             garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
 
         def Complete_Undocking(self,udc, jet_txime):

@@ -220,8 +220,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
         ###Retrieval Page Definitions################################################3
         self.btn_search_search.clicked.connect(self.Search_Trigger)
-
         self.btn_search_retrieve.clicked.connect( self.Retrieval_Trigger)
+        # self.btn_search_next.clicked.connect(self.
 
 
 
@@ -273,9 +273,9 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         widgets.stackedWidget.setCurrentWidget(widgets.home)
         widgets.btn_home.setStyleSheet(UIFunctions.selectMenu(widgets.btn_home.styleSheet()))
 
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_viewport)
-        self.timer.start(16)  # Approximately 60 FPS (1000ms / 60 ≈ 16ms)
+        # self.timer = QTimer(self)
+        # self.timer.timeout.connect(self.update_viewport)
+        # self.timer.start(16)  # Approximately 60 FPS (1000ms / 60 ≈ 16ms)
 
     def set_custom_start_date(self, year, month, day):
         self.simulated_date = date(year, month, day)
@@ -291,8 +291,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         print("Warping: Date is now", qdate )
 
         self.dateEdit.setDate(qdate)
-    def update_viewport(self):
-        self.repaint()  # Force a redraw of the widget
+    # def update_viewport(self):
+    #     self.repaint()  # Force a redraw of the widget
 
     ## Sorting Page Functions###################################################################################################################
 
@@ -511,7 +511,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
     ##################################################TIMESIMULATION#########################################################3######
 
     def add_path_sim(self):
-        self.daystosim = int(self.le_days.text()) if self.le_days.text() else 1
+
         sim_items_csv, _ = items_fname, _ = QFileDialog.getOpenFileName(self, "Open items to be used daily", "",
                                                                         "CSV Files (*.csv)")
 
@@ -532,7 +532,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         itemObj.close()
 
     def TimeSimTrigger(self):
-
+        self.daystosim = 1 if self.le_days.text() == "" else int(self.le_days.text())
         self.item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
 
         sim = Algorithms.Algo_Picker.ScreenFunctions.TimeSimScreen(self.daystosim,self.item_consumption_list,self.current_date)
@@ -570,6 +570,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
     def button_Identify(self):
         garbage_dict = self.garbage.IdentifyWaste()
+        return garbage_dict
 
     def button_Return_Plan(self):
         manifest = self.garbage.ReturnPlan()
