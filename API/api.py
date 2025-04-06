@@ -5,6 +5,8 @@ import csv
 from Algorithms.Algo_Picker import ScreenFunctions
 from Algorithms.Classes import *
 import pickle
+from Algorithms.utils.file_loader import *
+from config import *
 
 
 
@@ -47,22 +49,21 @@ async def placementRecommendations(request: placementRequest):
     itemCsvWriter=csv.writer(itemobj)
     containerCsvWriter=csv.writer(containerobj)
 
-    itemCsvWriter.writerow(["item_id", "name", "width", "depth", "height", "mass", "priority", "expiry", "uses",
-                            "pref_zone","x","y","z","placed_cont","placed Status"])
-    itemCsvWriter.writerow(["zone", "container_id", "width", "depth", "height"])
+    itemCsvWriter.writerow(["item_id", "name", "width_cm", "depth_cm", "height_cm", "mass_kg", "priority", "expiry_date", "usage_limit",
+                            "preferred_zone","x","y","z","placed_cont","placed Status"])
+    containerCsvWriter.writerow(["container_id", "width_cm", "depth_cm", "height_cm", "zone"])
 
 
     for item in request.items:
         itemCsvWriter.writerow([item.itemId, item.name, item.width, item.depth, item.height, 0, item.priority, item.expiryDate, item.usageLimit, item.preferredZone])
     itemobj.close()
     for container in request.containers:
-        itemCsvWriter.writerow([container.zone, container.containerId, container.width, container.depth, container.height])
+        containerCsvWriter.writerow([container.containerId, container.width, container.depth, container.height, container.zone])
     containerobj.close()
     obj = ScreenFunctions.SortingScreen("itemFile.csv", "containerFile.csv")
 
     binItems, binContainers = obj.BeginSort()
-    with open(binItems, "rb") as f:
-        itemData = f.load()
+    itemData = load_or_initialize_item_dict(ITEM_DATA_PATH)
     item_ids = [ item for item in itemData.keys()]
     placement_result_json = []
     for ID in item_ids:
@@ -82,7 +83,7 @@ async def placementRecommendations(request: placementRequest):
                 }
             }
         }
-        placements_template['itemId'] = itemData[ID].itemId
+        placements_template['itemId'] = itemData[ID].item_id
         placements_template['containerId'] = itemData[ID].placed_cont
         placements_template["position"]["startCoordinates"]["width"] = itemData[ID].x
         placements_template["position"]["startCoordinates"]["depth"] = itemData[ID].y
@@ -125,7 +126,6 @@ async def placementRecommendations(request: placementRequest):
                 }
             }
         }
-
     return {
         "success": boolean,
         "placements": [placement_result_json
@@ -141,7 +141,7 @@ async def placementRecommendations(request: placementRequest):
 #2.a Item Search Request
 @app.get("/api/search")
 async def searchItem(
-    itemId: str = Query(None, description="itemID"),
+    itemId: int = Query(None, description="itemID"),
     itemName: str = Query(None, description="itemName"),
     userId: str = Query(None, description="userID")
 ):
@@ -149,23 +149,24 @@ async def searchItem(
     number = None
 
 
-    with open(r"Algorithms/item_data.bin", "rb") as f:
-        itemData = f.load()
-    with open(r"Algorithms/container_data.bin", "rb") as f:
-        containerData = f.load()
+    itemData = load_or_initialize_item_dict(ITEM_DATA_PATH)
+    containerData = load_or_initialize_container_dict(CONTAINER_DATA_PATH)
 
 
-    item_ids = [item for item in itemData.keys]
-    container_ids = [cont for cont in containerData.keys]
+    item_ids = [item for item in itemData.keys()]
+    # container_ids = [cont for cont in containerData.keys()]
 
     success = True
     try:
 
         route = ScreenFunctions.RetrivalScreen(itemId, itemName,itemData[itemId].placed_cont, userId)
-        steps,found = route.BeginRetrieval()
+        path,found = route.BeginRetrieval()
+        steps = path
 
     except Exception:
         success = Exception
+        found = 0
+        steps = {}
 
 
 
@@ -195,15 +196,15 @@ async def searchItem(
     }
 
     result_json["success"] = success
-    result_json["found"] = bool
+    result_json["found"] = found
     result_json["item"]["containerId"] = itemData[itemId].placed_cont
-    result_json["item"]["zone"] = list(steps[0].keys())[0]
+    result_json["item"]["zone"] = containerData[itemData[itemId].placed_cont].zone
     result_json["item"]["position"]["startCoordinates"]["width"] = itemData[itemId].width
     result_json["item"]["position"]["startCoordinates"]["depth"] = itemData[itemId].depth
     result_json["item"]["position"]["startCoordinates"]["height"] = itemData[itemId].height
-    result_json["item"]["position"]["endCoordinates"]["width"] = itemData[itemId].width + itemData[ID].x
-    result_json["item"]["position"]["endCoordinates"]["depth"] = itemData[itemId].depth + itemData[ID].y
-    result_json["item"]["position"]["endCoordinates"]["height"] = itemData[itemId].height + itemData[ID].z
+    result_json["item"]["position"]["endCoordinates"]["width"] = itemData[itemId].width + itemData[itemId].x
+    result_json["item"]["position"]["endCoordinates"]["depth"] = itemData[itemId].depth + itemData[itemId].y
+    result_json["item"]["position"]["endCoordinates"]["height"] = itemData[itemId].height + itemData[itemId].z
 
     remove_buffer = list(steps[0].values())[0][::-1]
     placeback_buffer = []
@@ -462,7 +463,7 @@ async def export_arrangement():
 #-----------------------------------------------------------------------------------------
 #END
 #to run this api server first install fastapi and uvicorn and then run:
-#python -m uvicorn api:app --reload
+#python3 -m uvicorn API.api:app --reload
 
 
 
