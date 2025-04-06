@@ -1,3 +1,5 @@
+import datetime
+
 from .Sorting_Algorithm import OpenFileSort
 from .Retrival_Algorithm import SetupRetrieval
 from .Time_Simulation import SetupSimulation
@@ -79,8 +81,8 @@ class ScreenFunctions():
 
         def BeginSimulation(self):
 
-            new_date,expiredlist,usedlist = SetupSimulation(self.daysToSim,self.itemsToUse,self.sim_date)
-            return new_date,expiredlist,usedlist
+            new_date,item_dict,expiredlist,usedlist = SetupSimulation(self.daysToSim,self.itemsToUse,self.sim_date)
+            return new_date,item_dict,expiredlist,usedlist
 
     class UndockingScreen():
 
@@ -95,9 +97,7 @@ class ScreenFunctions():
             item_id = [int(item) for item in item_dict.keys()]
             print(item_id)
             for item in item_id:
-
                 if item_dict[item].status != None and item not in garbage_dict.keys():
-
                     garbage_dict.update({item: item_dict[item].status})
 
 
@@ -108,16 +108,36 @@ class ScreenFunctions():
             return garbage_dict
 
         def ReturnPlan(self,udc, date, maxweight):
-
-
+            item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
             garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
 
-        def Complete_Undocking(self,udc, jet_txime):
+            depleted_items = [item_dict[item] for item in garbage_dict.keys()]
+
+            weighted = sorted(depleted_items, key = lambda item : item.mass )
+            print(weighted)
+            slated_return = []
+            mass_sum = 0
+            while mass_sum < maxweight:
+                temp_obj = weighted.pop()
+                slated_return.append(temp_obj)
+                mass_sum += temp_obj.mass
+
+            path_to_items = []
+            for i in slated_return:
+                route = ScreenFunctions.RetrivalScreen(i.item_id, i.name,None, i.placed_cont)
+                path, found = route.BeginRetrieval()
+                path_to_items.append(path)
+
+            print(path_to_items,slated_return,
+
+
+        def Complete_Undocking(self,udc, jet_time):
             undockingCont = udc
             garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
-            garbage_ids = [int(item) for item in garbage_dict.keys]
+            garbage_ids = [int(item) for item in garbage_dict.keys()]
 
             return sum(garbage_ids), jet_time
+
 
 
 

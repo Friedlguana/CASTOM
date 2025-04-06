@@ -40,6 +40,7 @@ def shiftCurrentDate(dailyUseList, n=1):
         global item_dict
         item_dict[itemID].Use_Item(n)
 
+
     for items in dailyUseList:
         if items['itemId']:
             item_id = items['itemId']
@@ -97,7 +98,13 @@ def shiftCurrentDate(dailyUseList, n=1):
                         expiredlist.append(item_id)
 
     save_dict_to_file(item_dict,ITEM_DATA_PATH)
+
+    # Just for debugging:
+    for k, v in item_dict.items():
+        print(f"Item {k}: uses={v.uses}, status={v.status}, expiry={v.expiry}")
+
     return currDate
+
 
 
 
@@ -113,11 +120,7 @@ def SetupSimulation(days_to_sim,daily_use,simulation_date):
     loader(daily_use)
     new_date = shiftCurrentDate(daily_use,days_to_sim)
 
-    for i in usedlist:
-        print({item_dict[i].status:item_dict[i].uses})
-        print({item_dict[i].status: item_dict[i].expiry})
-
-    return new_date,expiredlist,usedlist
+    return new_date,item_dict,expiredlist,usedlist
 
 item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
 expiredlist = []

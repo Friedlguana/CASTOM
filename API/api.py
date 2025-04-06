@@ -456,6 +456,7 @@ async def import_containers(file: UploadFile = File(...)):
 @app.get("/api/export/arrangement")
 async def export_arrangement():
     csv_content = "Item ID,Container ID,Coordinates (W1,D1,H1),(W2,D2,H2)\n"
+
     csv_content += "001,contA,(0,0,0),(10,10,20)\n"
     csv_content += "002,contB,(0,0,0),(15,15,50)\n"
 
