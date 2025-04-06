@@ -1,11 +1,11 @@
-from glass_engine import *
-from glass import Vertex
+"""from glass_engine import *
+from glass import Vertex"""
 from pyglm import glm
 import math
 import random
 
 
-class Cuboid(Mesh):
+"""class Cuboid(Mesh):
     def __init__(self, base_vertex: glm.vec3, width: float, height: float, depth: float):
         Mesh.__init__(self)
         self.base_vertex = base_vertex
@@ -108,4 +108,4 @@ def compute_centroid(position, width, height, depth):
         z - depth / 2  # Adjust based on your coordinate system
     )
     return centroid
-
+"""
