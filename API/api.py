@@ -8,7 +8,7 @@ import pickle
 from Algorithms.utils.file_loader import *
 from config import *
 
-
+from Algorithms.Retrival_Algorithm import SetupRetrieval
 
 app = FastAPI()
 boolean = True
@@ -255,15 +255,66 @@ class retrieveRequest(BaseModel):
 
 @app.post("/api/retrieve")
 async def retrieveItem(request: retrieveRequest):
+    try:
+        # Load data
+        item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
+        container_dict = load_or_initialize_container_dict(CONTAINER_DATA_PATH)
 
-    #can call the client request data as follows:
-    # itemId = request.itemId
-    # userId = request.userId
-    # timestamp = request.timestamp
+        # Validate input
+        item_id = int(request.itemId)
+        if item_id not in item_dict:
+            return {"success": False, "message": "Item not found"}
 
-    #respone
-    #Call code to retrieve item and return a boolean value for "success"
-    return {"success": boolean}
+        # Get target container from item data
+        target_container = item_dict[item_id].placed_cont
+
+        # Find retrieval path
+        paths, found = SetupRetrieval(item_id, target_container)
+        if not found:
+            return {"success": False, "message": "No retrieval path found"}
+
+        # Generate steps
+        retrieval_steps = []
+        step_counter = 0
+
+        # Use the first available path (algorithm returns shortest path)
+        container_id, item_sequence = next(iter(paths.items()))
+
+        # Remove phase
+        for item in item_sequence[:-1]:  # Last item is the target
+            retrieval_steps.append({
+                "step": step_counter,
+                "action": "remove",
+                "itemId": str(item),
+                "itemName": item_dict[item].name
+            })
+            step_counter += 1
+
+        # Retrieve phase
+        retrieval_steps.append({
+            "step": step_counter,
+            "action": "retrieve",
+            "itemId": request.itemId,
+            "itemName": item_dict[item_id].name
+        })
+        step_counter += 1
+
+        # Placeback phase (reverse order)
+        for item in reversed(item_sequence[:-1]):
+            retrieval_steps.append({
+                "step": step_counter,
+                "action": "placeBack",
+                "itemId": str(item),
+                "itemName": item_dict[item].name
+            })
+            step_counter += 1
+
+        return {
+            "success": True,
+        }
+
+    except Exception as e:
+        return {"success": False, "message": str(e)}
 
 #-----------------------------------------------------------------------------------------
 
