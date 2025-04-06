@@ -1,7 +1,9 @@
 from fastapi import FastAPI, Query, UploadFile, File
 from pydantic import BaseModel
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal,Union
 import csv
+
+import Algorithms.Algo_Picker
 from Algorithms.Algo_Picker import ScreenFunctions
 from Algorithms.Classes import *
 import pickle
@@ -9,6 +11,8 @@ from Algorithms.utils.file_loader import *
 from config import *
 
 from Algorithms.Retrival_Algorithm import SetupRetrieval
+
+
 
 app = FastAPI()
 boolean = True
@@ -323,29 +327,40 @@ async def retrieveItem(request: retrieveRequest):
 @app.get("/api/waste/identify")
 async def wasteIdentify():
 
-    #response
-    return {
-        "success": boolean,
-        "wasteItems": [
-            {
-                "itemId": "string",
-                "name": "string",
-                "reason": "string",  # "Expired", "Out of Uses"
-                "containerId": "string",
-                "position": {
-                    "startCoordinates": {
-                        "width": number,
-                        "depth": number,
-                        "height": number
-                    },
-                    "endCoordinates": {
-                        "width": number,
-                        "depth": number,
-                        "height": number
+    ident = Algorithms.Algo_Picker.ScreenFunctions.UndockingScreen()
+    waste = ident.IdentifyWaste().keys()
+    result = []
+    for i in waste:
+        tempres = {
+                    "itemId": i.item_id,
+                    "name": i.name,
+                    "reason": i.status,  # "Expired", "Out of Uses"
+                    "containerId": i.placed_cont,
+                    "position": {
+                        "startCoordinates": {
+                            "width": i.x,
+                            "depth": i.y,
+                            "height": i.z
+                        },
+                        "endCoordinates": {
+                            "width": i.width + i.x,
+                            "depth": i.depth + i.y,
+                            "height": i.height + i.z
+                        }
                     }
                 }
-            }
-        ]
+
+        result.append(tempres)
+
+
+
+    if waste:
+        found = True
+
+    #response
+    return {
+        "success": found,
+        "wasteItems": [result]
     }
 
 #3.b waste return plan
@@ -355,6 +370,48 @@ class wasteReturnPlanRequest(BaseModel):
     maxWeight: float
 @app.post("/api/waste/return-plan")
 async def wasteReturnPlan(request: wasteReturnPlanRequest):
+    waste = Algorithms.Algo_Picker.ScreenFunctions.UndockingScreen()
+    path_to_items,slated_return = waste.ReturnPlan()
+
+    item_ids = [id for id in path_to_items.keys()]
+
+    remove_buffer = list(path_to_items.values())[0][::-1]
+    placeback_buffer = []
+    for i in range(len(list(path_to_items.values())[0]) * 2 - 1):
+        step = 0
+        while remove_buffer != [itemId]:
+            removed_item = remove_buffer.pop()
+            placeback_buffer.append(remove_buffer.pop())
+            template = {
+                "step": step,
+                "action": "remove",  # Possible values: "remove", "retrieve", "placeBack"
+                "itemId": removed_item,
+                "itemName": itemData[removed_item].name
+            }
+            step += 1
+            result_json["retrievalSteps"].append(template)
+
+        template = {
+            "step": step,
+            "action": "retrieve",  # Possible values: "remove", "retrieve", "placeBack"
+            "itemId": itemId,
+            "itemName": itemName
+        }
+        step += 1
+        result_json["retrievalSteps"].append(template)
+        while placeback_buffer != []:
+            placed_item = placeback_buffer.pop()
+            template = {
+                "step": step,
+                "action": "placeBack",  # Possible values: "remove", "retrieve", "placeBack"
+                "itemId": placed_item,
+                "itemName": itemData[placed_item].name
+            }
+            step += 1
+            result_json["retrievalSteps"].append(template)
+
+
+
     #response
     return {
         "success": boolean,
@@ -546,17 +603,26 @@ class place_params(BaseModel):
     userId: str
     timestamp:str #iso
     containerId: str
-    width: int or float
-    depth: int or float
-    height: int or float
+    width: Union[int, float]
+    depth: Union[int, float]
+    height: Union[int, float]
+
 @app.post("/api/place")
 async def place_item(request: place_params):
 
-    placed = True
+    item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
+
+    item2place = Algorithms.Algo_Picker.ScreenFunctions.RetrivalScreen(request.itemId, item_dict[request.itemId])
+    val = item2place.PlaceItem(request.itemId,request.containerId,(request.width,request.depth,request.height))
 
     return {
-        "success" : placed
+        "success" : val
     }
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)
+
 
 #-----------------------------------------------------------------------------------------
 #END
