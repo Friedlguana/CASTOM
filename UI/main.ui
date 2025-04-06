@@ -2417,14 +2417,14 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLineEdit" name="udc_name">
+                           <widget class="QLineEdit" name="le_udc_name">
                             <property name="placeholderText">
                              <string>Undocking Container Name</string>
                             </property>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QLineEdit" name="ludc_maxweight">
+                           <widget class="QLineEdit" name="le_dc_maxweight">
                             <property name="placeholderText">
                              <string>Maximum Weight</string>
                             </property>
@@ -2626,7 +2626,7 @@ background-repeat: None;</string>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QTableWidget" name="tableWidget">
+                           <widget class="QTableWidget" name="slated4return">
                             <property name="styleSheet">
                              <string notr="true"/>
                             </property>
@@ -2831,23 +2831,6 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                                    </size>
                                   </property>
                                  </spacer>
-                                </item>
-                                <item>
-                                 <widget class="QPushButton" name="btn_next_day">
-                                  <property name="minimumSize">
-                                   <size>
-                                    <width>0</width>
-                                    <height>35</height>
-                                   </size>
-                                  </property>
-                                  <property name="styleSheet">
-                                   <string notr="true">padding: 6px 20px;
-font: bold 9pt &quot;Segoe UI&quot;;</string>
-                                  </property>
-                                  <property name="text">
-                                   <string>Next Day</string>
-                                  </property>
-                                 </widget>
                                 </item>
                                 <item alignment="Qt::AlignmentFlag::AlignLeft">
                                  <widget class="QLineEdit" name="le_days">

@@ -19,6 +19,7 @@ class ScreenFunctions():
 
         def BeginSort(self):
             self.sortedfpath = OpenFileSort(self.f_itemspath,self.f_contpath)
+
             return self.sortedfpath
 
         def ResetSort(self):
@@ -68,10 +69,30 @@ class ScreenFunctions():
                     else:
                         return output_dict,bool
 
+        def PlaceItem(self,item,new_cont,coords):
+            x = coords[0]
+            y = coords[1]
+            z = coords[2]
 
 
-        def logger(self):
-            pass
+            item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
+
+            item = item_dict[self.searchitem_id]
+            item.x,item.y,item.z = x,y,z
+
+            return True
+
+
+
+
+        def logger(self,timestamp,loc_start,loc_end):
+            self.searchitem_name
+            self.searchitem_id = item_id
+            self.searchcont_id = container
+            self.astro_id = astro_id
+            self.timestamp = timestamp
+
+
 
     class TimeSimScreen():
         def __init__(self,no_of_days,usage_list,sim_date):
@@ -95,14 +116,13 @@ class ScreenFunctions():
             garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
             item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
             item_id = [int(item) for item in item_dict.keys()]
-            print(item_id)
             for item in item_id:
                 if item_dict[item].status != None and item not in garbage_dict.keys():
                     garbage_dict.update({item: item_dict[item].status})
 
 
             save_dict_to_file(garbage_dict, WASTE_DATA_PATH)
-            print(garbage_dict)
+
         def IdentifyWaste(self):
             garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
             return garbage_dict
@@ -114,7 +134,7 @@ class ScreenFunctions():
             depleted_items = [item_dict[item] for item in garbage_dict.keys()]
 
             weighted = sorted(depleted_items, key = lambda item : item.mass )
-            print(weighted)
+
             slated_return = []
             mass_sum = 0
             while mass_sum < maxweight:
@@ -128,7 +148,8 @@ class ScreenFunctions():
                 path, found = route.BeginRetrieval()
                 path_to_items.append(path)
 
-            print(path_to_items,slated_return,
+            #print(path_to_items,slated_return,slated_return)
+            return path_to_items,slated_return
 
 
         def Complete_Undocking(self,udc, jet_time):

@@ -192,7 +192,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
         self.current_date = date.today() #.strftime("%d-%m-%Y")
 
-        self.simulated_date = None
+        self.simulated_date = datetime.datetime.today()
         self.dateEdit.setDisplayFormat("dd MMM yyyy")
         self.dateEdit.setDate(QDate.currentDate())
 
@@ -294,7 +294,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         else:
             qdate = QDate.currentDate()
 
-        print("Warping: Date is now", qdate )
+        #print("Warping: Date is now", qdate )
 
         self.dateEdit.setDate(qdate)
     # def update_viewport(self):
@@ -570,28 +570,76 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         garbage.GarbageCollector()
 
     def button_Identify(self):
+
+        self.undockingcontname = self.le_udc_name
+        if not self.undockingcontname:
+            self.le_udc_name.setText("Enter Valid Container Name")
+            return
+
+        self.max_weight = self.le_dc_maxweight
+        if not self.max_weight:
+            self.le_dc_maxweight.setText("Enter Valid Maximum Weight")
+            return
+
         garbage = Algorithms.Algo_Picker.ScreenFunctions.UndockingScreen()
         garbage_dict = garbage.IdentifyWaste()
+        garbage_id = [item for item in garbage_dict.keys()]
 
-        self.Table_SimResults.setRowCount(len(data))
-        self.Table_SimResults.setColumnCount(len(data[0]) if len(data[0]) else 0)
+        data = []
+        for i in garbage_id:
+            temp_data = [i,item_dict[i].name,item_dict[i].status,item_dict[i].mass]
+            data.append(temp_data)
+
+        self.onship_table.setRowCount(len(data))
+        self.onship_table.setColumnCount(len(data[0]) if len(data[0]) else 0)
 
         for row_idx, row_data in enumerate(data):
             for col_idx, value in enumerate(row_data):
                 item = QTableWidgetItem(str(value))
-                self.Table_SimResults.setItem(row_idx, col_idx, item)
+                self.onship_table.setItem(row_idx, col_idx, item)
 
         return garbage_dict
 
     def button_generate_manifest(self):
+
+        self.undockingcontname = self.le_udc_name.text()
+        if not self.undockingcontname:
+            self.le_udc_name.setText("Enter Valid Container Name")
+            return
+
+        self.max_weight = int(self.le_dc_maxweight.text())
+        if not self.max_weight:
+            self.le_dc_maxweight.setText("Enter Valid Maximum Weight")
+            return
+
         garbage = Algorithms.Algo_Picker.ScreenFunctions.UndockingScreen()
-        manifest = garbage.ReturnPlan("Nasa", 32, 200)
-        print(manifest)
+        item_paths,items_to_return = garbage.ReturnPlan(self.undockingcontname, 32, self.max_weight)
+
+        data = []
+        for i in garbage_id:
+            temp_data = [i, item_dict[i].name, item_dict[i].status, item_dict[i].mass]
+            data.append(temp_data)
+
+        self.onship_table.setRowCount(len(data))
+        self.onship_table.setColumnCount(len(data[0]) if len(data[0]) else 0)
+
+        for row_idx, row_data in enumerate(data):
+            for col_idx, value in enumerate(row_data):
+                item = QTableWidgetItem(str(value))
+                self.onship_table.setItem(row_idx, col_idx, item)
+
 
     def button_complete_dock(self):
+
+        self.undockingcontname = self.le_udc_name
+        if not self.undockingcontname:
+            self.le_udc_name.setText("Enter Valid Container Name")
+            return
+
         garbage = Algorithms.Algo_Picker.ScreenFunctions.UndockingScreen()
-        num,date = garbage.Complete_Undocking("Nasa",jet_time=datetime.datetime.now())
+        num,date = garbage.Complete_Undocking(self.undockingcontname,self.simulated_date)
         return num,date
+        print(num,date)
 
 
     ################################################################################################################################3######
