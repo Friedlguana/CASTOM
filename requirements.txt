@@ -4,5 +4,5 @@ uvicorn
 pydantic
 py3dbp
 python-dateutil
-
-
+numpy
+python-multipart

@@ -1,5 +1,7 @@
-from fastapi import FastAPI, Query, UploadFile, File, HTTPException
+from fastapi import (FastAPI, Query, UploadFile, File, HTTPException)
 from pydantic import BaseModel
+
+
 from typing import List, Optional, Literal,Union
 from datetime import datetime
 
@@ -19,6 +21,13 @@ app = FastAPI()
 boolean = True
 number = 0
 csvFile = "file download"
+
+
+
+
+
+
+
 
 #-----------------------------------------------------------------------------------------
 
@@ -173,14 +182,14 @@ async def searchItem(
         found = 0
         steps = {}
 
-
+    itemId = list(path.values())[0][-1]
 
     result_json = {
         "success": boolean,
         "found": boolean,
         "item": {
             "itemId": itemId,
-            "name": itemName,
+            "name": itemData[itemId].name,
             "containerId": "string",
             "zone": "string",
             "position": {
@@ -207,49 +216,48 @@ async def searchItem(
     result_json["item"]["position"]["startCoordinates"]["width"] = itemData[itemId].width
     result_json["item"]["position"]["startCoordinates"]["depth"] = itemData[itemId].depth
     result_json["item"]["position"]["startCoordinates"]["height"] = itemData[itemId].height
-    result_json["item"]["position"]["endCoordinates"]["width"] = itemData[itemId].width + itemData[itemId].x
-    result_json["item"]["position"]["endCoordinates"]["depth"] = itemData[itemId].depth + itemData[itemId].y
-    result_json["item"]["position"]["endCoordinates"]["height"] = itemData[itemId].height + itemData[itemId].z
+    result_json["item"]["position"]["endCoordinates"]["width"] = itemData[itemId].width + float(itemData[itemId].x)
+    result_json["item"]["position"]["endCoordinates"]["depth"] = itemData[itemId].depth + float(itemData[itemId].y)
+    result_json["item"]["position"]["endCoordinates"]["height"] = itemData[itemId].height + float(itemData[itemId].z)
 
-    remove_buffer = list(steps[0].values())[0][::-1]
+    remove_buffer = list(steps.values())[0][::-1]
     placeback_buffer = []
-    for i in range(len(list(steps[0].values())[0])*2 - 1):
-        step = 0
-        while remove_buffer != [itemId]:
-            removed_item = remove_buffer.pop()
-            placeback_buffer.append(remove_buffer.pop())
-            template = {
-                    "step": step,
-                    "action": "remove",  # Possible values: "remove", "retrieve", "placeBack"
-                    "itemId": removed_item,
-                    "itemName": itemData[removed_item].name
-                }
-            step+=1
-            result_json["retrievalSteps"].append(template)
+    step = 0
+    for j in range(len(remove_buffer) -1):
+        removed_item = remove_buffer.pop()
+        placeback_buffer.append(removed_item)
+        template = {
+                "step": step,
+                "action": "remove",  # Possible values: "remove", "retrieve", "placeBack"
+                "itemId": removed_item,
+                "itemName": itemData[removed_item].name
+            }
+        result_json["retrievalSteps"].append(template)
+        step += 1
 
+    template = {
+        "step": step,
+        "action": "retrieve",  # Possible values: "remove", "retrieve", "placeBack"
+        "itemId": remove_buffer.pop(),
+        "itemName": itemData[itemId].name
+    }
+    step += 1
+    result_json["retrievalSteps"].append(template)
+
+    for j in range(len(placeback_buffer)):
+        placed_item = placeback_buffer.pop()
         template = {
             "step": step,
-            "action": "retrieve",  # Possible values: "remove", "retrieve", "placeBack"
-            "itemId": itemId,
-            "itemName": itemName
+            "action": "placeBack",  # Possible values: "remove", "retrieve", "placeBack"
+            "itemId": placed_item,
+            "itemName": itemData[placed_item].name
         }
-        step += 1
-        result_json["retrievalSteps"].append(template)
-        while placeback_buffer != []:
-            placed_item = placeback_buffer.pop()
-            template = {
-                "step": step,
-                "action": "placeBack",  # Possible values: "remove", "retrieve", "placeBack"
-                "itemId": placed_item,
-                "itemName": itemData[placed_item].name
-            }
-            step += 1
-            result_json["retrievalSteps"].append(template)
 
+        result_json["retrievalSteps"].append(template)
+        step +=1
     # response
-    return {
-        result_json
-    }
+    return result_json
+
 
 #2.b Item Retrieval Request
 #'Request' structure definition
@@ -625,11 +633,10 @@ async def returnlogs(request: log_params):
         ]
     }
 
-
 class place_params(BaseModel):
     itemId: str
     userId: str
-    timestamp:str #iso
+    timestamp: str  # ISO
     containerId: str
     width: Union[int, float]
     depth: Union[int, float]
@@ -637,6 +644,7 @@ class place_params(BaseModel):
 
 @app.post("/api/place")
 async def place_item(request: place_params):
+    print("📦 /api/place route loaded and available")
 
     item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
 
@@ -647,9 +655,6 @@ async def place_item(request: place_params):
         "success" : val
     }
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)
 
 
 #-----------------------------------------------------------------------------------------
