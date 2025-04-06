@@ -6,10 +6,11 @@ from .Classes import *
 from config import *
 from .utils.file_loader import *
 
-item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
+
 def loader(daiy_use):
     global dater
     global item_dict
+    item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
     dater = {}  # k,v pairs of item id, [expiry date, uses, waste status]
 
 
@@ -22,7 +23,7 @@ def loader(daiy_use):
         elif item["name"]:
             items_by_id = [item for item in Item_ID == item["name"]]
             for i in items_by_id:
-                dater.update({i: [item_dict[i].expiry if item_dict[itemId].expiry != "N/A" else "no expiry",item_dict[i].uses,item_dict[i].status]})
+                dater.update({i: [item_dict[i].expiry if item_dict["itemId"].expiry != "N/A" else "no expiry",item_dict[i].uses,item_dict[i].status]})
 
 
 def shiftCurrentDate(dailyUseList, n=1):
@@ -33,6 +34,11 @@ def shiftCurrentDate(dailyUseList, n=1):
 
     currDateOriginal = currDate
     currDate = currDate + datetime.timedelta(days=n)
+    updated_item_dict = {}
+    def useItem(itemID, n):
+
+        global item_dict
+        item_dict[itemID].Use_Item(n)
 
     for items in dailyUseList:
         if items['itemId']:
@@ -42,31 +48,39 @@ def shiftCurrentDate(dailyUseList, n=1):
             item = item_dict[item_id]
             if item.expiry == "N/A":
                 if item.uses <= 0:
-                    item.status = "Out of Uses"
+                    item.update_status("Out of Uses")
+
                     usedlist.append(item_id)
+
             else:
                 expiry_date = datetime.datetime.strptime(item.expiry, "%Y-%m-%d")
                 if expiry_date.date() <= currDate and item.uses <= 0:
 
-                    days_to_expiry = (expiry_date - datetime.now()).days
+                    days_to_expiry = (expiry_date - datetime.datetime.now()).days
 
                     if days_to_expiry<item.uses:
-                        item.status = "Expired"
+                        item.update_status("Expired")
+
                         expiredlist.append(item_id)
 
+
                     elif days_to_expiry>item.uses:
-                        item.status = "Out of Uses"
+                        item.update_status("Out of Uses")
+
                         usedlist.append(item_id)
 
+
                 elif expiry_date.date() <= currDate :
-                    item.status = "Expired"
+                    item.update_status("Expired")
                     expiredlist.append(item_id)
 
+
                 elif item.uses <= 0:
-                    item.status = "Out of Uses"
+                    item.update_status("Out of Uses")
                     usedlist.append(item_id)
 
-        elif 'name' in items:
+
+        elif items['name']:
             name = items['name']
             ids_to_check = [id for id in Item_ID if item_dict[id].name == name]
             for item_id in ids_to_check:
@@ -74,24 +88,20 @@ def shiftCurrentDate(dailyUseList, n=1):
                 item = item_dict[item_id]
                 if item.expiry == "N/A":
                     if item.uses <= 0:
-                        item.status = "Out of Uses"
+                        item.update_status("Out of Uses")
                         usedlist.append(item_id)
                 else:
                     expiry_date = datetime.datetime.strptime(item.expiry, "%Y-%m-%d")
                     if expiry_date < currDate:
-                        item.status = "Expired"
+                        item.update_status("Expired")
                         expiredlist.append(item_id)
 
-    return daily_use,currDate
+    save_dict_to_file(item_dict,ITEM_DATA_PATH)
+    return currDate
 
 
 
 
-
-def useItem(itemID, n):
-
-    global item_dict
-    item_dict[itemID].Use_Item(n)
 def SetupSimulation(days_to_sim,daily_use,simulation_date):
     global expiredlist
     global usedlist
@@ -109,7 +119,7 @@ def SetupSimulation(days_to_sim,daily_use,simulation_date):
 
     return new_date,expiredlist,usedlist
 
-
+item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
 expiredlist = []
 usedlist = []
 dater = {}

@@ -110,7 +110,8 @@ class Item:
     def Use_Item(self,no_of_uses):
 
         self.uses -= no_of_uses
-
+    def update_status(self,status):
+        self.status = status
 
 
 class Container:

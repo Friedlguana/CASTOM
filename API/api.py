@@ -271,6 +271,7 @@ async def retrieveItem(request: retrieveRequest):
 #3.a identify waste
 @app.get("/api/waste/identify")
 async def wasteIdentify():
+
     #response
     return {
         "success": boolean,
