@@ -93,14 +93,18 @@ class ScreenFunctions():
             garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
             item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
 
-            item_id = [int(item) for item in item_dict.keys]
+
+            item_id = [int(item) for item in item_dict.keys()]
+            print(item_id)
             for item in item_id:
 
-                if item_dict[item].status != None:
-                    garbage_dict.update({item: item_dict[item_id]})
+                if item_dict[item].status != None and item not in garbage_dict.keys():
+
+                    garbage_dict.update({item: item_dict[item].status})
+
 
             save_dict_to_file(garbage_dict, WASTE_DATA_PATH)
-
+            print(garbage_dict)
         def IdentifyWaste(self):
             garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
             return garbage_dict

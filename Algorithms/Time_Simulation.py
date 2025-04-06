@@ -35,7 +35,7 @@ def shiftCurrentDate(dailyUseList, n=1):
     currDate = currDate + datetime.timedelta(days=n)
 
     for items in dailyUseList:
-        if items.get('itemId'):
+        if items['itemId']:
             item_id = items['itemId']
             useItem(item_id, n)
 
@@ -46,9 +46,25 @@ def shiftCurrentDate(dailyUseList, n=1):
                     usedlist.append(item_id)
             else:
                 expiry_date = datetime.datetime.strptime(item.expiry, "%Y-%m-%d")
-                if expiry_date.date() < currDate:
+                if expiry_date.date() <= currDate and item.uses <= 0:
+
+                    days_to_expiry = (expiry_date - datetime.now()).days
+
+                    if days_to_expiry<item.uses:
+                        item.status = "Expired"
+                        expiredlist.append(item_id)
+
+                    elif days_to_expiry>item.uses:
+                        item.status = "Out of Uses"
+                        usedlist.append(item_id)
+
+                elif expiry_date.date() <= currDate :
                     item.status = "Expired"
                     expiredlist.append(item_id)
+
+                elif item.uses <= 0:
+                    item.status = "Out of Uses"
+                    usedlist.append(item_id)
 
         elif 'name' in items:
             name = items['name']
@@ -66,10 +82,10 @@ def shiftCurrentDate(dailyUseList, n=1):
                         item.status = "Expired"
                         expiredlist.append(item_id)
 
-    # Save updated data
-    save_dict_to_file(item_dict, ITEM_DATA_PATH)
+    return daily_use,currDate
 
-    return currDate
+
+
 
 
 def useItem(itemID, n):
@@ -80,9 +96,16 @@ def SetupSimulation(days_to_sim,daily_use,simulation_date):
     global expiredlist
     global usedlist
     global currDate
+    expiredlist = []
+    usedlist = []
+
     currDate = simulation_date
     loader(daily_use)
     new_date = shiftCurrentDate(daily_use,days_to_sim)
+
+    for i in usedlist:
+        print({item_dict[i].status:item_dict[i].uses})
+        print({item_dict[i].status: item_dict[i].expiry})
 
     return new_date,expiredlist,usedlist
 
