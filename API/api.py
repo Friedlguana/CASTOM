@@ -104,9 +104,9 @@ async def placementRecommendations(request: placementRequest):
             }
             placements_template['itemId'] = itemData[ID].item_id
             placements_template['containerId'] = itemData[ID].placed_cont
-            placements_template["position"]["startCoordinates"]["width"] = itemData[ID].x
-            placements_template["position"]["startCoordinates"]["depth"] = itemData[ID].y
-            placements_template["position"]["startCoordinates"]["height"] = itemData[ID].z
+            placements_template["position"]["startCoordinates"]["width"] = float(itemData[ID].x)
+            placements_template["position"]["startCoordinates"]["depth"] = float(itemData[ID].y)
+            placements_template["position"]["startCoordinates"]["height"] = float(itemData[ID].z)
             placements_template["position"]["endCoordinates"]["width"] = itemData[ID].width + float(itemData[ID].x)
             placements_template["position"]["endCoordinates"]["depth"] = itemData[ID].depth + float(itemData[ID].y)
             placements_template["position"]["endCoordinates"]["height"] = itemData[ID].height + float(itemData[ID].z)
@@ -114,6 +114,76 @@ async def placementRecommendations(request: placementRequest):
 
 
 
+            # rearrangements_template = {
+            #     "step": number,
+            #     "action": "string",
+            #     "itemId": "string",
+            #     "fromContainer": "string",
+            #     "fromPosition": {
+            #         "startCoordinates": {
+            #             "width": number,
+            #             "depth": number,
+            #             "height": number
+            #         },
+            #         "endCoordinates": {
+            #             "width": number,
+            #             "depth": number,
+            #             "height": number
+            #         }
+            #     },
+            #     "toContainer": "string",
+            #     "toPosition": {
+            #         "startCoordinates": {
+            #             "width": number,
+            #             "depth": number,
+            #             "height": number
+            #         },
+            #         "endCoordinates": {
+            #             "width": number,
+            #             "depth": number,
+            #             "height": number
+            #         }
+            #     }
+            # }
+        return {
+            "success": boolean,
+            "placements": [placement_result_json
+            ],
+            "rearrangements": [
+
+            ]
+        }
+
+    #THIS IS FOR IF WE NEED REARRAGNMENTS TBD
+    else:
+
+        item_dict=load_or_initialize_item_dict(ITEM_DATA_PATH)
+        container_dict=load_or_initialize_container_dict(CONTAINER_DATA_PATH)
+
+
+        itemobj=open('itemFile.csv','w',newline='')
+        containerobj = open('containerFile.csv','w',newline='')
+        itemCsvWriter=csv.writer(itemobj)
+        containerCsvWriter=csv.writer(containerobj)
+
+        itemCsvWriter.writerow(["item_id", "name", "width_cm", "depth_cm", "height_cm", "mass_kg", "priority", "expiry_date", "usage_limit",
+                                "preferred_zone","x","y","z","placed_cont","placed Status"])
+        containerCsvWriter.writerow(["container_id", "width_cm", "depth_cm", "height_cm", "zone"])
+
+        for item in item_dict.values():
+            itemCsvWriter.writerow([item.item_id, item.name, item.width, item.depth, item.height, item.mass, item.priority, item.expiry, item.uses, item.pref_zone])
+        itemobj.close()
+        for container in container_dict.values():
+            containerCsvWriter.writerow([container.container_id, container.original_width, container.original_depth, container.original_height, container.zone])
+        containerobj.close()
+        obj = ScreenFunctions.SortingScreen("itemFile.csv", "containerFile.csv")
+        binItems, binContainers = obj.BeginSort()
+
+        itemData = load_or_initialize_item_dict(ITEM_DATA_PATH)
+
+        item_ids = [item for item in itemData.keys()]
+        rearrangements_result_json = []
+        for ID in item_ids:
             rearrangements_template = {
                 "step": number,
                 "action": "string",
@@ -145,88 +215,73 @@ async def placementRecommendations(request: placementRequest):
                     }
                 }
             }
+            rearrangements_template['itemId'] = itemData[ID].item_id
+            rearrangements_template["fromContainer"] = item_dict[ID].placed_cont
+            rearrangements_template["fromPosition"]["startCoordinates"]["width"] = float(item_dict[ID].x)
+            rearrangements_template["fromPosition"]["startCoordinates"]["depth"] = float(item_dict[ID].y)
+            rearrangements_template["fromPosition"]["startCoordinates"]["height"] = float(item_dict[ID].z)
+            rearrangements_template["fromPosition"]["endCoordinates"]["width"] = float(item_dict[ID].width) + float(item_dict[ID].x)
+            rearrangements_template["fromPosition"]["endCoordinates"]["depth"] = float(item_dict[ID].depth) + float(item_dict[ID].y)
+            rearrangements_template["fromPosition"]["endCoordinates"]["height"] = float(item_dict[ID].height) + float(item_dict[ID].z)
+            rearrangements_template["toContainer"] = itemData[ID].placed_cont
+            rearrangements_template["toPosition"]["startCoordinates"]["width"] = float(itemData[ID].x)
+            rearrangements_template["toPosition"]["startCoordinates"]["depth"] = float(itemData[ID].y)
+            rearrangements_template["toPosition"]["startCoordinates"]["height"] = float(itemData[ID].z)
+            rearrangements_template["toPosition"]["endCoordinates"]["width"] = float(itemData[ID].width) + float(itemData[ID].x)
+            rearrangements_template["toPosition"]["endCoordinates"]["depth"] = float(itemData[ID].depth) + float(itemData[ID].y)
+            rearrangements_template["toPosition"]["endCoordinates"]["height"] = float(itemData[ID].height) + float(itemData[ID].z)
+            if item_dict[ID].placed_cont==itemData[ID].placed_cont:
+                rearrangements_template['step']=0
+                rearrangements_template['action']="move"
+            else:
+                rearrangements_template['step']=0
+                rearrangements_template['action']="remove"
+                rearrangements_result_json.append(rearrangements_template)
+                rearrangements_template['step']=1
+                rearrangements_template['action']="place"
+
+            rearrangements_result_json.append(rearrangements_template)
+
+            # rearrangements_template = {
+            #     "step": number,
+            #     "action": "string",
+            #     "itemId": "string",
+            #     "fromContainer": "string",
+            #     "fromPosition": {
+            #         "startCoordinates": {
+            #             "width": number,
+            #             "depth": number,
+            #             "height": number
+            #         },
+            #         "endCoordinates": {
+            #             "width": number,
+            #             "depth": number,
+            #             "height": number
+            #         }
+            #     },
+            #     "toContainer": "string",
+            #     "toPosition": {
+            #         "startCoordinates": {
+            #             "width": number,
+            #             "depth": number,
+            #             "height": number
+            #         },
+            #         "endCoordinates": {
+            #             "width": number,
+            #             "depth": number,
+            #             "height": number
+            #         }
+            #     }
+            # }
+
+
         return {
             "success": boolean,
-            "placements": [placement_result_json
-            ],
-            "rearrangements": [
-
+            "placements": [
+                           ],
+            "rearrangements": [rearrangements_result_json
             ]
         }
-    #THIS IS FOR IF WE NEED REARRAGNMENTS TBD
-    # else:
-    #
-    #     binItems, binContainers = obj.BeginSort()
-    #     itemData = load_or_initialize_item_dict(ITEM_DATA_PATH)
-    #
-    #     item_ids = [item for item in itemData.keys()]
-    #     placement_result_json = []
-    #     for ID in item_ids:
-    #         placements_template = {
-    #             "itemId": "string",
-    #             "containerId": "string",
-    #             "position": {
-    #                 "startCoordinates": {
-    #                     "width": number,
-    #                     "depth": number,
-    #                     "height": number
-    #                 },
-    #                 "endCoordinates": {
-    #                     "width": number,
-    #                     "depth": number,
-    #                     "height": number
-    #                 }
-    #             }
-    #         }
-    #         placements_template['itemId'] = itemData[ID].item_id
-    #         placements_template['containerId'] = itemData[ID].placed_cont
-    #         placements_template["position"]["startCoordinates"]["width"] = itemData[ID].x
-    #         placements_template["position"]["startCoordinates"]["depth"] = itemData[ID].y
-    #         placements_template["position"]["startCoordinates"]["height"] = itemData[ID].z
-    #         placements_template["position"]["endCoordinates"]["width"] = itemData[ID].width + itemData[ID].x
-    #         placements_template["position"]["endCoordinates"]["depth"] = itemData[ID].depth + itemData[ID].y
-    #         placements_template["position"]["endCoordinates"]["height"] = itemData[ID].height + itemData[ID].z
-    #         placement_result_json.append(placements_template)
-    #
-    #         rearrangements_template = {
-    #             "step": number,
-    #             "action": "string",
-    #             "itemId": "string",
-    #             "fromContainer": "string",
-    #             "fromPosition": {
-    #                 "startCoordinates": {
-    #                     "width": number,
-    #                     "depth": number,
-    #                     "height": number
-    #                 },
-    #                 "endCoordinates": {
-    #                     "width": number,
-    #                     "depth": number,
-    #                     "height": number
-    #                 }
-    #             },
-    #             "toContainer": "string",
-    #             "toPosition": {
-    #                 "startCoordinates": {
-    #                     "width": number,
-    #                     "depth": number,
-    #                     "height": number
-    #                 },
-    #                 "endCoordinates": {
-    #                     "width": number,
-    #                     "depth": number,
-    #                     "height": number
-    #                 }
-    #             }
-    #         }
-    #     return {
-    #         "success": boolean,
-    #         "placements": [placement_result_json
-    #                        ],
-    #         "rearrangements": [
-    #
-    #         ]
-    #     }
 
 
 #-----------------------------------------------------------------------------------------
