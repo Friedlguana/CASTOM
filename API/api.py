@@ -542,7 +542,7 @@ async def completeUndocking(request: wasteCompleteUndockingRequest):
 
         if expiry != "N/A":
             expiry_date = datetime.strptime(expiry, "%Y-%m-%d")
-            if expiry_date > threshold:
+            if expiry_date <= threshold:
                 number += 1
 
     return {
