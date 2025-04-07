@@ -501,6 +501,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
                 placeback_buffer.append(remove_buffer.pop())
                 #########Visualisation Code Goes Here#########################
                 step += 1
+
             #MARK TARGET
             #target.colour = red
             step += 1
