@@ -107,9 +107,9 @@ async def placementRecommendations(request: placementRequest):
             placements_template["position"]["startCoordinates"]["width"] = itemData[ID].x
             placements_template["position"]["startCoordinates"]["depth"] = itemData[ID].y
             placements_template["position"]["startCoordinates"]["height"] = itemData[ID].z
-            placements_template["position"]["endCoordinates"]["width"] = itemData[ID].width + itemData[ID].x
-            placements_template["position"]["endCoordinates"]["depth"] = itemData[ID].depth + itemData[ID].y
-            placements_template["position"]["endCoordinates"]["height"] = itemData[ID].height + itemData[ID].z
+            placements_template["position"]["endCoordinates"]["width"] = itemData[ID].width + float(itemData[ID].x)
+            placements_template["position"]["endCoordinates"]["depth"] = itemData[ID].depth + float(itemData[ID].y)
+            placements_template["position"]["endCoordinates"]["height"] = itemData[ID].height + float(itemData[ID].z)
             placement_result_json.append(placements_template)
 
 
