@@ -21,7 +21,7 @@ app = FastAPI()
 boolean = True
 number = 0
 csvFile = "file download"
-
+simulated_date = datetime.today().date()
 
 
 
@@ -55,6 +55,8 @@ class placementRequest(BaseModel):
 
 @app.post("/api/placement")
 async def placementRecommendations(request: placementRequest):
+
+
     number = None
     ## Example usage
     # container_ids = [container.containerId for container in request.containers]
@@ -67,7 +69,6 @@ async def placementRecommendations(request: placementRequest):
                             "preferred_zone","x","y","z","placed_cont","placed Status"])
     containerCsvWriter.writerow(["container_id", "width_cm", "depth_cm", "height_cm", "zone"])
 
-
     for item in request.items:
         itemCsvWriter.writerow([item.itemId, item.name, item.width, item.depth, item.height, 0, item.priority, item.expiryDate, item.usageLimit, item.preferredZone])
     itemobj.close()
@@ -76,78 +77,157 @@ async def placementRecommendations(request: placementRequest):
     containerobj.close()
     obj = ScreenFunctions.SortingScreen("itemFile.csv", "containerFile.csv")
 
-    binItems, binContainers = obj.BeginSort()
     itemData = load_or_initialize_item_dict(ITEM_DATA_PATH)
-    item_ids = [ item for item in itemData.keys()]
-    placement_result_json = []
-    for ID in item_ids:
-        placements_template = {
-            "itemId": "string",
-            "containerId": "string",
-            "position": {
-                "startCoordinates": {
-                    "width": number,
-                    "depth": number,
-                    "height": number
-                },
-                "endCoordinates": {
-                    "width": number,
-                    "depth": number,
-                    "height": number
+    if itemData == {}:
+
+        binItems, binContainers = obj.BeginSort()
+        itemData = load_or_initialize_item_dict(ITEM_DATA_PATH)
+
+        item_ids = [ item for item in itemData.keys()]
+        placement_result_json = []
+        for ID in item_ids:
+            placements_template = {
+                "itemId": "string",
+                "containerId": "string",
+                "position": {
+                    "startCoordinates": {
+                        "width": number,
+                        "depth": number,
+                        "height": number
+                    },
+                    "endCoordinates": {
+                        "width": number,
+                        "depth": number,
+                        "height": number
+                    }
                 }
             }
-        }
-        placements_template['itemId'] = itemData[ID].item_id
-        placements_template['containerId'] = itemData[ID].placed_cont
-        placements_template["position"]["startCoordinates"]["width"] = itemData[ID].x
-        placements_template["position"]["startCoordinates"]["depth"] = itemData[ID].y
-        placements_template["position"]["startCoordinates"]["height"] = itemData[ID].z
-        placements_template["position"]["endCoordinates"]["width"] = itemData[ID].width + itemData[ID].x
-        placements_template["position"]["endCoordinates"]["depth"] = itemData[ID].depth + itemData[ID].y
-        placements_template["position"]["endCoordinates"]["height"] = itemData[ID].height + itemData[ID].z
-        placement_result_json.append(placements_template)
+            placements_template['itemId'] = itemData[ID].item_id
+            placements_template['containerId'] = itemData[ID].placed_cont
+            placements_template["position"]["startCoordinates"]["width"] = itemData[ID].x
+            placements_template["position"]["startCoordinates"]["depth"] = itemData[ID].y
+            placements_template["position"]["startCoordinates"]["height"] = itemData[ID].z
+            placements_template["position"]["endCoordinates"]["width"] = itemData[ID].width + itemData[ID].x
+            placements_template["position"]["endCoordinates"]["depth"] = itemData[ID].depth + itemData[ID].y
+            placements_template["position"]["endCoordinates"]["height"] = itemData[ID].height + itemData[ID].z
+            placement_result_json.append(placements_template)
 
 
 
-        rearrangements_template = {
-            "step": number,
-            "action": "string",
-            "itemId": "string",
-            "fromContainer": "string",
-            "fromPosition": {
-                "startCoordinates": {
-                    "width": number,
-                    "depth": number,
-                    "height": number
+            rearrangements_template = {
+                "step": number,
+                "action": "string",
+                "itemId": "string",
+                "fromContainer": "string",
+                "fromPosition": {
+                    "startCoordinates": {
+                        "width": number,
+                        "depth": number,
+                        "height": number
+                    },
+                    "endCoordinates": {
+                        "width": number,
+                        "depth": number,
+                        "height": number
+                    }
                 },
-                "endCoordinates": {
-                    "width": number,
-                    "depth": number,
-                    "height": number
-                }
-            },
-            "toContainer": "string",
-            "toPosition": {
-                "startCoordinates": {
-                    "width": number,
-                    "depth": number,
-                    "height": number
-                },
-                "endCoordinates": {
-                    "width": number,
-                    "depth": number,
-                    "height": number
+                "toContainer": "string",
+                "toPosition": {
+                    "startCoordinates": {
+                        "width": number,
+                        "depth": number,
+                        "height": number
+                    },
+                    "endCoordinates": {
+                        "width": number,
+                        "depth": number,
+                        "height": number
+                    }
                 }
             }
-        }
-    return {
-        "success": boolean,
-        "placements": [placement_result_json
-        ],
-        "rearrangements": [
+        return {
+            "success": boolean,
+            "placements": [placement_result_json
+            ],
+            "rearrangements": [
 
-        ]
-    }
+            ]
+        }
+    #THIS IS FOR IF WE NEED REARRAGNMENTS TBD
+    # else:
+    #
+    #     binItems, binContainers = obj.BeginSort()
+    #     itemData = load_or_initialize_item_dict(ITEM_DATA_PATH)
+    #
+    #     item_ids = [item for item in itemData.keys()]
+    #     placement_result_json = []
+    #     for ID in item_ids:
+    #         placements_template = {
+    #             "itemId": "string",
+    #             "containerId": "string",
+    #             "position": {
+    #                 "startCoordinates": {
+    #                     "width": number,
+    #                     "depth": number,
+    #                     "height": number
+    #                 },
+    #                 "endCoordinates": {
+    #                     "width": number,
+    #                     "depth": number,
+    #                     "height": number
+    #                 }
+    #             }
+    #         }
+    #         placements_template['itemId'] = itemData[ID].item_id
+    #         placements_template['containerId'] = itemData[ID].placed_cont
+    #         placements_template["position"]["startCoordinates"]["width"] = itemData[ID].x
+    #         placements_template["position"]["startCoordinates"]["depth"] = itemData[ID].y
+    #         placements_template["position"]["startCoordinates"]["height"] = itemData[ID].z
+    #         placements_template["position"]["endCoordinates"]["width"] = itemData[ID].width + itemData[ID].x
+    #         placements_template["position"]["endCoordinates"]["depth"] = itemData[ID].depth + itemData[ID].y
+    #         placements_template["position"]["endCoordinates"]["height"] = itemData[ID].height + itemData[ID].z
+    #         placement_result_json.append(placements_template)
+    #
+    #         rearrangements_template = {
+    #             "step": number,
+    #             "action": "string",
+    #             "itemId": "string",
+    #             "fromContainer": "string",
+    #             "fromPosition": {
+    #                 "startCoordinates": {
+    #                     "width": number,
+    #                     "depth": number,
+    #                     "height": number
+    #                 },
+    #                 "endCoordinates": {
+    #                     "width": number,
+    #                     "depth": number,
+    #                     "height": number
+    #                 }
+    #             },
+    #             "toContainer": "string",
+    #             "toPosition": {
+    #                 "startCoordinates": {
+    #                     "width": number,
+    #                     "depth": number,
+    #                     "height": number
+    #                 },
+    #                 "endCoordinates": {
+    #                     "width": number,
+    #                     "depth": number,
+    #                     "height": number
+    #                 }
+    #             }
+    #         }
+    #     return {
+    #         "success": boolean,
+    #         "placements": [placement_result_json
+    #                        ],
+    #         "rearrangements": [
+    #
+    #         ]
+    #     }
+
 
 #-----------------------------------------------------------------------------------------
 
@@ -255,6 +335,7 @@ async def searchItem(
 
         result_json["retrievalSteps"].append(template)
         step +=1
+
     # response
     return result_json
 
@@ -268,66 +349,46 @@ class retrieveRequest(BaseModel):
 
 @app.post("/api/retrieve")
 async def retrieveItem(request: retrieveRequest):
-    try:
-        # Load data
-        item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
-        container_dict = load_or_initialize_container_dict(CONTAINER_DATA_PATH)
 
-        # Validate input
-        item_id = int(request.itemId)
-        if item_id not in item_dict:
-            return {"success": False, "message": "Item not found"}
+    #logging
+    logdict = {"itemId" : request.itemId,
+               "userId": request.userId,
+               "timestamp":request.timestamp,
+               "actionType":"retrieval",
+               }
+    save_logdict_to_file(logdict,LOG_DATA_PATH)
 
-        # Get target container from item data
-        target_container = item_dict[item_id].placed_cont
-
-        # Find retrieval path
-        paths, found = SetupRetrieval(item_id, target_container)
-        if not found:
-            return {"success": False, "message": "No retrieval path found"}
-
-        # Generate steps
-        retrieval_steps = []
-        step_counter = 0
-
-        # Use the first available path (algorithm returns shortest path)
-        container_id, item_sequence = next(iter(paths.items()))
-
-        # Remove phase
-        for item in item_sequence[:-1]:  # Last item is the target
-            retrieval_steps.append({
-                "step": step_counter,
-                "action": "remove",
-                "itemId": str(item),
-                "itemName": item_dict[item].name
-            })
-            step_counter += 1
-
-        # Retrieve phase
-        retrieval_steps.append({
-            "step": step_counter,
-            "action": "retrieve",
-            "itemId": request.itemId,
-            "itemName": item_dict[item_id].name
-        })
-        step_counter += 1
-
-        # Placeback phase (reverse order)
-        for item in reversed(item_sequence[:-1]):
-            retrieval_steps.append({
-                "step": step_counter,
-                "action": "placeBack",
-                "itemId": str(item),
-                "itemName": item_dict[item].name
-            })
-            step_counter += 1
-
-        return {
+    return {
             "success": True,
         }
 
-    except Exception as e:
-        return {"success": False, "message": str(e)}
+class place_params(BaseModel):
+    itemId: str
+    userId: str
+    timestamp: str  # ISO
+    containerId: str
+    width: Union[int, float]
+    depth: Union[int, float]
+    height: Union[int, float]
+
+@app.post("/api/place")
+async def place_item(request: place_params):
+
+    logdict = {"itemId": request.itemId,
+               "userId": request.userId,
+               "timestamp": request.timestamp,
+               "action":"placement"}
+    save_logdict_to_file(logdict, LOG_DATA_PATH)
+
+    item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
+
+    item2place = Algorithms.Algo_Picker.ScreenFunctions.RetrivalScreen(request.itemId, item_dict[request.itemId])
+    val = item2place.PlaceItem(request.itemId,request.containerId,(request.width,request.depth,request.height))
+
+    return {
+        "success" : val
+    }
+
 
 #-----------------------------------------------------------------------------------------
 
@@ -368,8 +429,8 @@ async def wasteIdentify():
 
     #response
     return {
-        "success": found,
-        "wasteItems": [result]
+        "success": True,
+        "wasteItems": result
     }
 
 #3.b waste return plan
@@ -380,35 +441,54 @@ class wasteReturnPlanRequest(BaseModel):
 @app.post("/api/waste/return-plan")
 async def wasteReturnPlan(request: wasteReturnPlanRequest):
     waste = Algorithms.Algo_Picker.ScreenFunctions.UndockingScreen()
-    path_to_items,slated_return = waste.ReturnPlan()
+    path_to_items,slated_return,maxweight,volume = waste.ReturnPlan(request.undockingContainerId,request.undockingDate,request.maxWeight)
 
-    item_ids = [id for id in path_to_items.keys()]
+    cont_ids = [id.keys()[0] for id in path_to_items]
 
-    remove_buffer = list(path_to_items.values())[0][::-1]
-    placeback_buffer = []
-    for i in range(len(list(path_to_items.values())[0])):
+    returnplan = []
+    step = 0
+    for i in slated_return:
+
+        temp = {
+            "step": step,
+            "itemId": waste[i].item_id,
+            "itemName": waste[i].name,
+            "fromContainer": waste[i].placed_cont,
+            "toContainer": request.undockingContainerId
+        }
+
+        returnplan.append(temp)
+        step+=1
+
+    returnsteps = []
+    for i in path_to_items:
+        remove_buffer = list(i.values())[0][::-1]
+        placeback_buffer = []
+
         step = 0
-        while remove_buffer != [itemId]:
+        for j in range(len(remove_buffer) -1):
             removed_item = remove_buffer.pop()
-            placeback_buffer.append(remove_buffer.pop())
+            placeback_buffer.append(removed_item)
             template = {
-                "step": step,
-                "action": "move",  # Possible values: "remove", "retrieve", "placeBack"
-                "itemId": removed_item,
-                "itemName": itemData[removed_item].name
-            }
+                    "step": step,
+                    "action": "remove",  # Possible values: "remove", "retrieve", "placeBack"
+                    "itemId": removed_item,
+                    "itemName": itemData[removed_item].name
+                }
+            returnsteps.append(template)
             step += 1
-            result_json["retrievalSteps"].append(template)
 
         template = {
             "step": step,
-            "action": "remove",  # Possible values: "remove", "retrieve", "placeBack"
-            "itemId": itemId,
-            "itemName": itemName
+            "action": "retrieve",  # Possible values: "remove", "retrieve", "placeBack"
+            "itemId": remove_buffer.pop(),
+            "itemName": itemData[itemId].name
         }
+        returnsteps.append(template)
         step += 1
-        result_json["retrievalSteps"].append(template)
-        while placeback_buffer != []:
+
+
+        for j in range(len(placeback_buffer)):
             placed_item = placeback_buffer.pop()
             template = {
                 "step": step,
@@ -417,42 +497,30 @@ async def wasteReturnPlan(request: wasteReturnPlanRequest):
                 "itemName": itemData[placed_item].name
             }
 
-            result_json["retrievalSteps"].append(template)
+            returnsteps.append(template)
+            step +=1
 
+    returnItems = []
+    for i in slated_return:
+        temp ={
+            "itemId": waste[i].item_id,
+            "name": waste[i].name,
+            "reason": waste[i].status
+          }
+        returnItems.append(temp)
 
 
     #response
     return {
         "success": boolean,
-        "returnPlan": [
-            {
-                "step": number,
-                "itemId": "string",
-                "itemName": "string",
-                "fromContainer": "string",
-                "toContainer": "string"
-            }
-        ],
-        "retrievalSteps": [
-            {
-                "step": number,
-                "action": "string",  # "remove", "setAside", "retrieve", "placeBack"
-                "itemId": "string",
-                "itemName": "string"
-            }
-        ],
+        "returnPlan": returnplan,
+        "retrievalSteps": returnsteps,
         "returnManifest": {
-            "undockingContainerId": "string",
-            "undockingDate": "string",
-            "returnItems": [
-                {
-                    "itemId": "string",
-                    "name": "string",
-                    "reason": "string"
-                }
-            ],
-            "totalVolume": number,
-            "totalWeight": number
+            "undockingContainerId": request.undockingContainerId,
+            "undockingDate": request.undockingDate,
+            "returnItems": returnItems,
+            "totalVolume": volume,
+            "totalWeight": maxweight
         }
     }
 
@@ -633,27 +701,6 @@ async def returnlogs(request: log_params):
         ]
     }
 
-class place_params(BaseModel):
-    itemId: str
-    userId: str
-    timestamp: str  # ISO
-    containerId: str
-    width: Union[int, float]
-    depth: Union[int, float]
-    height: Union[int, float]
-
-@app.post("/api/place")
-async def place_item(request: place_params):
-    print("📦 /api/place route loaded and available")
-
-    item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
-
-    item2place = Algorithms.Algo_Picker.ScreenFunctions.RetrivalScreen(request.itemId, item_dict[request.itemId])
-    val = item2place.PlaceItem(request.itemId,request.containerId,(request.width,request.depth,request.height))
-
-    return {
-        "success" : val
-    }
 
 
 

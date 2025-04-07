@@ -137,11 +137,17 @@ class ScreenFunctions():
 
             slated_return = []
             mass_sum = 0
+            totvol = 0
             while mass_sum < maxweight:
-                temp_obj = weighted.pop()
+                try:
+                    temp_obj = weighted.pop()
+                except IndexError:
+                    break
                 slated_return.append(temp_obj)
                 mass_sum += temp_obj.mass
-
+                totvol += temp_obj.volume
+            if slated_return:
+                extra = slated_return.pop()
             path_to_items = []
             for i in slated_return:
                 route = ScreenFunctions.RetrivalScreen(i.item_id, i.name,None, i.placed_cont)
@@ -149,7 +155,7 @@ class ScreenFunctions():
                 path_to_items.append(path)
 
             #print(path_to_items,slated_return,slated_return)
-            return path_to_items,slated_return
+            return path_to_items,slated_return,maxweight,totvol
 
 
         def Complete_Undocking(self,udc, jet_time):

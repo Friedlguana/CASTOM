@@ -81,10 +81,8 @@ def save_dict_to_file(data, filepath):
     filepath = Path(filepath)
     with open(filepath, "wb") as file:
         pickle.dump(data, file)
-    #print(f"[INFO] Saved data to: {filepath}")
 
-#item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
-#container_dict = load_or_initialize_container_dict(CONTAINER_DATA_PATH)
-
-#save_dict_to_file(item_dict, ITEM_DATA_PATH)
-#save_dict_to_file(container_dict, CONTAINER_DATA_PATH)
+def save_logdict_to_file(data, filepath):
+    filepath = Path(filepath)
+    with open(filepath, "ab") as file:
+        pickle.dump(data, file)

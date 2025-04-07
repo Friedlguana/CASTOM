@@ -17,10 +17,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QDateEdit, QFrame,
     QGridLayout, QHBoxLayout, QHeaderView, QLabel,
-    QLineEdit, QMainWindow, QProgressBar, QPushButton,
-    QSizePolicy, QSpacerItem, QStackedWidget, QTableWidget,
-    QTableWidgetItem, QTextEdit, QTimeEdit, QVBoxLayout,
-    QWidget)
+    QLineEdit, QMainWindow, QPushButton, QSizePolicy,
+    QSpacerItem, QStackedWidget, QTableWidget, QTableWidgetItem,
+    QTextEdit, QTimeEdit, QVBoxLayout, QWidget)
 import resources_rc
 
 class Ui_MainWindow(object):
@@ -1519,63 +1518,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_12.addWidget(self.onship_table)
 
-        self.ud_btn_frame = QFrame(self.tables_btns_frame)
-        self.ud_btn_frame.setObjectName(u"ud_btn_frame")
-        self.ud_btn_frame.setStyleSheet(u"QPushButton{\n"
-"border:none;\n"
-"border-radius: 0;\n"
-"}")
-        self.ud_btn_frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.ud_btn_frame.setFrameShadow(QFrame.Shadow.Raised)
-        self.verticalLayout_18 = QVBoxLayout(self.ud_btn_frame)
-        self.verticalLayout_18.setObjectName(u"verticalLayout_18")
-        self.btn_moveall = QPushButton(self.ud_btn_frame)
-        self.btn_moveall.setObjectName(u"btn_moveall")
-        self.btn_moveall.setStyleSheet(u"\n"
-"padding: 2px 2px;\n"
-"background-repeat: None;")
-        icon7 = QIcon()
-        icon7.addFile(u":/icons/images/icons/cil-chevron-double-right.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.btn_moveall.setIcon(icon7)
-
-        self.verticalLayout_18.addWidget(self.btn_moveall)
-
-        self.btn_moveone = QPushButton(self.ud_btn_frame)
-        self.btn_moveone.setObjectName(u"btn_moveone")
-        self.btn_moveone.setStyleSheet(u"\n"
-"padding: 2px 2px;\n"
-"background-repeat: None;")
-        icon8 = QIcon()
-        icon8.addFile(u":/icons/images/icons/cil-arrow-right.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.btn_moveone.setIcon(icon8)
-
-        self.verticalLayout_18.addWidget(self.btn_moveone, 0, Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignVCenter)
-
-        self.btn_returnone = QPushButton(self.ud_btn_frame)
-        self.btn_returnone.setObjectName(u"btn_returnone")
-        self.btn_returnone.setStyleSheet(u"\n"
-"padding: 2px 2px;\n"
-"background-repeat: None;")
-        icon9 = QIcon()
-        icon9.addFile(u":/icons/images/icons/cil-arrow-left.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.btn_returnone.setIcon(icon9)
-
-        self.verticalLayout_18.addWidget(self.btn_returnone)
-
-        self.bt_returnall = QPushButton(self.ud_btn_frame)
-        self.bt_returnall.setObjectName(u"bt_returnall")
-        self.bt_returnall.setStyleSheet(u"\n"
-"padding: 2px 2px;\n"
-"background-repeat: None;")
-        icon10 = QIcon()
-        icon10.addFile(u":/icons/images/icons/cil-chevron-double-left.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.bt_returnall.setIcon(icon10)
-
-        self.verticalLayout_18.addWidget(self.bt_returnall)
-
-
-        self.horizontalLayout_12.addWidget(self.ud_btn_frame, 0, Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignVCenter)
-
         self.slated4return = QTableWidget(self.tables_btns_frame)
         if (self.slated4return.columnCount() < 4):
             self.slated4return.setColumnCount(4)
@@ -1597,12 +1539,6 @@ class Ui_MainWindow(object):
 
 
         self.verticalLayout.addWidget(self.tables_btns_frame)
-
-        self.progressBar = QProgressBar(self.undocking)
-        self.progressBar.setObjectName(u"progressBar")
-        self.progressBar.setValue(0)
-
-        self.verticalLayout.addWidget(self.progressBar)
 
         self.frame_14 = QFrame(self.undocking)
         self.frame_14.setObjectName(u"frame_14")
@@ -1688,9 +1624,9 @@ class Ui_MainWindow(object):
         self.btn_timesim_reset.setObjectName(u"btn_timesim_reset")
         self.btn_timesim_reset.setStyleSheet(u"padding: 8px 25px;\n"
 "font: bold 9pt \"Segoe UI\";")
-        icon11 = QIcon()
-        icon11.addFile(u":/icons/images/icons/cil-reload.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.btn_timesim_reset.setIcon(icon11)
+        icon7 = QIcon()
+        icon7.addFile(u":/icons/images/icons/cil-reload.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.btn_timesim_reset.setIcon(icon7)
 
         self.horizontalLayout_8.addWidget(self.btn_timesim_reset)
 
@@ -1785,7 +1721,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(3)
+        self.stackedWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1870,10 +1806,6 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Status", None));
         ___qtablewidgetitem3 = self.onship_table.horizontalHeaderItem(3)
         ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Weight", None));
-        self.btn_moveall.setText("")
-        self.btn_moveone.setText("")
-        self.btn_returnone.setText("")
-        self.bt_returnall.setText("")
         ___qtablewidgetitem4 = self.slated4return.horizontalHeaderItem(0)
         ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"ID", None));
         ___qtablewidgetitem5 = self.slated4return.horizontalHeaderItem(1)

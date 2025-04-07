@@ -1820,7 +1820,7 @@ background: transparent;
 </string>
                      </property>
                      <property name="currentIndex">
-                      <number>3</number>
+                      <number>2</number>
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
@@ -2543,88 +2543,6 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                             </column>
                            </widget>
                           </item>
-                          <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
-                           <widget class="QFrame" name="ud_btn_frame">
-                            <property name="styleSheet">
-                             <string notr="true">QPushButton{
-border:none;
-border-radius: 0;
-}</string>
-                            </property>
-                            <property name="frameShape">
-                             <enum>QFrame::Shape::StyledPanel</enum>
-                            </property>
-                            <property name="frameShadow">
-                             <enum>QFrame::Shadow::Raised</enum>
-                            </property>
-                            <layout class="QVBoxLayout" name="verticalLayout_18">
-                             <item>
-                              <widget class="QPushButton" name="btn_moveall">
-                               <property name="styleSheet">
-                                <string notr="true">
-padding: 2px 2px;
-background-repeat: None;</string>
-                               </property>
-                               <property name="text">
-                                <string/>
-                               </property>
-                               <property name="icon">
-                                <iconset resource="resources.qrc">
-                                 <normaloff>:/icons/images/icons/cil-chevron-double-right.png</normaloff>:/icons/images/icons/cil-chevron-double-right.png</iconset>
-                               </property>
-                              </widget>
-                             </item>
-                             <item alignment="Qt::AlignmentFlag::AlignHCenter|Qt::AlignmentFlag::AlignVCenter">
-                              <widget class="QPushButton" name="btn_moveone">
-                               <property name="styleSheet">
-                                <string notr="true">
-padding: 2px 2px;
-background-repeat: None;</string>
-                               </property>
-                               <property name="text">
-                                <string/>
-                               </property>
-                               <property name="icon">
-                                <iconset resource="resources.qrc">
-                                 <normaloff>:/icons/images/icons/cil-arrow-right.png</normaloff>:/icons/images/icons/cil-arrow-right.png</iconset>
-                               </property>
-                              </widget>
-                             </item>
-                             <item>
-                              <widget class="QPushButton" name="btn_returnone">
-                               <property name="styleSheet">
-                                <string notr="true">
-padding: 2px 2px;
-background-repeat: None;</string>
-                               </property>
-                               <property name="text">
-                                <string/>
-                               </property>
-                               <property name="icon">
-                                <iconset resource="resources.qrc">
-                                 <normaloff>:/icons/images/icons/cil-arrow-left.png</normaloff>:/icons/images/icons/cil-arrow-left.png</iconset>
-                               </property>
-                              </widget>
-                             </item>
-                             <item>
-                              <widget class="QPushButton" name="bt_returnall">
-                               <property name="styleSheet">
-                                <string notr="true">
-padding: 2px 2px;
-background-repeat: None;</string>
-                               </property>
-                               <property name="text">
-                                <string/>
-                               </property>
-                               <property name="icon">
-                                <iconset resource="resources.qrc">
-                                 <normaloff>:/icons/images/icons/cil-chevron-double-left.png</normaloff>:/icons/images/icons/cil-chevron-double-left.png</iconset>
-                               </property>
-                              </widget>
-                             </item>
-                            </layout>
-                           </widget>
-                          </item>
                           <item>
                            <widget class="QTableWidget" name="slated4return">
                             <property name="styleSheet">
@@ -2662,13 +2580,6 @@ background-repeat: None;</string>
                            </widget>
                           </item>
                          </layout>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QProgressBar" name="progressBar">
-                         <property name="value">
-                          <number>0</number>
-                         </property>
                         </widget>
                        </item>
                        <item>

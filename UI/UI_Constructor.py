@@ -591,7 +591,12 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             data.append(temp_data)
 
         self.onship_table.setRowCount(len(data))
-        self.onship_table.setColumnCount(len(data[0]) if len(data[0]) else 0)
+        try:
+            col = len(data[0])
+        except IndexError:
+            col = 0
+
+        self.onship_table.setColumnCount(col)
 
         for row_idx, row_data in enumerate(data):
             for col_idx, value in enumerate(row_data):
@@ -613,23 +618,36 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             return
 
         garbage = Algorithms.Algo_Picker.ScreenFunctions.UndockingScreen()
-        item_paths,items_to_return = garbage.ReturnPlan(self.undockingcontname, 32, self.max_weight)
+        item_paths,items_to_return,max_weight,tot_vol = garbage.ReturnPlan(self.undockingcontname, 32, self.max_weight)
+        garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
+        garbage_id = [id for id in garbage_dict.keys()]
 
         data = []
-        for i in garbage_id:
-            temp_data = [i, item_dict[i].name, item_dict[i].status, item_dict[i].mass]
+        for i in items_to_return:
+            temp_data = [i.item_id, i.name, i.status, i.mass]
             data.append(temp_data)
 
-        self.onship_table.setRowCount(len(data))
-        self.onship_table.setColumnCount(len(data[0]) if len(data[0]) else 0)
+        self.slated4return.setRowCount(len(data))
+        self.slated4return.setColumnCount(len(data[0]) if len(data[0]) else 0)
 
         for row_idx, row_data in enumerate(data):
             for col_idx, value in enumerate(row_data):
                 item = QTableWidgetItem(str(value))
-                self.onship_table.setItem(row_idx, col_idx, item)
+                self.slated4return.setItem(row_idx, col_idx, item)
 
 
     def button_complete_dock(self):
+
+        item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
+        garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
+
+        garb_id = [id for id in garbage_dict.keys()]
+        for id in garb_id:
+            item_dict.pop(id,None)
+            garbage_dict.pop(id,None)
+
+        save_dict_to_file(item_dict,ITEM_DATA_PATH)
+        save_dict_to_file(garbage_dict,WASTE_DATA_PATH)
 
         self.undockingcontname = self.le_udc_name
         if not self.undockingcontname:
@@ -638,6 +656,9 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
         garbage = Algorithms.Algo_Picker.ScreenFunctions.UndockingScreen()
         num,date = garbage.Complete_Undocking(self.undockingcontname,self.simulated_date)
+
+        self.slated4return.clear()
+        self.onship_table.clear()
         return num,date
         print(num,date)
 
