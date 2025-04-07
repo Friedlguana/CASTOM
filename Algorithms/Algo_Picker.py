@@ -165,11 +165,3 @@ class ScreenFunctions():
 
             return sum(garbage_ids), jet_time
 
-
-
-
-
-
-
-
-
