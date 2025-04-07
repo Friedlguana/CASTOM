@@ -21,14 +21,14 @@ from datetime import datetime
 """from glass_engine import *
 from glass_engine.Geometries import *
 from glass_engine.Lights import *"""
-from pyglm import glm
+#from pyglm import glm
 import time
 import pickle
 
 
 import Algorithms.Algo_Picker
 from main import Ui_MainWindow
-from Object_Creator import *
+#from Object_Creator import *
 from Algorithms import *
 
 from Algorithms.utils.file_loader import (
@@ -71,6 +71,11 @@ class MplCanvas(FigureCanvas):
         self.ax.set_facecolor(dark_gray_rgb)         # Set axes background
 
         self.setParent(parent)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.updateGeometry()
+
+    def sizeHint(self):
+        return self.size()
 
 
 
@@ -166,15 +171,23 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         widgets.btn_exit.clicked.connect(self.buttonClick)
         # Initialize Matplotlib canvas
         self.mpl_canvas = MplCanvas(self.sort_visualiser)
+        self.search_canvas = MplCanvas(self.search_visualiser)
 
         # Create layout for visualizer widget
         layout = QVBoxLayout(self.sort_visualiser)
+        layout2 = QVBoxLayout(self.search_visualiser)
+
         layout.setContentsMargins(0, 0, 0, 0)
+        layout2.setContentsMargins(0, 0, 0, 0)
 
         # Add navigation toolbar
         self.toolbar = NavigationToolbar(self.mpl_canvas, self)
+        self.toolbar = NavigationToolbar(self.search_canvas, self)
         layout.addWidget(self.toolbar)
         layout.addWidget(self.mpl_canvas)
+        layout2.addWidget(self.search_canvas)
+        layout2.addWidget(self.toolbar)
+
 
         # Clock Logic
 
@@ -216,12 +229,12 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.btn_sorting_sort.clicked.connect( self.sort_btn_function)
         self.resetSim.clicked.connect(self.reset_btn_function)
 
-        self.sorting_cont_comboBox.currentTextChanged.connect( self.combox_glass_engine)
+        self.sorting_cont_comboBox.currentTextChanged.connect(lambda cont_id: self.create_plot(1,cont_id))
 
         ###Retrieval Page Definitions################################################3
         self.btn_search_search.clicked.connect(self.Search_Trigger)
+        #self.btn_search_next.clicked.connect(self.)
         self.btn_search_retrieve.clicked.connect( self.Retrieval_Trigger)
-        # self.btn_search_next.clicked.connect(self.
 
 
 
@@ -336,126 +349,125 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
     first = True
 
-    def combox_glass_engine(self, cont_ID):
+    def create_plot(self, type, container_needed=None, item_needed=None):
+        # ======== Container Data ========
+        CONTAINERS = {}
+        cont = []
+        item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
 
-        '''if self.first:
+        if type == 2:
+            container_needed = item_dict[item_needed].placed_cont
 
-            if cont_ID == "":
-                pass
-            else:
-                container_ID = cont_ID
-                #GlassEngineWidget.Create_Digi_Twin(self.glass_engine_widget, self.cont_dict[container_ID],
-                                                   #self.item_dict)
-                self.first = False
+        # Filter items for the container
+        for item in item_dict:
+            if item_dict[item].placed_cont == container_needed:
+                itemer = {
+                    "Position": (float(item_dict[item].x), float(item_dict[item].y), float(item_dict[item].z)),
+                    "Dimensions": (
+                    float(item_dict[item].width), float(item_dict[item].depth), float(item_dict[item].height)),
+                    "ID": item_dict[item].item_id
+                }
+                cont.append(itemer)
+        CONTAINERS[container_needed] = cont
+        # ======== Visualization Functions ========
+        def plot_cuboid(ax, position, dimensions, color):
 
-        else:
-            if cont_ID == "":
-                pass
-            else:
-                #GlassEngineWidget.Clear_Scene(self.glass_engine_widget)
-                container_ID = cont_ID
-                #GlassEngineWidget.Create_Digi_Twin(self.glass_engine_widget, self.cont_dict[container_ID],
-                                                   #self.item_dict)'''
+            """Plot a 3D cuboid with specified position and dimensions"""
+            x, y, z = position
+            dx, dy, dz = dimensions
 
-        def create_plot(container_needed):
-            # ======== Container Data ========
-            CONTAINERS = {}
-            cont = []
-            item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)  # Load item data
+            # Define cuboid vertices
+            vertices = [
+                [x, y, z],
+                [x + dx, y, z],
+                [x + dx, y + dy, z],
+                [x, y + dy, z],
+                [x, y, z + dz],
+                [x + dx, y, z + dz],
+                [x + dx, y + dy, z + dz],
+                [x, y + dy, z + dz],
+            ]
 
-            # Filter items belonging to the specified container
-            for item in item_dict:
-                if item_dict[item].placed_cont == container_needed:
-                    itemer = {
-                        "Position": (float(item_dict[item].x), float(item_dict[item].y), float(item_dict[item].z)),
-                        "Dimensions": (
-                            float(item_dict[item].width), float(item_dict[item].depth), float(item_dict[item].height)
-                        ),
-                    }
-                    cont.append(itemer)
-            CONTAINERS[container_needed] = cont
+            # Define cube faces
+            faces = [
+                [vertices[0], vertices[1], vertices[5], vertices[4]],  # Bottom
+                [vertices[2], vertices[3], vertices[7], vertices[6]],  # Top
+                [vertices[0], vertices[3], vertices[2], vertices[1]],  # Front
+                [vertices[4], vertices[5], vertices[6], vertices[7]],  # Back
+                [vertices[0], vertices[4], vertices[7], vertices[3]],  # Left
+                [vertices[1], vertices[5], vertices[6], vertices[2]],  # Right
+            ]
 
-            # ======== Visualization Functions ========
-            def plot_cuboid(ax, position, dimensions, color):
-                """Plot a 3D cuboid with specified position and dimensions"""
-                x, y, z = position
-                dx, dy, dz = dimensions
+            ax.add_collection3d(Poly3DCollection(faces, facecolors=color,
+                                                 edgecolors='black', alpha=0.8))
 
-                # Define cuboid vertices
-                vertices = [
-                    [x, y, z],
-                    [x + dx, y, z],
-                    [x + dx, y + dy, z],
-                    [x, y + dy, z],
-                    [x, y, z + dz],
-                    [x + dx, y, z + dz],
-                    [x + dx, y + dy, z + dz],
-                    [x, y + dy, z + dz],
-                ]
+        def visualize_container(container_name):
+            """Visualize a single container inside the sort_visualiser widget"""
 
-                # Define cube faces
-                faces = [
-                    [vertices[0], vertices[1], vertices[5], vertices[4]],  # Bottom
-                    [vertices[2], vertices[3], vertices[7], vertices[6]],  # Top
-                    [vertices[0], vertices[3], vertices[2], vertices[1]],  # Front
-                    [vertices[4], vertices[5], vertices[6], vertices[7]],  # Back
-                    [vertices[0], vertices[4], vertices[7], vertices[3]],  # Left
-                    [vertices[1], vertices[5], vertices[6], vertices[2]],  # Right
-                ]
+            if type == 1:
+                canvas = self.mpl_canvas  # sort_visualizer
+            elif type == 2:
+                canvas = self.search_canvas  # search_visualizer
+            # Clear previous plot from canvas
+            canvas.ax.clear()
 
-                ax.add_collection3d(Poly3DCollection(faces, facecolors=color,
-                                                     edgecolors='black', alpha=0.8))
+            # Set background colors to match the dark theme
+            dark_gray_rgb = (44 / 255, 49 / 255, 58 / 255)  # Convert RGB values to normalized format (0-1)
+            canvas.fig.patch.set_facecolor(dark_gray_rgb)  # Figure background
+            canvas.ax.set_facecolor(dark_gray_rgb)  # Axes background
 
-            def visualize_container(container_name):
-                """Visualize a single container inside the sort_visualiser widget"""
+            # Customize gridlines and labels for better visibility
+            canvas.ax.grid(color='gray', linestyle='--', linewidth=0.5)
+
+            # Change axis labels and ticks to white for visibility
+            canvas.ax.xaxis.label.set_color('white')  # X-axis label color
+            canvas.ax.yaxis.label.set_color('white')  # Y-axis label color
+            canvas.ax.zaxis.label.set_color('white')  # Z-axis label color
+
+            canvas.ax.tick_params(axis='x', colors='white')
+            canvas.ax.tick_params(axis='y', colors='white')
+            canvas.ax.tick_params(axis='z', colors='white')
+
+            # Set title with white text color
+            canvas.ax.set_title(f"Container {container_name}", fontweight='bold', color='white')
+
+            canvas.ax.set_xlabel("X-axis", color='white')  # X-axis label text color
+            canvas.ax.set_ylabel("Y-axis", color='white')  # Y-axis label text color
+            canvas.ax.set_zlabel("Z-axis", color='white')  # Z-axis label text color
+            if type==1:
                 items = CONTAINERS.get(container_name)
                 if not items:
                     print(f"No items found in container {container_name}")
                     return
-
-                # Clear previous plot from canvas
-                self.mpl_canvas.ax.clear()
-
-                # Set background colors to match the dark theme
-                dark_gray_rgb = (44 / 255, 49 / 255, 58 / 255)  # Convert RGB values to normalized format (0-1)
-                self.mpl_canvas.fig.patch.set_facecolor(dark_gray_rgb)  # Figure background
-                self.mpl_canvas.ax.set_facecolor(dark_gray_rgb)  # Axes background
-
-                # Customize gridlines and labels for better visibility
-                self.mpl_canvas.ax.grid(color='gray', linestyle='--', linewidth=0.5)
-
-                # Change axis labels and ticks to white for visibility
-                self.mpl_canvas.ax.xaxis.label.set_color('white')  # X-axis label color
-                self.mpl_canvas.ax.yaxis.label.set_color('white')  # Y-axis label color
-                self.mpl_canvas.ax.zaxis.label.set_color('white')  # Z-axis label color
-
-                self.mpl_canvas.ax.tick_params(axis='x', colors='white')
-                self.mpl_canvas.ax.tick_params(axis='y', colors='white')
-                self.mpl_canvas.ax.tick_params(axis='z', colors='white')
-
-                # Set title with white text color
-                self.mpl_canvas.ax.set_title(f"Container {container_name}", fontweight='bold', color='white')
-
-                self.mpl_canvas.ax.set_xlabel("X-axis", color='white')  # X-axis label text color
-                self.mpl_canvas.ax.set_ylabel("Y-axis", color='white')  # Y-axis label text color
-                self.mpl_canvas.ax.set_zlabel("Z-axis", color='white')  # Z-axis label text color
 
                 # Plot each item with random color
                 for item in items:
                     color = (random.random(), random.random(), random.random())
                     plot_cuboid(self.mpl_canvas.ax, item["Position"], item["Dimensions"], color)
 
-                # Set equal aspect ratio and redraw canvas
                 self.mpl_canvas.ax.set_box_aspect([1, 1, 1])
 
                 self.mpl_canvas.draw()
+            elif type==2:
+                items = CONTAINERS.get(container_name)
+                if not items:
+                    print(f"No items found in container {container_name}")
+                    return
 
-            # ======== Run Visualization ========
-            visualize_container(container_needed)
+                # Plot each item with random color
+                for item in items:
+                    if item["ID"]==item_needed:
+                        color = ("red","red","red")
+                    else:
+                        color=("white","white","white")
+                    plot_cuboid(canvas.ax, item["Position"], item["Dimensions"], color)
+                    self.search_canvas.ax.set_box_aspect([1, 1, 1])
+                    self.search_canvas.draw()
+
+        # ======== Run Visualization ========
+        visualize_container(container_needed)
 
         # Call the function with the desired container ID
-        create_plot(cont_ID)
-
     def reset_btn_function(self):
         self.sorting_cont_comboBox.clear()
         #GlassEngineWidget.Clear_Scene(self.glass_engine_widget)
@@ -472,6 +484,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
         route = Algorithms.Algo_Picker.ScreenFunctions.RetrivalScreen(self.searchitem_id, self.searchitem_name,
                                                                       self.searchcont_id, self.astro_id)
+        self.create_plot(2,item_needed=self.searchitem_id)
+        print(self.searchcont_id,self.searchitem_id)
         self.steps, self.bool = route.BeginRetrieval()
         print(self.steps,self.bool)
 
@@ -493,7 +507,6 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
                 placeback_buffer.append(remove_buffer.pop())
                 #########Visualisation Code Goes Here#########################
                 step += 1
-
 
             #MARK TARGET
             #target.colour = red
