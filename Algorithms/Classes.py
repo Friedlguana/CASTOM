@@ -1,48 +1,44 @@
 import math
 import numpy as np
-class Item:
 
-    def __init__(self, item_id, name, width, depth, height, mass, priority, expiry, uses, pref_zone, x=None, y=None,
-                 z=None, placed_cont=None, placed =False,status = None):
+from collections import defaultdict
+MAX_WORKERS = 8
+MIN_CELL_SIZE = 100  # Reduced from 250mm for better collision detection
+
+
+import math
+from collections import defaultdict
+from dataclasses import dataclass
+
+
+@dataclass
+class Item:
+    def __init__(self, item_id, name, width, depth, height, mass, priority, expiry, uses, pref_zone,fixed_position=False):
+        # Convert cm to mm
+        self.original_width = int(width * 10)
+        self.original_depth = int(depth * 10)
+        self.original_height = int(height * 10)
+
         self.item_id = item_id
         self.name = name
-        self.original_width = int(math.ceil(10*width))
-        self.original_depth = int(math.ceil(10*depth))
-        self.original_height = int(math.ceil(10*height))
-        self.rotation = 0
-
-        self.apply_rotation()
-
         self.mass = mass
-        self.x = x
-        self.y = y
-        self.z = z
-        self.placed_cont = placed_cont
-        self.pref_zone = pref_zone
-        self.priority = int(priority)
+        self.priority = priority
         self.expiry = expiry
         self.uses = uses
-        self.status = status
-        self.volume = self.original_width * self.original_depth * self.original_height
-        self.fixed_position = all([x is not None, y is not None, z is not None])
-        self.placed = placed or self.fixed_position
-        if any(d < 0 for d in (self.width, self.depth, self.height)):
-            raise ValueError(f"Invalid dimensions for item {item_id}")
+        self.pref_zone = pref_zone
+        self.rotation = 0
+        self.x = self.y = self.z = None
+        self.placed = False
+        self.placed_cont = None
+        self.apply_rotation()
+        self.fixed_position = fixed_position
 
     def apply_rotation(self):
-        """Update dimensions based on rotation state using 3D permutations"""
-        rotations = [
-            (self.original_width, self.original_depth, self.original_height),
-            (self.original_width, self.original_height, self.original_depth),
-            (self.original_depth, self.original_width, self.original_height),
-            (self.original_depth, self.original_height, self.original_width),
-            (self.original_height, self.original_width, self.original_depth),
-            (self.original_height, self.original_depth, self.original_width)
-        ]
+        rotations = self.get_rotation_states()
         self.width, self.depth, self.height = rotations[self.rotation % 6]
+        self.volume = self.width * self.depth * self.height
 
     def get_rotation_states(self):
-        """Return all possible dimension permutations for rotation detection"""
         return [
             (self.original_width, self.original_depth, self.original_height),
             (self.original_width, self.original_height, self.original_depth),
@@ -114,14 +110,32 @@ class Item:
 
 
 class Container:
-    def __init__(self, zone, container_id, width, depth, height):
-        self.zone = zone
+    def __init__(self, container_id, width, depth, height, zone):
         self.container_id = container_id
-        self.original_width = int(math.floor(10*width))
-        self.original_depth = int(math.floor(10*depth))
-        self.original_height = int(math.floor(10*height))
+        self.original_width = int(width * 10)
+        self.original_depth = int(depth * 10)
+        self.original_height = int(height * 10)
         self.zone = zone
+        self.grid = {}
+        self.cell_size = MIN_CELL_SIZE
 
+    def get_grid_cells(self, item):
+        x = int(item.x)
+        y = int(item.y)
+        z = int(item.z)
+        width = int(item.width)
+        depth = int(item.depth)
+        height = int(item.height)
+        x_start = x // self.cell_size
+        x_end = (x+width) // self.cell_size
+        y_start = y // self.cell_size
+        y_end = (y + depth) // self.cell_size
+        z_start = z // self.cell_size
+        z_end = (z + height) // self.cell_size
 
-        if any(d <= 0 for d in (self.original_width, self.original_depth, self.original_height)):
-            raise ValueError(f"Invalid dimensions for container {container_id}")
+        return [
+            (x, y, z)
+            for x in range(x_start, x_end + 1)
+            for y in range(y_start, y_end + 1)
+            for z in range(z_start, z_end + 1)
+        ]
