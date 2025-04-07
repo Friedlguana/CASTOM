@@ -1,11 +1,12 @@
 import math
 import csv
 import pickle
+from concurrent.futures import ThreadPoolExecutor
 from config import *
 from .utils.file_loader import *
-
 from .Classes import *
 from py3dbp import Packer, Bin as PyBin, Item as PyItem
+
 
 def sort_items(items):
     return sorted(items, key=lambda x: (-x.priority, -x.volume))
@@ -55,22 +56,36 @@ def validate_placement(item, container):
             item.z + item.height <= container.original_height)
 
 
-def start_BFD(zone_map):
-    # First pass: preferred zones
-    for container in containers:
-        preferred_items = [i for i in Overall_List
-                           if not i.placed
-                           and not i.fixed_position
-                           and i.pref_zone == container.zone]
+def process_zone(zone_containers, zone_items):
+    """Process containers in one zone sequentially"""
+    sorted_items = sort_items(zone_items)
 
-        if not preferred_items:
-            continue
+    for container in zone_containers:
+        if not sorted_items:
+            break
 
-        sorted_items = sort_items(preferred_items)
         py3dbp_bin = pack_container(container, sorted_items)
-
         if py3dbp_bin:
             update_container_placements(container, py3dbp_bin)
+            # Update remaining items for next containers in zone
+            sorted_items = [i for i in sorted_items if not i.placed]
+
+
+def start_BFD(zone_map):
+    # First pass: parallel zone processing
+    with ThreadPoolExecutor() as executor:
+        # Create zone tasks (zone_containers, zone_items)
+        zone_tasks = []
+        for zone_id, zone_containers in zone_map.items():
+            zone_items = [i for i in Overall_List
+                          if not i.placed
+                          and not i.fixed_position
+                          and i.pref_zone == zone_id]
+            if zone_items:  # Only create tasks for zones with items
+                zone_tasks.append((zone_containers, zone_items))
+
+        # Submit all zones for parallel processing
+        executor.map(lambda args: process_zone(*args), zone_tasks)
 
     # Second pass: remaining items
     remaining = [i for i in Overall_List if not i.placed and not i.fixed_position]
@@ -85,15 +100,15 @@ def start_BFD(zone_map):
             update_container_placements(container, py3dbp_bin)
             remaining = [i for i in Overall_List if not i.placed and not i.fixed_position]
 
-
+    # Convert dimensions from mm to cm
     for item in Overall_List:
-        item.x=item.x/10
-        item.y=item.y/10
-        item.z=item.z/10
-        item.width=item.width/10
-        item.height=item.height/10
-        item.depth=item.depth/10
-        item_dict.update({int(item.item_id) : item})
+        item.x = item.x / 10
+        item.y = item.y / 10
+        item.z = item.z / 10
+        item.width = item.width / 10
+        item.height = item.height / 10
+        item.depth = item.depth / 10
+        item_dict.update({int(item.item_id): item})
 
     save_dict_to_file(item_dict, ITEM_DATA_PATH)
 
@@ -149,11 +164,12 @@ def load_items(file_path):
                 width=float(row['width_cm']),
                 depth=float(row['depth_cm']),
                 height=float(row['height_cm']),
-                mass= float(row["mass_kg"]),
+                mass=float(row["mass_kg"]),
                 priority=int(row['priority']),
                 expiry=str(row["expiry_date"]),
                 uses=int(row['usage_limit']),
-                pref_zone=row['preferred_zone']
+                pref_zone=row['preferred_zone'],
+                fixed_position = bool(row.get('fixed_position', False))
             ))
     return items
 
@@ -190,42 +206,29 @@ def initialise():
             item.x = item.y = item.z = None
 
 
-def OpenFileSort(item_fname,cont_fname):
+def OpenFileSort(item_fname, cont_fname):
     global Overall_List
-    Overall_List =load_items(item_fname)
+    Overall_List = load_items(item_fname)
     global cont_dict
     cont_dict = load_containers(cont_fname)
 
     initialise()
 
     zone_map = {}
-    for c in cont_dict:
+    for c in containers:
         if c.zone not in zone_map:
             zone_map[c.zone] = []
         zone_map[c.zone].append(c)
 
-    path = start_BFD(zone_map)
+    start_BFD(zone_map)
     print_results()
-    return (item_fname,cont_fname)
+    return (item_fname, cont_fname)
 
 
-
-
-#you input the item id to remove that object from placement
+# Global variables
 To_Remove_List = []
-#you give me the item object that needs to be added
-To_Add_list=[]
+To_Add_list = []
 containers = []
 item_dict = {}
 cont_dict = {}
-
-
-
-
-
-
-
-
-
-
-
+Overall_List = []
