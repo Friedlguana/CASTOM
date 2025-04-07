@@ -76,11 +76,6 @@ class MplCanvas(FigureCanvas):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.updateGeometry()
 
-    def sizeHint(self):
-        return self.size()
-
-
-
 
 widgets = None
 
@@ -181,14 +176,17 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
         layout.setContentsMargins(0, 0, 0, 0)
         layout2.setContentsMargins(0, 0, 0, 0)
-
         # Add navigation toolbar
-        self.toolbar = NavigationToolbar(self.mpl_canvas, self)
-        self.toolbar = NavigationToolbar(self.search_canvas, self)
-        layout.addWidget(self.toolbar)
+        self.sort_toolbar = NavigationToolbar(self.mpl_canvas, self)
+
+
+        # Add widgets in consistent order
+        layout.addWidget(self.sort_toolbar)
         layout.addWidget(self.mpl_canvas)
+
+
         layout2.addWidget(self.search_canvas)
-        layout2.addWidget(self.toolbar)
+
 
 
         # Clock Logic
@@ -487,6 +485,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
                     self.search_canvas.draw()
             else:
                 global iteration
+                if type==5:
+                    iteration -= 1
                 ahead=retrieval[iteration:]
                 behind=retrieval[:iteration]
                 items = CONTAINERS.get(container_name)
@@ -510,8 +510,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
                         self.search_canvas.draw()
                 if type==4:
                     iteration+=1
-                else:
-                    iteration-= 1
+
 
 
 
@@ -579,10 +578,9 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
 
     def Prev_Item(self):
-        print("Hello")
         global iteration
         steper = list(self.steps.values())[0]
-        if iteration >= 0:
+        if iteration > 0:
             self.create_plot(5, item_needed=self.searchitem_id, retrieval=steper)
 
     ################################################################################################################################3######

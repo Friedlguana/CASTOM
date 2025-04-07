@@ -2162,7 +2162,7 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                          </layout>
                         </widget>
                        </item>
-                       <item alignment="Qt::AlignmentFlag::AlignBottom">
+                       <item>
                         <widget class="QFrame" name="footer">
                          <property name="frameShape">
                           <enum>QFrame::Shape::StyledPanel</enum>
@@ -2259,7 +2259,11 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                          <layout class="QHBoxLayout" name="horizontalLayout_10">
                           <item>
                            <widget class="QWidget" name="search_visualiser" native="true">
-                            <layout class="QGridLayout" name="gridLayout_5"/>
+                            <layout class="QGridLayout" name="gridLayout_5">
+                             <property name="sizeConstraint">
+                              <enum>QLayout::SizeConstraint::SetNoConstraint</enum>
+                             </property>
+                            </layout>
                            </widget>
                           </item>
                          </layout>
