@@ -530,9 +530,23 @@ class wasteCompleteUndockingRequest(BaseModel):
     timestamp: str #iso
 @app.post("/api/waste/complete-undocking")
 async def completeUndocking(request: wasteCompleteUndockingRequest):
-    #response
+
+    itemData = load_or_initialize_item_dict(ITEM_DATA_PATH)
+    containerData = load_or_initialize_container_dict(CONTAINER_DATA_PATH)
+
+    threshold = datetime.strptime(wasteCompleteUndockingRequest.timestamp, "%Y-%m-%d")
+    number = 0
+
+    for item in itemData.values():
+        expiry = item.expiry
+
+        if expiry != "N/A":
+            expiry_date = datetime.strptime(expiry, "%Y-%m-%d")
+            if expiry_date > threshold:
+                number += 1
+
     return {
-        "success": boolean,
+        "success": true,
         "itemsRemoved": number
     }
 
