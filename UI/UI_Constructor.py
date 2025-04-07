@@ -25,6 +25,8 @@ from pyglm import glm
 import time
 import pickle
 
+iteration=0
+
 
 import Algorithms.Algo_Picker
 from main import Ui_MainWindow
@@ -229,11 +231,12 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.btn_sorting_sort.clicked.connect( self.sort_btn_function)
         self.resetSim.clicked.connect(self.reset_btn_function)
 
-        self.sorting_cont_comboBox.currentTextChanged.connect(lambda cont_id: self.create_plot(1,cont_id))
+        self.sorting_cont_comboBox.currentTextChanged.connect(lambda cont_id: self.create_plot(1,container_needed=cont_id))
 
         ###Retrieval Page Definitions################################################3
         self.btn_search_search.clicked.connect(self.Search_Trigger)
-        #self.btn_search_next.clicked.connect(self.)
+        self.btn_search_next.clicked.connect(self.Next_Item)
+        self.btn_search_prevstep.clicked.connect(self.Prev_Item)
         self.btn_search_retrieve.clicked.connect( self.Retrieval_Trigger)
 
 
@@ -349,14 +352,15 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
     first = True
 
-    def create_plot(self, type, container_needed=None, item_needed=None):
+    def create_plot(self, type, container_needed=None, item_needed=None,retrieval=None):
         # ======== Container Data ========
         CONTAINERS = {}
         cont = []
         item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
 
-        if type == 2:
-            container_needed = item_dict[item_needed].placed_cont
+        if type !=1:
+            print(item_needed)
+            container_needed = item_dict[int(item_needed)].placed_cont
 
         # Filter items for the container
         for item in item_dict:
@@ -368,6 +372,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
                     "ID": item_dict[item].item_id
                 }
                 cont.append(itemer)
+
         CONTAINERS[container_needed] = cont
         # ======== Visualization Functions ========
         def plot_cuboid(ax, position, dimensions, color):
@@ -406,7 +411,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
             if type == 1:
                 canvas = self.mpl_canvas  # sort_visualizer
-            elif type == 2:
+            else:
                 canvas = self.search_canvas  # search_visualizer
             # Clear previous plot from canvas
             canvas.ax.clear()
@@ -463,6 +468,55 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
                     plot_cuboid(canvas.ax, item["Position"], item["Dimensions"], color)
                     self.search_canvas.ax.set_box_aspect([1, 1, 1])
                     self.search_canvas.draw()
+            elif type==3:
+                items = CONTAINERS.get(container_name)
+                if not items:
+                    print(f"No items found in container {container_name}")
+                    return
+
+                # Plot each item with random color
+                for item in items:
+                    if item["ID"] == int(item_needed):
+                        color = ("red", "red", "red")
+                    elif item["ID"] in retrieval:
+                        color = ("yellow", "yellow", "yellow")
+                    else:
+                        color=("white","white","white")
+                    plot_cuboid(canvas.ax, item["Position"], item["Dimensions"], color)
+                    self.search_canvas.ax.set_box_aspect([1, 1, 1])
+                    self.search_canvas.draw()
+            else:
+                global iteration
+                ahead=retrieval[iteration:]
+                behind=retrieval[:iteration]
+                items = CONTAINERS.get(container_name)
+                if not items:
+                    print(f"No items found in container {container_name}")
+                    return
+
+                # Plot each item with random color
+                for item in items:
+                    if item["ID"] == int(item_needed):
+                        color = ("red", "red", "red")
+                    elif item["ID"]==int(ahead[0]):
+                        color = ("yellow", "yellow", "yellow")
+                    elif item["ID"] in ahead:
+                        color = ("orange", "orange", "orange")
+                    else:
+                        color = ("white", "white", "white")
+                    if (item["ID"]) not in behind:
+                        plot_cuboid(canvas.ax, item["Position"], item["Dimensions"], color)
+                        self.search_canvas.ax.set_box_aspect([1, 1, 1])
+                        self.search_canvas.draw()
+                if type==4:
+                    iteration+=1
+                else:
+                    iteration-= 1
+
+
+
+
+
 
         # ======== Run Visualization ========
         visualize_container(container_needed)
@@ -485,9 +539,9 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         route = Algorithms.Algo_Picker.ScreenFunctions.RetrivalScreen(self.searchitem_id, self.searchitem_name,
                                                                       self.searchcont_id, self.astro_id)
         self.create_plot(2,item_needed=self.searchitem_id)
-        print(self.searchcont_id,self.searchitem_id)
         self.steps, self.bool = route.BeginRetrieval()
-        print(self.steps,self.bool)
+        global iteration
+        iteration=0
 
     def Retrieval_Trigger(self):
 
@@ -495,7 +549,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.searchitem_name = self.le_item_name.text()
         self.searchcont_id = self.le_cont_id.text() if self.le_cont_id.text() else None
         self.astro_id = self.le_astro_id.text()
-
+        self.create_plot(3, item_needed=self.searchitem_id, retrieval=list(self.steps.values())[0])
         item_dict[self.searchitem_id].Use_Item()
 
         remove_buffer = list(steps[0].values())[0][::-1]
@@ -511,19 +565,25 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             #MARK TARGET
             #target.colour = red
             step += 1
-
-
             while placeback_buffer != []:
                 placed_item = placeback_buffer.pop()
                 #########Visualisation Code Goes Here#########################
                 step += 1
-
-
     def Next_Item(self):
-        pass
+        global iteration
+        steper = list(self.steps.values())[0]
+        if iteration<len(steper):
+            self.create_plot(4,item_needed=self.searchitem_id,retrieval=steper)
+
+
+
 
     def Prev_Item(self):
-        pass
+        print("Hello")
+        global iteration
+        steper = list(self.steps.values())[0]
+        if iteration >= 0:
+            self.create_plot(5, item_needed=self.searchitem_id, retrieval=steper)
 
     ################################################################################################################################3######
 
