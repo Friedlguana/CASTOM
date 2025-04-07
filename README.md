@@ -24,8 +24,8 @@
 
 ### Usage:
 In order to run the program, you must first download all the py files in _main_ and download all the packages mentioned above (If not installed already).
-1) API Support: The program supports the usage of API to create endpoints and perform automated testing of the code. (port 8000)
-2) User Interface: The user interface is run by executing UI_Constructor.py.
+1) API Support: The program supports the usage of API to create endpoints and perform automated testing of the code. (port 8000). The api.py program is located in the API folder
+2) User Interface: The user interface is run by executing UI_Constructor.py. This file is located in the UI directory.
 
 HOME SCREEN:
 ![image](https://github.com/user-attachments/assets/aebdd861-dd32-4981-ac95-5e2adf53ab03)
