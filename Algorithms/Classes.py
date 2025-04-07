@@ -1,24 +1,24 @@
 import math
 import numpy as np
-
+import math
+from collections import defaultdict
+from dataclasses import dataclass
 from collections import defaultdict
 MAX_WORKERS = 8
 MIN_CELL_SIZE = 100  # Reduced from 250mm for better collision detection
 
 
-import math
-from collections import defaultdict
-from dataclasses import dataclass
+
 
 
 @dataclass
 class Item:
-    def __init__(self, item_id, name, width, depth, height, mass, priority, expiry, uses, pref_zone,fixed_position=False):
+    def __init__(self, item_id, name, width, depth, height, mass, priority, expiry, uses, pref_zone,fixed_position=False,status = None,x = 0,y = 0 ,z = 0):
         # Convert cm to mm
         self.original_width = int(width * 10)
         self.original_depth = int(depth * 10)
         self.original_height = int(height * 10)
-
+        self.status = status
         self.item_id = item_id
         self.name = name
         self.mass = mass
@@ -27,7 +27,9 @@ class Item:
         self.uses = uses
         self.pref_zone = pref_zone
         self.rotation = 0
-        self.x = self.y = self.z = None
+        self.x = x
+        self.y = y
+        self.z = z
         self.placed = False
         self.placed_cont = None
         self.apply_rotation()

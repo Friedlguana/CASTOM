@@ -22,7 +22,8 @@ boolean = True
 number = 0
 csvFile = "file download"
 simulated_date = datetime.today().date()
-
+disposed_items = []
+first_run = True
 
 
 
@@ -77,8 +78,15 @@ async def placementRecommendations(request: placementRequest):
     containerobj.close()
     obj = ScreenFunctions.SortingScreen("itemFile.csv", "containerFile.csv")
 
-    itemData = load_or_initialize_item_dict(ITEM_DATA_PATH)
-    if itemData == {}:
+    global first_run
+    if first_run:
+        first_run = False
+        log_dict = {
+            "logs": [
+
+            ]
+        }
+
 
         binItems, binContainers = obj.BeginSort()
         itemData = load_or_initialize_item_dict(ITEM_DATA_PATH)
@@ -86,6 +94,20 @@ async def placementRecommendations(request: placementRequest):
         item_ids = [ item for item in itemData.keys()]
         placement_result_json = []
         for ID in item_ids:
+
+            log_template = {
+                "timestamp": simulated_date,
+                "userId": "string",
+                "actionType": "string",
+                "itemId": "string",
+                "details": {
+                    "fromContainer": "string",
+                    "toContainer": "string",
+                    "reason": "string"
+                }
+            }
+
+
             placements_template = {
                 "itemId": "string",
                 "containerId": "string",
@@ -112,39 +134,6 @@ async def placementRecommendations(request: placementRequest):
             placements_template["position"]["endCoordinates"]["height"] = itemData[ID].height + float(itemData[ID].z)
             placement_result_json.append(placements_template)
 
-
-
-            # rearrangements_template = {
-            #     "step": number,
-            #     "action": "string",
-            #     "itemId": "string",
-            #     "fromContainer": "string",
-            #     "fromPosition": {
-            #         "startCoordinates": {
-            #             "width": number,
-            #             "depth": number,
-            #             "height": number
-            #         },
-            #         "endCoordinates": {
-            #             "width": number,
-            #             "depth": number,
-            #             "height": number
-            #         }
-            #     },
-            #     "toContainer": "string",
-            #     "toPosition": {
-            #         "startCoordinates": {
-            #             "width": number,
-            #             "depth": number,
-            #             "height": number
-            #         },
-            #         "endCoordinates": {
-            #             "width": number,
-            #             "depth": number,
-            #             "height": number
-            #         }
-            #     }
-            # }
         return {
             "success": boolean,
             "placements": [placement_result_json
@@ -306,18 +295,18 @@ async def searchItem(
     # container_ids = [cont for cont in containerData.keys()]
 
     success = True
-    try:
+    # try:
 
-        route = ScreenFunctions.RetrivalScreen(itemId, itemName,itemData[itemId].placed_cont, userId)
-        path,found = route.BeginRetrieval()
-        steps = path
+    route = ScreenFunctions.RetrivalScreen(itemId, itemName,userId, itemData[itemId].placed_cont)
+    path, found = route.BeginRetrieval()
+    steps = path
 
-    except Exception:
-        success = Exception
-        found = 0
-        steps = {}
+    # except Exception:
+    #     success = Exception
+    #     found = 0
+    #     steps = {}
 
-    itemId = list(path.values())[0][-1]
+    itemId = list(steps.values())[0][-1]
 
     result_json = {
         "success": boolean,
@@ -437,7 +426,7 @@ async def place_item(request: place_params):
 
     item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
 
-    item2place = Algorithms.Algo_Picker.ScreenFunctions.RetrivalScreen(request.itemId, item_dict[request.itemId])
+    item2place = Algorithms.Algo_Picker.ScreenFunctions.RetrivalScreen(int(request.itemId), item_dict[int(request.itemId)],request.userId,request.containerId)
     val = item2place.PlaceItem(request.itemId,request.containerId,(request.width,request.depth,request.height))
 
     return {

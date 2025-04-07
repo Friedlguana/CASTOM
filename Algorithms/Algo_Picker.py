@@ -22,6 +22,8 @@ class ScreenFunctions():
 
             return self.sortedfpath
 
+
+
         def ResetSort(self):
             self.sortedfpath = None
             self.f_itemspath = None
@@ -79,6 +81,8 @@ class ScreenFunctions():
 
             item = item_dict[self.searchitem_id]
             item.x,item.y,item.z = x,y,z
+
+            save_dict_to_file(item_dict,ITEM_DATA_PATH)
 
             return True
 

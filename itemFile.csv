@@ -1,2 +1,4 @@
 item_id,name,width_cm,depth_cm,height_cm,mass_kg,priority,expiry_date,usage_limit,preferred_zone,x,y,z,placed_cont,placed Status
-string,string,0.0,0.0,0.0,0,0,string,0,string
+1999,Emergency_Oxygen_Mask,49.1,27.9,43.5,0,95,2025-12-31,4721,Crew_Quarters
+2000,Research_Samples,22.0,13.3,22.3,0,56,2026-03-15,4972,Lab
+1998,Thruster_Fuel,25.4,25.1,39.8,0,8,2025-11-10,2585,Crew_Quarters
