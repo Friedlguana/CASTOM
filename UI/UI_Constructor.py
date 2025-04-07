@@ -21,14 +21,14 @@ from datetime import datetime
 """from glass_engine import *
 from glass_engine.Geometries import *
 from glass_engine.Lights import *"""
-from pyglm import glm
+#from pyglm import glm
 import time
 import pickle
 
 
 import Algorithms.Algo_Picker
 from main import Ui_MainWindow
-from Object_Creator import *
+#from Object_Creator import *
 from Algorithms import *
 
 from Algorithms.utils.file_loader import (
