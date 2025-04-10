@@ -40,6 +40,7 @@ class Item(BaseModel):
     width: float
     depth: float
     height: float
+    mass: float
     priority: int
     expiryDate: str
     usageLimit: int
