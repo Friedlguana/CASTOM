@@ -106,8 +106,11 @@ class Item:
         return self.z
 
     def Use_Item(self,no_of_uses):
+        self.uses = int(self.uses)
+        self.uses -= int(no_of_uses)
+        print(f'[DEBUG]{type(self.uses)}')
+        print(f'[DEBUG]{type(no_of_uses)}')
 
-        self.uses -= no_of_uses
     def update_status(self,status):
         self.status = status
 

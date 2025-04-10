@@ -1,6 +1,6 @@
 from fastapi import (FastAPI, Query, UploadFile, File, HTTPException)
 from pydantic import BaseModel
-
+import numpy as np
 
 from typing import List, Optional, Literal,Union
 from datetime import datetime
@@ -21,7 +21,9 @@ app = FastAPI()
 boolean = True
 number = 0
 csvFile = "file download"
-simulated_date = datetime.today().date()
+simulated_date = datetime.fromisoformat(datetime.strftime(datetime.today(), r"%Y-%m-%d")).date()
+# print(simulated_date) [DEBUG]
+# simulated_date = datetime.today().date().isoformat()
 disposed_items = []
 first_run = True
 
@@ -43,7 +45,7 @@ class Item(BaseModel):
     mass: float
     priority: int
     expiryDate: Optional[str] = "N/A"
-    usageLimit: Optional[int] = None
+    usageLimit: Optional[int] = np.inf
     preferredZone: str
 class Container(BaseModel):
     containerId: str
@@ -280,9 +282,9 @@ async def placementRecommendations(request: placementRequest):
 #2.a Item Search Request
 @app.get("/api/search")
 async def searchItem(
-    itemId: int = Query(None, description="itemID"),
-    itemName: str = Query(None, description="itemName"),
-    userId: str = Query(None, description="userID")
+    itemId: Optional[str] = Query(None, description="itemID"),
+    itemName: Optional[str] = Query(None, description="itemName"),
+    userId: Optional[str] = Query(None, description="userID")
 ):
 
     number = None
@@ -388,9 +390,9 @@ async def searchItem(
 #2.b Item Retrieval Request
 #'Request' structure definition
 class retrieveRequest(BaseModel):
-    itemId: str
-    userId: str
-    timestamp: str
+    itemId: Optional[str] = Query(None, description="itemId")
+    userId: Optional[str] = Query(None, description="userId")
+    timestamp: str 
 
 @app.post("/api/retrieve")
 async def retrieveItem(request: retrieveRequest):
@@ -408,8 +410,8 @@ async def retrieveItem(request: retrieveRequest):
         }
 
 class place_params(BaseModel):
-    itemId: str
-    userId: str
+    itemId: str 
+    userId: Optional[str]= "guest"
     timestamp: str  # ISO
     containerId: str
     width: Union[int, float]
@@ -591,7 +593,7 @@ async def completeUndocking(request: wasteCompleteUndockingRequest):
                 number += 1
 
     return {
-        "success": true,
+        "success": True,
         "itemsRemoved": number
     }
 
@@ -599,7 +601,7 @@ async def completeUndocking(request: wasteCompleteUndockingRequest):
 
 #4 Time simulation
 class ItemToUse(BaseModel):
-    itemId: str
+    itemId: Optional[str] = None
     name: Optional[str] = None
 
 class SimulationRequest(BaseModel):
@@ -607,78 +609,79 @@ class SimulationRequest(BaseModel):
     toTimestamp: Optional[str] = None
     itemsToBeUsedPerDay: List[ItemToUse] = []
 
-class itemUsed(BaseModel):
-    itemId: str
-    name: str
-    remainingUses: int
+# class itemUsed(BaseModel):
+#     itemId: str
+#     name: str
+#     remainingUses: int
 
-class itemExpired(BaseModel):
-    itemId: str
-    name: str
+# class itemExpired(BaseModel):
+#     itemId: str
+#     name: str
 
-class simulationChanges(BaseModel):
-    itemsUsed: List[itemUsed]
-    itemsExpired: List[itemExpired]
-    itemsDepletedToday: List[itemExpired]
+# class simulationChanges(BaseModel):
+#     itemsUsed: List[itemUsed]
+#     itemsExpired: List[itemExpired]
+#     itemsDepletedToday: List[itemExpired]
 
-class simulationResponse(BaseModel):
-    success: bool
-    newDate: str
-    changes: simulationChanges
+# class simulationResponse(BaseModel):
+#     success: bool
+#     newDate: str
+#     changes: simulationChanges
 
 @app.post("/api/simulate/day")
 async def simulateDay(request: SimulationRequest):
-    try:
-        # Validate input - either numOfDays or toTimestamp must be provided
-        if request.numOfDays is None and request.toTimestamp is None:
-            raise HTTPException(status_code=400, detail="Either numOfDays or toTimestamp must be provided")
+    global simulated_date
+    # try:
+    # Validate input - either numOfDays or toTimestamp must be provided
+    if request.numOfDays is None and request.toTimestamp is None:
+        raise HTTPException(status_code=400, detail="Either numOfDays or toTimestamp must be provided")
 
-        # Convert itemsToBeUsedPerDay to the format expected by TimeSimScreen
-        items_to_use = [{"itemId": item.itemId, "name": item.name} for item in request.itemsToBeUsedPerDay]
+    # Convert itemsToBeUsedPerDay to the format expected by TimeSimScreen
+    items_to_use = [{"itemId": item.itemId, "name": item.name} for item in request.itemsToBeUsedPerDay]
 
-        # Parse timestamp if provided
-        sim_date = None
-        if request.toTimestamp:
-            try:
-                sim_date = datetime.fromisoformat(request.toTimestamp)
-            except ValueError:
-                raise HTTPException(status_code=400, detail="Invalid ISO format for toTimestamp")
+    # Parse timestamp if provided
+    sim_date = None
+    if request.toTimestamp:
+        sim_date = datetime.fromisoformat(request.toTimestamp).date()
+        curr = datetime.strftime(simulated_date,r'%Y-%m-%d')
+        sim_days = (simulated_date - sim_date).days
 
-        # Create TimeSimScreen instance and begin simulation
-        time_sim_screen = ScreenFunctions.TimeSimScreen(
-            no_of_days=request.numOfDays,
-            usage_list=items_to_use,
-            sim_date=sim_date
-        )
+    # Create TimeSimScreen instance and begin simulation
+    time_sim_screen = ScreenFunctions.TimeSimScreen(
+        no_of_days=request.numOfDays if request.numOfDays else int(sim_days),
+        usage_list=items_to_use,
+        sim_date=simulated_date
+    )
 
-        # Call BeginSimulation which returns new_date, expired_list, used_list
-        new_date, expired_list, used_list = time_sim_screen.BeginSimulation()
+    
+    # Call BeginSimulation which returns new_date, expired_list, used_list
+    simulated_date, item_dict, expired_list, used_list = time_sim_screen.BeginSimulation()
+    simulated_date = datetime.strftime(simulated_date, r'%Y-%m-%d')
+    # Identify items that are depleted (have 0 remaining uses)
+    items_depleted = [
+        {"itemId": item["itemId"], "name": item["name"]}
+        for item in used_list if item.get("remainingUses", 0) == 0
+    ]
 
-        # Identify items that are depleted (have 0 remaining uses)
-        items_depleted = [
-            {"itemId": item["itemId"], "name": item["name"]}
-            for item in used_list if item.get("remainingUses", 0) == 0
-        ]
-
-        # Format response according to expected structure
-        response = {
-            "success": True,
-            "newDate": new_date.isoformat() if isinstance(new_date, datetime) else str(new_date),
-            "changes": {
-                "itemsUsed": used_list,
-                "itemsExpired": expired_list,
-                "itemsDepletedToday": items_depleted
-            }
+    # Format response according to expected structure
+    response = {
+        "success": True,
+        "newDate": simulated_date.isoformat() if isinstance(simulated_date, datetime) else str(simulated_date),
+        "changes": {
+            "itemsUsed": used_list,
+            "itemsExpired": expired_list,
+            "itemsDepletedToday": items_depleted
         }
+    }
 
-        return response
+    return response
 
-    except Exception as e:
-        # Handle any exceptions
-        return {
-            "success": False,
-            "error": str(e)
-        }
+    # except Exception as e:
+    #     # Handle any exceptions
+    #     return {
+    #         "success": False,
+    #         "error": str(e)
+    #     }
 
 #-----------------------------------------------------------------------------------------
 
@@ -778,3 +781,61 @@ async def returnlogs(request: log_params):
 # binItems, binContainers = obj.BeginSort()
 # with poen(binItems, "rb") as f:
 #     f.load()
+
+
+# {
+#   "items": [
+#     {
+#       "itemId": "1999",
+#       "name": "Emergency_Oxygen_Mask",
+#       "width": 49.1,
+#       "depth": 27.9,
+#       "height": 43.5,
+#       "mass": 10,
+#       "priority": 95,
+#       "expiryDate": "2025-12-31",
+#       "usageLimit": 4721,
+#       "preferredZone": "Crew_Quarters"
+#     },
+#     {
+#       "itemId": "2000",
+#       "name": "Research_Samples",
+#       "width": 22.0,
+#       "depth": 13.3,
+#       "height": 22.3,
+#       "mass": 10,
+#       "priority": 56,
+#       "expiryDate": "2026-03-15",
+#       "usageLimit": 4972,
+#       "preferredZone": "Lab"
+#     },
+#     {
+#       "itemId": "1998",
+#       "name": "Thruster_Fuel",
+#       "width": 25.4,
+#       "depth": 25.1,
+#       "height": 39.8,
+#       "mass": 10,
+#       "priority": 8,
+#       "expiryDate": "2025-11-10",
+#       "usageLimit": 2585,
+#       "preferredZone": "Crew_Quarters"
+#     }
+#   ],
+#   "containers": [
+#     {
+#       "containerId": "CQ03",
+#       "zone": "Crew_Quarters",
+#       "width": 100.0,
+#       "depth": 85.0,
+#       "height": 200.0
+#     },
+#     {
+#       "containerId": "L02",
+#       "zone": "Lab",
+#       "width": 100.0,
+#       "depth": 85.0,
+#       "height": 200.0
+#     }
+#   ]
+# }

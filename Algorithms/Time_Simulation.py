@@ -118,7 +118,7 @@ def SetupSimulation(days_to_sim,daily_use,simulation_date):
 
     currDate = simulation_date
     loader(daily_use)
-    new_date = shiftCurrentDate(daily_use,days_to_sim)
+    new_date = shiftCurrentDate(daily_use,int(days_to_sim))
 
     return new_date,item_dict,expiredlist,usedlist
 

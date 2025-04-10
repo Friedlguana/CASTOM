@@ -100,7 +100,7 @@ class ScreenFunctions():
 
     class TimeSimScreen():
         def __init__(self,no_of_days,usage_list,sim_date):
-            self.daysToSim = no_of_days
+            self.daysToSim = int(no_of_days)
             self.itemsToUse = usage_list
             self.sim_date = sim_date
 
