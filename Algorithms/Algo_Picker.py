@@ -45,7 +45,7 @@ class ScreenFunctions():
             best_route = {}
             scores = []
             if self.searchitem_id:
-                if int(self.searchitem_id) in self.item_dict:
+                if self.searchitem_id in self.item_dict:
                     route,bool = SetupRetrieval(self.searchitem_id, self.searchcont_id if self.searchcont_id else self.item_dict[self.searchitem_id].placed_cont)
                     return route,bool
                 else:
@@ -119,7 +119,7 @@ class ScreenFunctions():
 
             garbage_dict = load_or_initialize_waste_dict(WASTE_DATA_PATH)
             item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
-            item_id = [int(item) for item in item_dict.keys()]
+            item_id = [item for item in item_dict.keys()]
             for item in item_id:
                 if item_dict[item].status != None and item not in garbage_dict.keys():
                     garbage_dict.update({item: item_dict[item].status})

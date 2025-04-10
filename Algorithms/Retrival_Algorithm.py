@@ -5,7 +5,7 @@ from .utils.file_loader import *
 
 def steps_for_retrieval(obj, cont, visited=None):
 
-    Item_ID_in_cont = [int(attribute.item_id) for attribute in item_dict.values() if attribute.placed_cont == cont]
+    Item_ID_in_cont = [attribute.item_id for attribute in item_dict.values() if attribute.placed_cont == cont]
 
     if visited is None:
         visited = set()
@@ -81,7 +81,7 @@ def SetupRetrieval(item, cont):
     item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
     container_dict = load_or_initialize_container_dict(CONTAINER_DATA_PATH)
 
-    Item_ID = [int(attribute.item_id) for attribute in item_dict.values()]
+    Item_ID = [attribute.item_id for attribute in item_dict.values()]
     container_ID = [attribute.container_id for attribute in container_dict.values()]
     if item in Item_ID:
 

@@ -14,7 +14,7 @@ def loader(daiy_use):
     dater = {}  # k,v pairs of item id, [expiry date, uses, waste status]
 
 
-    Item_ID = [int(attribute.item_id) for attribute in item_dict.values()]
+    Item_ID = [attribute.item_id for attribute in item_dict.values()]
     for item in daiy_use:
         if item["itemId"]:
             iid =  item_dict[item["itemId"]].expiry if item_dict[item["itemId"]].expiry != "N/A" else "no expiry"
@@ -29,7 +29,7 @@ def loader(daiy_use):
 def shiftCurrentDate(dailyUseList, n=1):
     global item_dict
 
-    Item_ID = [int(attribute.item_id) for attribute in item_dict.values()]
+    Item_ID = [attribute.item_id for attribute in item_dict.values()]
     global currDate, dater, expiredlist, usedlist
 
     currDateOriginal = currDate

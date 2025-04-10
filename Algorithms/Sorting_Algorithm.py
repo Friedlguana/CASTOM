@@ -108,7 +108,7 @@ def start_BFD(zone_map):
         item.width = item.width / 10
         item.height = item.height / 10
         item.depth = item.depth / 10
-        item_dict.update({int(item.item_id): item})
+        item_dict.update({item.item_id: item})
 
     save_dict_to_file(item_dict, ITEM_DATA_PATH)
 
@@ -159,7 +159,7 @@ def load_items(file_path):
         reader = csv.DictReader(f)
         for row in reader:
             items.append(Item(
-                item_id=int(row['item_id']),
+                item_id=row['item_id'],
                 name=row['name'],
                 width=float(row['width_cm']),
                 depth=float(row['depth_cm']),
