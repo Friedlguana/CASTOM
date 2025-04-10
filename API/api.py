@@ -42,8 +42,8 @@ class Item(BaseModel):
     height: float
     mass: float
     priority: int
-    expiryDate: str
-    usageLimit: int
+    expiryDate: Optional[str] = "N/A"
+    usageLimit: Optional[int] = None
     preferredZone: str
 class Container(BaseModel):
     containerId: str
@@ -72,7 +72,7 @@ async def placementRecommendations(request: placementRequest):
     containerCsvWriter.writerow(["container_id", "width_cm", "depth_cm", "height_cm", "zone"])
 
     for item in request.items:
-        itemCsvWriter.writerow([item.itemId, item.name, item.width, item.depth, item.height, item.mass, item.priority, item.expiryDate if item.expiryDate else "N/A", None if type(item.usageLimit) != type(3) else item.usageLimit , item.preferredZone])
+        itemCsvWriter.writerow([item.itemId, item.name, item.width, item.depth, item.height, item.mass, item.priority, item.expiryDate , item.usageLimit , item.preferredZone])
     itemobj.close()
     for container in request.containers:
         containerCsvWriter.writerow([container.containerId, container.width, container.depth, container.height, container.zone])
