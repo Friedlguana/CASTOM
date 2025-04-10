@@ -167,7 +167,7 @@ def load_items(file_path):
                 mass=float(row["mass_kg"]),
                 priority=int(row['priority']),
                 expiry=str(row["expiry_date"]),
-                uses=int(row['usage_limit']),
+                uses=row['usage_limit'],
                 pref_zone=row['preferred_zone'],
                 fixed_position = bool(row.get('fixed_position', False))
             ))
