@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>1166</width>
-    <height>720</height>
+    <height>687</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -677,6 +677,9 @@ Button */
                <width>42</width>
                <height>42</height>
               </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">image: url(:/images/images/images/PyDracula.png);</string>
              </property>
              <property name="frameShape">
               <enum>QFrame::Shape::NoFrame</enum>
@@ -1820,7 +1823,7 @@ background: transparent;
 </string>
                      </property>
                      <property name="currentIndex">
-                      <number>2</number>
+                      <number>0</number>
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
@@ -1841,7 +1844,7 @@ background: transparent;
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_6">
                           <item>
-                           <widget class="QFrame" name="missontime_label">
+                           <widget class="QFrame" name="missiontime_frame">
                             <property name="styleSheet">
                              <string notr="true">border:None;</string>
                             </property>
@@ -1853,7 +1856,7 @@ background: transparent;
                             </property>
                             <layout class="QGridLayout" name="gridLayout_4">
                              <item row="0" column="0">
-                              <widget class="QLabel" name="label">
+                              <widget class="QLabel" name="label_mission_time">
                                <property name="text">
                                 <string/>
                                </property>
@@ -1969,34 +1972,19 @@ QDateEdit::down-arrow {
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_7">
                           <item>
-                           <widget class="QFrame" name="frame_4">
+                           <widget class="QLabel" name="label_reccomendations">
+                            <property name="minimumSize">
+                             <size>
+                              <width>0</width>
+                              <height>400</height>
+                             </size>
+                            </property>
                             <property name="styleSheet">
-                             <string notr="true">border:None;</string>
+                             <string notr="true"/>
                             </property>
-                            <property name="frameShape">
-                             <enum>QFrame::Shape::StyledPanel</enum>
+                            <property name="text">
+                             <string/>
                             </property>
-                            <property name="frameShadow">
-                             <enum>QFrame::Shadow::Raised</enum>
-                            </property>
-                            <layout class="QVBoxLayout" name="verticalLayout_14">
-                             <item>
-                              <widget class="QLabel" name="recommed_text">
-                               <property name="sizePolicy">
-                                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                                 <horstretch>0</horstretch>
-                                 <verstretch>0</verstretch>
-                                </sizepolicy>
-                               </property>
-                               <property name="styleSheet">
-                                <string notr="true"/>
-                               </property>
-                               <property name="text">
-                                <string/>
-                               </property>
-                              </widget>
-                             </item>
-                            </layout>
                            </widget>
                           </item>
                          </layout>

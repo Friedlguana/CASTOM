@@ -60,7 +60,8 @@ class Settings():
     # MENU SELECTED STYLESHEET
     MENU_SELECTED_STYLESHEET ="""
         border-left: 22px solid qlineargradient(spread:pad, x1:0.034, y1:0, x2:0.216, y2:0, stop:0.499 rgba(255, 121, 198, 255), stop:0.5 rgba(85, 170, 255, 0));
-        background-color: rgb(40, 44, 52);"""
+        background-color: rgb(40, 44, 52);
+        color: rgb(255, 255, 255);"""
 class MplCanvas(FigureCanvas):
     def __init__(self, parent=None):
         self.fig = Figure(figsize=(5, 5), dpi=100)
@@ -200,8 +201,6 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.timer.start(10)
 
         #Date logic
-
-
 
         self.current_date = date.today() #.strftime("%d-%m-%Y")
 
@@ -892,19 +891,18 @@ class UIFunctions(MainWindow):
     # TOGGLE MENU
     # ///////////////////////////////////////////////////////////////
     def toggleMenu(self, enable):
+
         if enable:
-            # GET WIDTH
-            width = self.leftMenuBg.original_width()
+            if not hasattr(self, "leftMenuBg"):
+                print("leftMenuBg is missing!")
+                return
+
+            width = self.leftMenuBg.width()
             maxExtend = Settings.MENU_WIDTH
             standard = 60
 
-            # SET MAX WIDTH
-            if width == 60:
-                widthExtended = maxExtend
-            else:
-                widthExtended = standard
+            widthExtended = maxExtend if width == 60 else standard
 
-            # ANIMATION
             self.animation = QPropertyAnimation(self.leftMenuBg, b"minimumWidth")
             self.animation.setDuration(Settings.TIME_ANIMATION)
             self.animation.setStartValue(width)
@@ -912,35 +910,37 @@ class UIFunctions(MainWindow):
             self.animation.setEasingCurve(QEasingCurve.InOutQuart)
             self.animation.start()
 
-    # TOGGLE LEFT BOX
-    # ///////////////////////////////////////////////////////////////
-    def toggleLeftBox(self, enable):
-        if enable:
-            # GET WIDTH
-            original_width = self.extraLeftBox.original_width()
-            widthLeftMenu = self.leftMenuFrame.original_width()
-            #widthRightBox = self.extraRightBox.original_width()
-            maxExtend = Settings.LEFT_BOX_WIDTH
-            color = Settings.BTN_LEFT_BOX_COLOR
-            standard = 0
 
-            # GET BTN STYLE
-            style = self.toggleLeftBox.styleSheet()
 
-            # SET MAX WIDTH
-            if original_width == 0:
-                widthExtended = maxExtend
-                # SELECT BTN
-                self.toggleLeftBox.setStyleSheet(style + color)
-                if widthLeftMenu != 0:
-                    style = self.settingsTopBtn.styleSheet()
-                    self.settingsTopBtn.setStyleSheet(style.replace(Settings.BTN_RIGHT_BOX_COLOR, ''))
-            else:
-                widthExtended = standard
-                # RESET BTN
-                self.toggleLeftBox.setStyleSheet(style.replace(color, ''))
-
-        UIFunctions.start_box_animation(self, original_width, widthLeftMenu, "left")
+    # # TOGGLE LEFT BOX
+    # # ///////////////////////////////////////////////////////////////
+    # def toggleLeftBox(self, enable):
+    #     if enable:
+    #         # GET WIDTH
+    #         original_width = self.extraLeftBox.original_width()
+    #         widthLeftMenu = self.leftMenuFrame.original_width()
+    #         #widthRightBox = self.extraRightBox.original_width()
+    #         maxExtend = Settings.LEFT_BOX_WIDTH
+    #         color = Settings.BTN_LEFT_BOX_COLOR
+    #         standard = 0
+    #
+    #         # GET BTN STYLE
+    #         style = self.toggleLeftBox.styleSheet()
+    #
+    #         # SET MAX WIDTH
+    #         if original_width == 0:
+    #             widthExtended = maxExtend
+    #             # SELECT BTN
+    #             self.toggleLeftBox.setStyleSheet(style + color)
+    #             if widthLeftMenu != 0:
+    #                 style = self.settingsTopBtn.styleSheet()
+    #                 self.settingsTopBtn.setStyleSheet(style.replace(Settings.BTN_RIGHT_BOX_COLOR, ''))
+    #         else:
+    #             widthExtended = standard
+    #             # RESET BTN
+    #             self.toggleLeftBox.setStyleSheet(style.replace(color, ''))
+    #
+    #     UIFunctions.start_box_animation(self, original_width, "left")
 
     # TOGGLE RIGHT BOX
     # ///////////////////////////////////////////////////////////////
@@ -971,29 +971,22 @@ class UIFunctions(MainWindow):
     #
     #         UIFunctions.start_box_animation(self, widthLeftBox, original_width, "right")
 
-    # def start_box_animation(self, left_box_width, left_menu_width, direction):
-    #     right_width = 0
-    #     left_width = 0
-    #
-    #     # Check values
-    #     if left_box_width == 0 and direction == "left":
-    #         left_width = 240
-    #     else:
-    #         left_width = 0
-    #     # Check values
-    #     if left_menu_width == 0 and direction == "right":
-    #         right_width = 240
-    #     else:
-    #         right_width = 0
-    #
-    #         # ANIMATION LEFT BOX
-    #     self.left_box = QPropertyAnimation(self.extraLeftBox, b"minimumWidth")
-    #     self.left_box.setDuration(Settings.TIME_ANIMATION)
-    #     self.left_box.setStartValue(left_box_width)
-    #     self.left_box.setEndValue(left_width)
-    #     self.left_box.setEasingCurve(QEasingCurve.InOutQuart)
-    #
-    #     self.toggleMenu(self,ena)
+    def start_box_animation(self, left_box_width, direction):
+        left_width = 0
+
+        if left_box_width == 0 and direction == "left":
+            left_width = Settings.LEFT_BOX_WIDTH
+        else:
+            left_width = 0
+
+        # Animate Left Box Only
+        self.left_box = QPropertyAnimation(self.extraLeftBox, b"minimumWidth")
+        self.left_box.setDuration(Settings.TIME_ANIMATION)
+        self.left_box.setStartValue(left_box_width)
+        self.left_box.setEndValue(left_width)
+        self.left_box.setEasingCurve(QEasingCurve.InOutQuart)
+
+        self.left_box.start()
 
     # ANIMATION RIGHT BOX
     # self.leftMenuFrame = QPropertyAnimation(self.leftMenuFrame, b"minimumWidth")

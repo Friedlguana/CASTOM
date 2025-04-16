@@ -17,16 +17,17 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QDateEdit, QFrame,
     QGridLayout, QHBoxLayout, QHeaderView, QLabel,
-    QLineEdit, QMainWindow, QPushButton, QSizePolicy,
-    QSpacerItem, QStackedWidget, QTableWidget, QTableWidgetItem,
-    QTextEdit, QTimeEdit, QVBoxLayout, QWidget)
+    QLayout, QLineEdit, QMainWindow, QPushButton,
+    QSizePolicy, QSpacerItem, QStackedWidget, QTableWidget,
+    QTableWidgetItem, QTextEdit, QTimeEdit, QVBoxLayout,
+    QWidget)
 import resources_rc
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1166, 720)
+        MainWindow.resize(1166, 687)
         MainWindow.setMinimumSize(QSize(940, 560))
         self.styleSheet = QWidget(MainWindow)
         self.styleSheet.setObjectName(u"styleSheet")
@@ -612,6 +613,7 @@ class Ui_MainWindow(object):
         self.topLogo.setGeometry(QRect(10, 5, 42, 42))
         self.topLogo.setMinimumSize(QSize(42, 42))
         self.topLogo.setMaximumSize(QSize(42, 42))
+        self.topLogo.setStyleSheet(u"image: url(:/images/images/images/PyDracula.png);")
         self.topLogo.setFrameShape(QFrame.Shape.NoFrame)
         self.topLogo.setFrameShadow(QFrame.Shadow.Raised)
         self.titleLeftApp = QLabel(self.topLogoInfo)
@@ -1055,20 +1057,20 @@ class Ui_MainWindow(object):
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
         self.horizontalLayout_6 = QHBoxLayout(self.frame)
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
-        self.missontime_label = QFrame(self.frame)
-        self.missontime_label.setObjectName(u"missontime_label")
-        self.missontime_label.setStyleSheet(u"border:None;")
-        self.missontime_label.setFrameShape(QFrame.Shape.StyledPanel)
-        self.missontime_label.setFrameShadow(QFrame.Shadow.Raised)
-        self.gridLayout_4 = QGridLayout(self.missontime_label)
+        self.missiontime_frame = QFrame(self.frame)
+        self.missiontime_frame.setObjectName(u"missiontime_frame")
+        self.missiontime_frame.setStyleSheet(u"border:None;")
+        self.missiontime_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.missiontime_frame.setFrameShadow(QFrame.Shadow.Raised)
+        self.gridLayout_4 = QGridLayout(self.missiontime_frame)
         self.gridLayout_4.setObjectName(u"gridLayout_4")
-        self.label = QLabel(self.missontime_label)
-        self.label.setObjectName(u"label")
+        self.label_mission_time = QLabel(self.missiontime_frame)
+        self.label_mission_time.setObjectName(u"label_mission_time")
 
-        self.gridLayout_4.addWidget(self.label, 0, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.label_mission_time, 0, 0, 1, 1)
 
 
-        self.horizontalLayout_6.addWidget(self.missontime_label)
+        self.horizontalLayout_6.addWidget(self.missiontime_frame)
 
         self.frame_5 = QFrame(self.frame)
         self.frame_5.setObjectName(u"frame_5")
@@ -1157,23 +1159,12 @@ class Ui_MainWindow(object):
         self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
         self.horizontalLayout_7 = QHBoxLayout(self.frame_2)
         self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
-        self.frame_4 = QFrame(self.frame_2)
-        self.frame_4.setObjectName(u"frame_4")
-        self.frame_4.setStyleSheet(u"border:None;")
-        self.frame_4.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_4.setFrameShadow(QFrame.Shadow.Raised)
-        self.verticalLayout_14 = QVBoxLayout(self.frame_4)
-        self.verticalLayout_14.setObjectName(u"verticalLayout_14")
-        self.recommed_text = QLabel(self.frame_4)
-        self.recommed_text.setObjectName(u"recommed_text")
-        sizePolicy2.setHeightForWidth(self.recommed_text.sizePolicy().hasHeightForWidth())
-        self.recommed_text.setSizePolicy(sizePolicy2)
-        self.recommed_text.setStyleSheet(u"")
+        self.label_reccomendations = QLabel(self.frame_2)
+        self.label_reccomendations.setObjectName(u"label_reccomendations")
+        self.label_reccomendations.setMinimumSize(QSize(0, 400))
+        self.label_reccomendations.setStyleSheet(u"")
 
-        self.verticalLayout_14.addWidget(self.recommed_text)
-
-
-        self.horizontalLayout_7.addWidget(self.frame_4)
+        self.horizontalLayout_7.addWidget(self.label_reccomendations)
 
 
         self.verticalLayout_7.addWidget(self.frame_2)
@@ -1289,7 +1280,7 @@ class Ui_MainWindow(object):
         self.footer.setFrameShape(QFrame.Shape.StyledPanel)
         self.footer.setFrameShadow(QFrame.Shadow.Raised)
 
-        self.verticalLayout_20.addWidget(self.footer, 0, Qt.AlignmentFlag.AlignBottom)
+        self.verticalLayout_20.addWidget(self.footer)
 
         self.stackedWidget.addWidget(self.sorting)
         self.retrieval = QWidget()
@@ -1353,6 +1344,7 @@ class Ui_MainWindow(object):
         self.search_visualiser.setObjectName(u"search_visualiser")
         self.gridLayout_5 = QGridLayout(self.search_visualiser)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
+        self.gridLayout_5.setSizeConstraint(QLayout.SizeConstraint.SetNoConstraint)
 
         self.horizontalLayout_10.addWidget(self.search_visualiser)
 
@@ -1721,7 +1713,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1775,8 +1767,8 @@ class Ui_MainWindow(object):
         self.closeAppBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close", None))
 #endif // QT_CONFIG(tooltip)
         self.closeAppBtn.setText("")
-        self.label.setText("")
-        self.recommed_text.setText("")
+        self.label_mission_time.setText("")
+        self.label_reccomendations.setText("")
         self.file_dropper_item.setText(QCoreApplication.translate("MainWindow", u"Open Item FIle", None))
         self.file_dropper_cont.setText(QCoreApplication.translate("MainWindow", u"Open Container FIle", None))
         self.sortingpath_label.setText(QCoreApplication.translate("MainWindow", u"- upload a csv file to sort", None))
