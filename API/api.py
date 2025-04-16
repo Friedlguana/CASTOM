@@ -26,6 +26,8 @@ simulated_date = datetime.fromisoformat(datetime.strftime(datetime.today(), r"%Y
 # simulated_date = datetime.today().date().isoformat()
 disposed_items = []
 first_run = True
+#initializing log file
+logData = load_or_initialize_log_file(LOG_DATA_PATH)
 
 
 
@@ -137,6 +139,22 @@ async def placementRecommendations(request: placementRequest):
             placements_template["position"]["endCoordinates"]["height"] = itemData[ID].height + float(itemData[ID].z)
             placement_result_json.append(placements_template)
 
+            #log start
+            logDict = {"timestamp": datetime.strftime(simulated_date, r"%Y-%m-%d"),
+                    "userId": "N/A",
+                    "actionType": "placement",
+                    "itemId": f"{itemData[ID].item_id}",
+                    "details": {
+                        "fromContainer": "supplyStation",
+                        "toContainer": f"{itemData[ID].placed_cont}",
+                        "reason": f"Placing item [{itemData[ID].item_id}] in the best possible position inside the container [{itemData[ID].placed_cont}]"
+                        }
+                    }
+            logData.append(logDict)
+            save_dict_to_file(logData, LOG_DATA_PATH)
+        # print(f"[DEBUG] {logData}")
+            #log end
+
         return {
             "success": boolean,
             "placements": [placement_result_json
@@ -233,6 +251,20 @@ async def placementRecommendations(request: placementRequest):
                 rearrangements_template['action']="place"
 
             rearrangements_result_json.append(rearrangements_template)
+
+            #log start
+            logDict = {"timestamp": datetime.strftime(simulated_date, r"%Y-%m-%d"),
+                    "userId": "N/A",
+                    "actionType": "rearrangement",
+                    "itemId": f"{itemData[ID].item_id}",
+                    "details": {
+                        "fromContainer": f"{item_dict[ID].placed_cont}",
+                        "toContainer": f"{itemData[ID].placed_cont}",
+                        "reason": f"Placing item [{itemData[ID].item_id}] in the best possible position inside the container [{itemData[ID].placed_cont}] from [{item_dict[ID].placed_cont}]"
+                        }
+                    }
+            logData.append(logDict)
+            save_dict_to_file(logData, LOG_DATA_PATH)
 
             # rearrangements_template = {
             #     "step": number,
@@ -397,13 +429,19 @@ class retrieveRequest(BaseModel):
 @app.post("/api/retrieve")
 async def retrieveItem(request: retrieveRequest):
 
-    #logging
-    logdict = {"itemId" : request.itemId,
-               "userId": request.userId,
-               "timestamp":request.timestamp,
-               "actionType":"retrieval",
-               }
-    save_logdict_to_file(logdict,LOG_DATA_PATH)
+    #log start
+    logDict = {"timestamp": datetime.strftime(simulated_date, r"%Y-%m-%d"),
+            "userId": "N/A",
+            "actionType": "retrieval",
+            "itemId": f"{itemData[ID].item_id}",
+            "details": {
+                "fromContainer": f"{item_dict[ID].placed_cont}",
+                "toContainer": f"N/A",
+                "reason": f"Retrieving item [{itemData[ID].item_id}] from container [{item_dict[ID].placed_cont}]"
+                }
+            }
+    logData.append(logDict)
+    save_dict_to_file(logData, LOG_DATA_PATH)
 
     return {
             "success": True,
@@ -592,6 +630,20 @@ async def completeUndocking(request: wasteCompleteUndockingRequest):
             if expiry_date <= threshold:
                 number += 1
 
+        #log start
+        logDict = {"timestamp": datetime.strftime(simulated_date, r"%Y-%m-%d"),
+                "userId": "N/A",
+                "actionType": "disposal",
+                "itemId": f"{itemData[ID].item_id}",
+                "details": {
+                    "fromContainer": f"{item_dict[ID].placed_cont}",
+                    "toContainer": f"N/A",
+                    "reason": f"Removing item [{itemData[ID].item_id}] from [{item_dict[ID].placed_cont}]"
+                    }
+                }
+        logData.append(logDict)
+        save_dict_to_file(logData, LOG_DATA_PATH)
+
     return {
         "success": True,
         "itemsRemoved": number
@@ -736,6 +788,8 @@ async def export_arrangement():
 
     return csv_content  # Ideally, return as a downloadable CSV file
 
+
+#6 Logging
 class log_params(BaseModel):
     startDate : str #iso
     endDate: str
