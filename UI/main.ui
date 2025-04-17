@@ -1858,9 +1858,9 @@ background: transparent;
                              <item row="0" column="0">
                               <widget class="QLabel" name="label_mission_time">
                                <property name="text">
-                                <string>Projected Mission Time 
-Storage Efficiency 
-TIme To Next Resupply </string>
+                                <string>Projected Mission Time: 60 Sidereal Days 
+Storage Efficiency: 97% 
+TIme To Next Resupply: 40 Sidereal Days </string>
                                </property>
                               </widget>
                              </item>

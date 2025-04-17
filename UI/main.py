@@ -1709,7 +1709,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1763,8 +1763,12 @@ class Ui_MainWindow(object):
         self.closeAppBtn.setToolTip(QCoreApplication.translate("MainWindow", u"Close", None))
 #endif // QT_CONFIG(tooltip)
         self.closeAppBtn.setText("")
-        self.label_mission_time.setText("")
-        self.label_reccomendations.setText("")
+        self.label_mission_time.setText(QCoreApplication.translate("MainWindow", u"Projected Mission Time: 60 Sidereal Days \n"
+"Storage Efficiency: 97% \n"
+"TIme To Next Resupply: 40 Sidereal Days ", None))
+        self.label_reccomendations.setText(QCoreApplication.translate("MainWindow", u"Recommendations \n"
+"Run Sorter To Rearrange \n"
+"Dispose Waste  ", None))
         self.file_dropper_item.setText(QCoreApplication.translate("MainWindow", u"Open Item FIle", None))
         self.file_dropper_cont.setText(QCoreApplication.translate("MainWindow", u"Open Container FIle", None))
         self.sortingpath_label.setText(QCoreApplication.translate("MainWindow", u"- upload a csv file to sort", None))
