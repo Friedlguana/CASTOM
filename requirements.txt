@@ -6,3 +6,5 @@ py3dbp
 python-dateutil
 numpy
 python-multipart
+matplotlib
+mpl_toolkits

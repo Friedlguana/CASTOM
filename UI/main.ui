@@ -1823,7 +1823,7 @@ background: transparent;
 </string>
                      </property>
                      <property name="currentIndex">
-                      <number>2</number>
+                      <number>0</number>
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
@@ -1858,7 +1858,9 @@ background: transparent;
                              <item row="0" column="0">
                               <widget class="QLabel" name="label_mission_time">
                                <property name="text">
-                                <string/>
+                                <string>Projected Mission Time 
+Storage Efficiency 
+TIme To Next Resupply </string>
                                </property>
                               </widget>
                              </item>
@@ -1983,7 +1985,9 @@ QDateEdit::down-arrow {
                              <string notr="true"/>
                             </property>
                             <property name="text">
-                             <string/>
+                             <string>Recommendations 
+Run Sorter To Rearrange 
+Dispose Waste  </string>
                             </property>
                            </widget>
                           </item>

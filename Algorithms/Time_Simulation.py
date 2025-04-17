@@ -54,7 +54,7 @@ def shiftCurrentDate(dailyUseList, n=1):
                     usedlist.append(item_id)
 
             else:
-                expiry_date = datetime.datetime.strptime(item.expiry, "%Y-%m-%d")
+                expiry_date = datetime.datetime.strptime(item.expiry, "%d-%m-%Y")
                 if expiry_date.date() <= currDate and item.uses <= 0:
 
                     days_to_expiry = (expiry_date - datetime.datetime.now()).days
