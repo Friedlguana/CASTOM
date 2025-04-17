@@ -26,7 +26,7 @@ import time
 import pickle
 
 iteration=0
-
+rearrage_factor = 0
 
 import Algorithms.Algo_Picker
 from main import Ui_MainWindow
@@ -328,6 +328,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
             self.label.setText(str(cont_fname))
 
     def sort_btn_function(self):
+        global rearrage_factor
+        rearrage_factor = 0
         self.sorting_cont_comboBox.clear()
         #GlassEngineWidget.Clear_Scene(self.glass_engine_widget)
         sorter = Algorithms.Algo_Picker.ScreenFunctions.SortingScreen(self.sort_fname_items,
@@ -543,7 +545,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         iteration=0
 
     def Retrieval_Trigger(self):
-
+        global rearrage_factor
+        rearrage_factor += 1
         self.searchitem_id = self.le_item_id.text()
         self.searchitem_name = self.le_item_name.text()
         self.searchcont_id = self.le_cont_id.text() if self.le_cont_id.text() else None
