@@ -1823,7 +1823,7 @@ background: transparent;
 </string>
                      </property>
                      <property name="currentIndex">
-                      <number>0</number>
+                      <number>2</number>
                      </property>
                      <widget class="QWidget" name="home">
                       <property name="styleSheet">
@@ -2163,8 +2163,8 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                       </layout>
                      </widget>
                      <widget class="QWidget" name="retrieval">
-                      <layout class="QVBoxLayout" name="verticalLayout_17">
-                       <item alignment="Qt::AlignmentFlag::AlignTop">
+                      <layout class="QGridLayout" name="gridLayout_5">
+                       <item row="0" column="0" colspan="2">
                         <widget class="QFrame" name="search_frame">
                          <property name="frameShape">
                           <enum>QFrame::Shape::StyledPanel</enum>
@@ -2230,7 +2230,7 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                          </layout>
                         </widget>
                        </item>
-                       <item>
+                       <item row="1" column="0">
                         <widget class="QFrame" name="retriveal_frame">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -2246,63 +2246,12 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                          </property>
                          <layout class="QHBoxLayout" name="horizontalLayout_10">
                           <item>
-                           <widget class="QWidget" name="search_visualiser" native="true">
-                            <layout class="QGridLayout" name="gridLayout_5">
-                             <property name="sizeConstraint">
-                              <enum>QLayout::SizeConstraint::SetNoConstraint</enum>
-                             </property>
-                            </layout>
-                           </widget>
+                           <widget class="QWidget" name="search_visualiser" native="true"/>
                           </item>
                          </layout>
                         </widget>
                        </item>
-                       <item alignment="Qt::AlignmentFlag::AlignHCenter">
-                        <widget class="QFrame" name="frame_11">
-                         <property name="frameShape">
-                          <enum>QFrame::Shape::StyledPanel</enum>
-                         </property>
-                         <property name="frameShadow">
-                          <enum>QFrame::Shadow::Raised</enum>
-                         </property>
-                         <layout class="QHBoxLayout" name="horizontalLayout_18">
-                          <item alignment="Qt::AlignmentFlag::AlignHCenter">
-                           <widget class="QPushButton" name="btn_search_prevstep">
-                            <property name="styleSheet">
-                             <string notr="true">padding: 6px 20px;
-font: bold 9pt &quot;Segoe UI&quot;;</string>
-                            </property>
-                            <property name="text">
-                             <string>Prev</string>
-                            </property>
-                            <property name="icon">
-                             <iconset resource="resources.qrc">
-                              <normaloff>:/icons/images/icons/cil-media-skip-backward.png</normaloff>:/icons/images/icons/cil-media-skip-backward.png</iconset>
-                            </property>
-                           </widget>
-                          </item>
-                          <item alignment="Qt::AlignmentFlag::AlignHCenter">
-                           <widget class="QPushButton" name="btn_search_next">
-                            <property name="layoutDirection">
-                             <enum>Qt::LayoutDirection::RightToLeft</enum>
-                            </property>
-                            <property name="styleSheet">
-                             <string notr="true">padding: 6px 20px;
-font: bold 9pt &quot;Segoe UI&quot;;</string>
-                            </property>
-                            <property name="text">
-                             <string>Next</string>
-                            </property>
-                            <property name="icon">
-                             <iconset resource="resources.qrc">
-                              <normaloff>:/icons/images/icons/cil-media-skip-forward.png</normaloff>:/icons/images/icons/cil-media-skip-forward.png</iconset>
-                            </property>
-                           </widget>
-                          </item>
-                         </layout>
-                        </widget>
-                       </item>
-                       <item>
+                       <item row="3" column="0">
                         <widget class="QFrame" name="logging_frame">
                          <property name="sizePolicy">
                           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -2345,6 +2294,51 @@ font: bold 9pt &quot;Segoe UI&quot;;</string>
                             </property>
                             <property name="text">
                              <string>Submit</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                       </item>
+                       <item row="2" column="0" colspan="2" alignment="Qt::AlignmentFlag::AlignHCenter">
+                        <widget class="QFrame" name="frame_11">
+                         <property name="frameShape">
+                          <enum>QFrame::Shape::StyledPanel</enum>
+                         </property>
+                         <property name="frameShadow">
+                          <enum>QFrame::Shadow::Raised</enum>
+                         </property>
+                         <layout class="QHBoxLayout" name="horizontalLayout_18">
+                          <item alignment="Qt::AlignmentFlag::AlignHCenter">
+                           <widget class="QPushButton" name="btn_search_prevstep">
+                            <property name="styleSheet">
+                             <string notr="true">padding: 6px 20px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
+                            </property>
+                            <property name="text">
+                             <string>Prev</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources.qrc">
+                              <normaloff>:/icons/images/icons/cil-media-skip-backward.png</normaloff>:/icons/images/icons/cil-media-skip-backward.png</iconset>
+                            </property>
+                           </widget>
+                          </item>
+                          <item alignment="Qt::AlignmentFlag::AlignHCenter">
+                           <widget class="QPushButton" name="btn_search_next">
+                            <property name="layoutDirection">
+                             <enum>Qt::LayoutDirection::RightToLeft</enum>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">padding: 6px 20px;
+font: bold 9pt &quot;Segoe UI&quot;;</string>
+                            </property>
+                            <property name="text">
+                             <string>Next</string>
+                            </property>
+                            <property name="icon">
+                             <iconset resource="resources.qrc">
+                              <normaloff>:/icons/images/icons/cil-media-skip-forward.png</normaloff>:/icons/images/icons/cil-media-skip-forward.png</iconset>
                             </property>
                            </widget>
                           </item>

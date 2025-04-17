@@ -17,17 +17,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QDateEdit, QFrame,
     QGridLayout, QHBoxLayout, QHeaderView, QLabel,
-    QLayout, QLineEdit, QMainWindow, QPushButton,
-    QSizePolicy, QSpacerItem, QStackedWidget, QTableWidget,
-    QTableWidgetItem, QTextEdit, QTimeEdit, QVBoxLayout,
-    QWidget)
+    QLineEdit, QMainWindow, QPushButton, QSizePolicy,
+    QSpacerItem, QStackedWidget, QTableWidget, QTableWidgetItem,
+    QTextEdit, QTimeEdit, QVBoxLayout, QWidget)
 import resources_rc
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1166,687)
+        MainWindow.resize(1166, 687)
         MainWindow.setMinimumSize(QSize(940, 560))
         self.styleSheet = QWidget(MainWindow)
         self.styleSheet.setObjectName(u"styleSheet")
@@ -1285,8 +1284,8 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.sorting)
         self.retrieval = QWidget()
         self.retrieval.setObjectName(u"retrieval")
-        self.verticalLayout_17 = QVBoxLayout(self.retrieval)
-        self.verticalLayout_17.setObjectName(u"verticalLayout_17")
+        self.gridLayout_5 = QGridLayout(self.retrieval)
+        self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.search_frame = QFrame(self.retrieval)
         self.search_frame.setObjectName(u"search_frame")
         self.search_frame.setFrameShape(QFrame.Shape.StyledPanel)
@@ -1330,7 +1329,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_9.addWidget(self.btn_search_retrieve)
 
 
-        self.verticalLayout_17.addWidget(self.search_frame, 0, Qt.AlignmentFlag.AlignTop)
+        self.gridLayout_5.addWidget(self.search_frame, 0, 0, 1, 2)
 
         self.retriveal_frame = QFrame(self.retrieval)
         self.retriveal_frame.setObjectName(u"retriveal_frame")
@@ -1342,44 +1341,11 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
         self.search_visualiser = QWidget(self.retriveal_frame)
         self.search_visualiser.setObjectName(u"search_visualiser")
-        self.gridLayout_5 = QGridLayout(self.search_visualiser)
-        self.gridLayout_5.setObjectName(u"gridLayout_5")
-        self.gridLayout_5.setSizeConstraint(QLayout.SizeConstraint.SetNoConstraint)
 
         self.horizontalLayout_10.addWidget(self.search_visualiser)
 
 
-        self.verticalLayout_17.addWidget(self.retriveal_frame)
-
-        self.frame_11 = QFrame(self.retrieval)
-        self.frame_11.setObjectName(u"frame_11")
-        self.frame_11.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_11.setFrameShadow(QFrame.Shadow.Raised)
-        self.horizontalLayout_18 = QHBoxLayout(self.frame_11)
-        self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
-        self.btn_search_prevstep = QPushButton(self.frame_11)
-        self.btn_search_prevstep.setObjectName(u"btn_search_prevstep")
-        self.btn_search_prevstep.setStyleSheet(u"padding: 6px 20px;\n"
-"font: bold 9pt \"Segoe UI\";")
-        icon5 = QIcon()
-        icon5.addFile(u":/icons/images/icons/cil-media-skip-backward.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.btn_search_prevstep.setIcon(icon5)
-
-        self.horizontalLayout_18.addWidget(self.btn_search_prevstep, 0, Qt.AlignmentFlag.AlignHCenter)
-
-        self.btn_search_next = QPushButton(self.frame_11)
-        self.btn_search_next.setObjectName(u"btn_search_next")
-        self.btn_search_next.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-        self.btn_search_next.setStyleSheet(u"padding: 6px 20px;\n"
-"font: bold 9pt \"Segoe UI\";")
-        icon6 = QIcon()
-        icon6.addFile(u":/icons/images/icons/cil-media-skip-forward.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.btn_search_next.setIcon(icon6)
-
-        self.horizontalLayout_18.addWidget(self.btn_search_next, 0, Qt.AlignmentFlag.AlignHCenter)
-
-
-        self.verticalLayout_17.addWidget(self.frame_11, 0, Qt.AlignmentFlag.AlignHCenter)
+        self.gridLayout_5.addWidget(self.retriveal_frame, 1, 0, 1, 1)
 
         self.logging_frame = QFrame(self.retrieval)
         self.logging_frame.setObjectName(u"logging_frame")
@@ -1411,7 +1377,37 @@ class Ui_MainWindow(object):
         self.horizontalLayout_11.addWidget(self.btn_search_log)
 
 
-        self.verticalLayout_17.addWidget(self.logging_frame)
+        self.gridLayout_5.addWidget(self.logging_frame, 3, 0, 1, 1)
+
+        self.frame_11 = QFrame(self.retrieval)
+        self.frame_11.setObjectName(u"frame_11")
+        self.frame_11.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_11.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_18 = QHBoxLayout(self.frame_11)
+        self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
+        self.btn_search_prevstep = QPushButton(self.frame_11)
+        self.btn_search_prevstep.setObjectName(u"btn_search_prevstep")
+        self.btn_search_prevstep.setStyleSheet(u"padding: 6px 20px;\n"
+"font: bold 9pt \"Segoe UI\";")
+        icon5 = QIcon()
+        icon5.addFile(u":/icons/images/icons/cil-media-skip-backward.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.btn_search_prevstep.setIcon(icon5)
+
+        self.horizontalLayout_18.addWidget(self.btn_search_prevstep, 0, Qt.AlignmentFlag.AlignHCenter)
+
+        self.btn_search_next = QPushButton(self.frame_11)
+        self.btn_search_next.setObjectName(u"btn_search_next")
+        self.btn_search_next.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
+        self.btn_search_next.setStyleSheet(u"padding: 6px 20px;\n"
+"font: bold 9pt \"Segoe UI\";")
+        icon6 = QIcon()
+        icon6.addFile(u":/icons/images/icons/cil-media-skip-forward.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.btn_search_next.setIcon(icon6)
+
+        self.horizontalLayout_18.addWidget(self.btn_search_next, 0, Qt.AlignmentFlag.AlignHCenter)
+
+
+        self.gridLayout_5.addWidget(self.frame_11, 2, 0, 1, 2, Qt.AlignmentFlag.AlignHCenter)
 
         self.stackedWidget.addWidget(self.retrieval)
         self.undocking = QWidget()
@@ -1713,7 +1709,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -1780,11 +1776,11 @@ class Ui_MainWindow(object):
         self.le_astro_id.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter astronaut ID", None))
         self.btn_search_search.setText(QCoreApplication.translate("MainWindow", u"Search", None))
         self.btn_search_retrieve.setText(QCoreApplication.translate("MainWindow", u"Retrieve", None))
-        self.btn_search_prevstep.setText(QCoreApplication.translate("MainWindow", u"Prev", None))
-        self.btn_search_next.setText(QCoreApplication.translate("MainWindow", u"Next", None))
         self.lineEdit.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter container in which item was placed", None))
         self.lineEdit_3.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Enter coordinates as [0,0,0]", None))
         self.btn_search_log.setText(QCoreApplication.translate("MainWindow", u"Submit", None))
+        self.btn_search_prevstep.setText(QCoreApplication.translate("MainWindow", u"Prev", None))
+        self.btn_search_next.setText(QCoreApplication.translate("MainWindow", u"Next", None))
         self.btn_load_waste.setText(QCoreApplication.translate("MainWindow", u"Load Waste", None))
         self.le_udc_name.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Undocking Container Name", None))
         self.le_dc_maxweight.setPlaceholderText(QCoreApplication.translate("MainWindow", u"Maximum Weight", None))

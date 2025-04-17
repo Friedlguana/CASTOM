@@ -39,7 +39,7 @@ from Algorithms.utils.file_loader import (
 )
 from config import *
 
-os.environ["QT_FONT_DPI"] = "180"
+# os.environ["QT_FONT_DPI"] = "180"
 Window_Size = 0
 GLOBAL_STATE = False
 
@@ -529,7 +529,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
     ########################################Retriveal Functions###########################################################################3
 
     def Search_Trigger(self):
-        self.searchitem_id = int(self.le_item_id.text()) if self.le_item_id.text() else None
+        self.searchitem_id = self.le_item_id.text() if self.le_item_id.text() else None
         self.searchitem_name = self.le_item_name.text()
         self.searchcont_id = self.le_cont_id.text() if self.le_cont_id.text() else None
         self.astro_id = self.le_astro_id.text()
@@ -549,25 +549,25 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         self.searchcont_id = self.le_cont_id.text() if self.le_cont_id.text() else None
         self.astro_id = self.le_astro_id.text()
         self.create_plot(3, item_needed=self.searchitem_id, retrieval=list(self.steps.values())[0])
-        item_dict[self.searchitem_id].Use_Item()
+        item_dict[self.searchitem_id].Use_Item(1)
 
-        remove_buffer = list(steps[0].values())[0][::-1]
-        placeback_buffer = []
-        for i in range(len(list(steps[0].values())[0]) * 2 - 1):
-            step = 0
-            while remove_buffer != [itemId]:
-                removed_item = remove_buffer.pop()
-                placeback_buffer.append(remove_buffer.pop())
-                #########Visualisation Code Goes Here#########################
-                step += 1
-
-            #MARK TARGET
-            #target.colour = red
-            step += 1
-            while placeback_buffer != []:
-                placed_item = placeback_buffer.pop()
-                #########Visualisation Code Goes Here#########################
-                step += 1
+        # remove_buffer = list(self.steps[0].values())[0][::-1]
+        # placeback_buffer = []
+        # for i in range(len(list(self.steps[0].values())[0]) * 2 - 1):
+        #     step = 0
+        #     while remove_buffer != [itemId]:
+        #         removed_item = remove_buffer.pop()
+        #         placeback_buffer.append(remove_buffer.pop())
+        #         #########Visualisation Code Goes Here#########################
+        #         step += 1
+        #
+        #     #MARK TARGET
+        #     #target.colour = red
+        #     step += 1
+        #     while placeback_buffer != []:
+        #         placed_item = placeback_buffer.pop()
+        #         #########Visualisation Code Goes Here#########################
+        #         step += 1
     def Next_Item(self):
         global iteration
         steper = list(self.steps.values())[0]
@@ -597,13 +597,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         head = next(csvreader)
         self.item_consumption_list = []
         for row in csvreader:
-            # try:
-            #
-            #     self.sim_items[int(row[0])] = [datetime.date.fromisoformat(row[7]), int(row[8].split()[0]), "Not Waste"]
-            # except:
-            #     self.sim_items[int(row[0])] = ["no expiry", int(row[8].split()[0]), "Not Waste"]
-
-            self.item_consumption_list.append({"itemId": int(row[0]),"name": None})
+            self.item_consumption_list.append({"itemId": str(int(row[0])),"name": None})
         itemObj.close()
 
     def TimeSimTrigger(self):
