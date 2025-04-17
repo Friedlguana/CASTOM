@@ -39,7 +39,7 @@ from Algorithms.utils.file_loader import (
 )
 from config import *
 
-os.environ["QT_FONT_DPI"] = "96"
+os.environ["QT_FONT_DPI"] = "180"
 Window_Size = 0
 GLOBAL_STATE = False
 
@@ -356,8 +356,8 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
         item_dict = load_or_initialize_item_dict(ITEM_DATA_PATH)
 
         if type !=1:
-            print(item_needed)
-            container_needed = item_dict[int(item_needed)].placed_cont
+
+            container_needed = item_dict[str(item_needed)].placed_cont
 
         # Filter items for the container
         for item in item_dict:
@@ -458,7 +458,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
 
                 # Plot each item with random color
                 for item in items:
-                    if item["ID"]==item_needed:
+                    if str(item["ID"])==str(item_needed):
                         color = ("red","red","red")
                     else:
                         color=("white","white","white")
@@ -538,6 +538,7 @@ class MainWindow(qtw.QMainWindow, Ui_MainWindow):
                                                                       self.searchcont_id, self.astro_id)
         self.create_plot(2,item_needed=self.searchitem_id)
         self.steps, self.bool = route.BeginRetrieval()
+        print(self.steps)
         global iteration
         iteration=0
 

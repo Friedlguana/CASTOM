@@ -157,6 +157,7 @@ def load_items(file_path):
     items = []
     with open(file_path) as f:
         reader = csv.DictReader(f)
+        next(reader, None)
         for row in reader:
             items.append(Item(
                 item_id=row['item_id'],
